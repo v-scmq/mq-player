@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--全局设置 -->
+    <settings>
+        <!--打印sql -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!--开启二级缓存 -->
+        <!--<setting name="cacheEnabled" value="true"/>-->
+        <!--将数据库的字段的下划线自动转换成驼峰=>自动支持驼峰转换 -->
+        <!--<setting name="mapUnderscoreToCamelCase" value="true" /> -->
+        <!--开启延时加载 -->
+        <!--<setting name="lazyLoadingEnabled" value="true"/> -->
+        <!--关闭立即加载 -->
+        <!--<setting name="aggressiveLazyLoading" value="false"/> -->
+    </settings>
+    <!--引入映射配置文件 -->
+    <!-- <mappers> <mapper resource="mapper.xml"/> </mappers> -->
+    <typeHandlers>
+        <typeHandler handler="com.scmq.player.model.TypeHandler"/>
+    </typeHandlers>
+</configuration>

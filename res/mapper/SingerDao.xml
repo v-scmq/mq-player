@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.scmq.player.dao.SingerDao">
+    <resultMap id="singerMap" type="com.scmq.player.model.Singer">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="cover" column="cover"/>
+        <result property="introduce" column="introduce"/>
+        <result property="songNum" column="song_num"/>
+        <result property="mid" column="mid"/>
+        <result property="platform" column="platform"/>
+    </resultMap>
+
+    <!-- 通过歌手名称和可选的平台id,来查找对应的歌手id.总是返回查询结果的第一个 -->
+    <select id="findIdByInfo" resultType="java.lang.Integer">
+        SELECT id FROM singer WHERE platform
+        <choose>
+            <when test="singer.platform==null">IS NULL AND name=#{singer.name}</when>
+            <otherwise>=#{singer.platform} AND mid=#{singer.mid}</otherwise>
+        </choose>
+        LIMIT 0,1;
+    </select>
+
+    <!--查询所有歌手信息-->
+    <select id="findAll" resultMap="singerMap">
+        SELECT id,name,cover,introduce,song_num,mid,platform FROM singer
+    </select>
+
+    <!--通过id查询歌手信息-->
+    <select id="findSingerById" resultMap="singerMap">
+        SELECT id,name,cover,introduce,song_num,mid,platform FROM singer WHERE id=#{id}
+    </select>
+
+    <!-- 保存单个歌手信息 -->
+    <insert id="saveOfSingle" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO singer(name, cover, introduce, song_num, mid, platform) VALUES(#{singer.name},#{singer.cover},#{singer.introduce},#{singer.songNum},#{singer.mid},#{singer.platform})
+	</insert>
+
+    <!--批量保存歌手信息-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO singer(name, cover, introduce, song_num, mid, platform) VALUES
+        <foreach collection="singers" item="singer" separator=",">
+            (#{singer.name},#{singer.cover},#{singer.introduce},#{singer.songNum},#{singer.mid},#{singer.platform})
+        </foreach>
+    </insert>
+
+    <!--修改歌手信息-->
+    <update id="update">
+        UPDATE singer
+        <set>
+            <if test="singer.name !=null">name=#{singer.name}</if>
+            <if test="singer.cover !=null">cover=#{singer.cover}</if>
+            <if test="singer.introduce !=null">introduce=#{singer.introduce}</if>
+            <if test="singer.song_num !=null">song_num=#{singer.songNum}</if>
+            <if test="singer.mid !=null">mid=#{singer.mid}</if>
+            <if test="singer.platform">platform=#{singer.platform}</if>
+        </set>
+        WHERE id=#{singer.id}
+    </update>
+</mapper>

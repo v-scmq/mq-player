@@ -1,0 +1,221 @@
+/*-------------------- 根布局面板- ------------------------------*/
+.root{-fx-background-color:rgb(0,0,0);}
+
+/*-------------------- context-menu(右键菜单)--------------- */
+.context-menu{-fx-background-color:rgb(242,242,242);}
+.menu-item{-fx-background-color:transparent;}
+.menu-item .label{-fx-text-fill:rgb(51,51,51);}
+.menu-item:hover{-fx-background-color:rgb(217,217,217);}
+
+/*-------------------- Slider(滑动条) ------------------------ */
+.slider .thumb{-fx-background-color:#B8A595;-fx-cursor:hand;-fx-pref-height:12px;-fx-pref-width:12px;}
+.slider .track{-fx-background-color:#B8A595;-fx-background-radius:0;-fx-pref-height:2px;-fx-cursor:hand;}
+.slider:vertical .thumb{-fx-background-color:rgb(226,155,208);-fx-pref-width:16px;-fx-pref-height:16px;}
+.slider:vertical .track{-fx-background-color:rgb(226,155,208);-fx-pref-width:4px;}
+/*滑动条刻度标签*/
+.slider:vertical Text{-fx-fill:white;-fx-font-size:18px;}
+
+/*-------------------- ScrollBar -------------------------*/
+.scroll-bar{-fx-background-color:transparent;-fx-pref-width:15px;-fx-min-height:15px;}
+.scroll-bar .decrement-button,.scroll-bar .increment-button,
+.scroll-bar .decrement-button >*,.scroll-bar .increment-button >*{visibility:collapse;}
+.scroll-bar .thumb{-fx-background-color:#ccc;-fx-background-radius:15px;}
+.scroll-bar .thumb:hover, .scroll-bar .thumb:pressed{-fx-background-color:#666;}
+
+/*------------------- ScrollPane(滚动面板) ----------------------*/
+.scroll-pane, .scroll-pane > .viewport{-fx-background-color:transparent;}
+
+/*------------------- CheckBox(复选框) ---------------------- */
+.check-box:disabled{-fx-opacity:1}
+
+/*------------------- TabPane(自定义选项卡面板) ------------------------*/
+.tab-pane{-fx-background-color:transparent;}
+.tab-pane:horizontal .header-container{-fx-alignment:center;-fx-spacing:50px;-fx-padding:0 20px;}
+.tab-pane:horizontal .header-container .tab{
+    -fx-font-size: 18px;-fx-padding: 0;-fx-text-fill:rgb(86,73,81);
+    -fx-max-height:35px;-fx-min-height:35px;-fx-pref-width:80px;
+    -fx-alignment: center;-fx-graphic-text-gap:8px;-fx-cursor:hand;
+}
+.tab-pane:horizontal .header-container .tab:hover,/*173,149,129*/
+.tab-pane:horizontal .header-container .tab:selected{-fx-text-fill:rgb(226,155,208);}
+.tab-pane:horizontal .header-container .tab .tab-line{
+    /*-fx-min-width:0;-fx-max-width:100px; rgb(0,161,215);*/
+    -fx-max-height:3px;-fx-min-height:3px;-fx-background-color:rgb(226,155,208);
+}
+.tab-pane:horizontal .header-container .tab:selected .tab-line{-fx-pref-width:80px;}
+.tab-pane:horizontal > .content{-fx-padding:10px 0 0 0;}
+.tab-pane:vertical .header-container .tab{
+    -fx-cursor:hand;-fx-font-size:18px;-fx-padding:0 0 0 20px;
+    -fx-max-height:45px;-fx-min-height:45px;-fx-pref-width:200px;
+    -fx-graphic-text-gap:15px;-fx-text-fill:rgb(86,73,81);
+}
+.tab-pane:vertical .header-container .tab:hover{-fx-background-color:rgb(229,226,223);}
+.tab-pane:vertical .header-container .tab:selected{-fx-background-color:rgb(220,212,206);-fx-text-fill:white;}
+.tab-pane:vertical .header-container{-fx-padding:10px 0;-fx-background-color:rgb(241,241,241);}
+.tab-pane:vertical > .content, #top-pane{-fx-padding:0 0 0 20px;-fx-background-color:rgb(236,236,236);}
+
+/*------------------ EditText(自定义输入框组件) ----------------------*/
+.edit-text{-fx-background-radius: 25px;-fx-background-color:rgb(217,217,217);}
+.edit-text .text-field{-fx-background-color:transparent;}
+.edit-text .right-node:hover{-fx-cursor:hand;}
+
+/*--------- TableView(下面的一些中间选择器未列出,详细参照TableView->CSS) --------- */
+.table-view,.table-view .column-header-background,
+.table-view .column-header-background > *, .table-view .table-column{-fx-background-color: transparent;}
+.table-view .nested-column-header{-fx-background-color:rgb(230,230,230);-fx-pref-height:40px;}
+.table-view .table-column .label{-fx-alignment:center-left;-fx-text-fill:rgb(106,85,102);}
+.table-cell{-fx-border-width: 0;-fx-text-fill:rgb(106,85,102);-fx-font-size: 16px;-fx-alignment:center-left;}
+.table-row-cell{-fx-background-color: transparent;-fx-cell-size:40px;}
+.table-row-cell:hover{-fx-background-color: rgba(228,228,228,0.5);}
+.table-row-cell:selected{-fx-background-color:rgba(228,228,228,0.7);}
+.table-row-cell:empty{-fx-background-color: transparent;}
+.table-view .placeholder .label{-fx-text-fill:rgb(106,85,102);-fx-font-size:18px;-fx-alignment:center-left;}
+.table-view .scroll-bar:horizontal{-fx-pref-height:0;visibility:collapse;}
+
+/*--------------------- ListView(列表视图组件) ------------------*/
+.list-view, .list-view .list-cell,.list-view .list-cell:empty{-fx-background-color:transparent;}
+.list-view .virtual-flow .scroll-bar:horizontal{-fx-max-width:0;-fx-pref-height:0;visibility:collapse;}
+
+/*----------------------- Pagination(自定义分页组件) --------------------*/
+.pagination{-fx-background-color:transparent;}
+.pagination .total-page{-fx-text-fill:#23527c;}
+.pagination .page-first{-fx-border-radius:4px 0 0 4px;-fx-background-radius:4px 0 0 4px;}
+.pagination .page-last{-fx-border-width:1px;-fx-border-radius:0 4px 4px 0;-fx-background-radius:0 4px 4px 0;}
+.pagination .page-button{
+    -fx-padding:6px 12px;-fx-cursor:hand;-fx-text-fill:#337ab7;
+    -fx-background-color:white;-fx-border-width:1px 0 1px 1px;
+    -fx-border-style:solid;-fx-border-color:#ddd;
+}
+.pagination .page-button:hover{-fx-text-fill: #23527c;-fx-background-color:#eee;}
+.pagination .page-button:disabled{-fx-text-fill:#777;-fx-opacity:1;}
+.pagination .current{
+    -fx-padding:6px 12px;-fx-cursor:default;-fx-background-color:#337ab7;
+    -fx-text-fill:white;-fx-border-width:1px 0 1px 1px;-fx-border-style:solid;-fx-border-color:#337ab7;
+}
+.pagination .page-input{
+    -fx-padding:6px 3px;-fx-cursor:text;-fx-text-fill:#23527c;-fx-pref-width:60px;
+    -fx-background-color:white;-fx-background-radius:4px 0 0 4px;
+    -fx-border-width:1px 0 1px 1px;-fx-border-style:solid;-fx-border-color:#ddd;-fx-border-radius:4px 0 4px 4px;
+}
+/*跳转到指定页按钮*/
+.pagination .page-skip{
+    -fx-text-fill:#23527c;-fx-cursor:hand;-fx-padding:6px 5px;
+    -fx-background-color:#ddd;-fx-background-radius:0 4px 4px 0;
+    -fx-border-width:1px 1px 1px 0;-fx-border-style:solid;-fx-border-color:#ddd;-fx-border-radius:4px 4px 4px 0;
+}
+
+/*---------------------- Dialog(自定义对话框组件) ----------------------*/
+.dialog {-fx-background-color:rgba(56,56,56,0.6);}
+.dialog .dialog-pane{-fx-background-color:white;-fx-background-radius:10px;}
+.dialog .dialog-pane > .dialog-content{-fx-padding:20px;}
+.dialog .dialog-pane > .decorative-pane{-fx-padding:20px;-fx-border-color:rgb(222,223,224);-fx-border-width:0 0 1px 0;}
+.dialog .dialog-pane > .decorative-pane > .dialog-title{-fx-font-size:18px;-fx-text-fill:rgb(106,85,102);}
+.dialog .dialog-pane > .decorative-pane > .close-icon{-fx-padding:8px;-fx-cursor:hand;}
+.dialog .dialog-pane > .decorative-pane > .close-icon > *{-fx-stroke:rgb(145,147,153);}
+.dialog .dialog-pane > .decorative-pane > .close-icon:hover{-fx-background-color:rgb(255,102,102);}
+.dialog .dialog-pane > .decorative-pane > .close-icon:hover > *{-fx-stroke:white;}
+
+/*-------------------- Accordion(手风琴面板) -------------------------*/
+.accordion .titled-pane .content{-fx-background-color:transparent;}
+.accordion .titled-pane .title {-fx-background-color:transparent;-fx-border-color:rgb(200,200,200);-fx-border-width:0px 1px 1px 1px;}
+.accordion .first-titled-pane .title{-fx-border-width:1px;}
+
+/*---------------- 通用组件样式结束,非通用节点样式开始 ---------------*/
+
+/*---------------- 所有图标 ,当做按钮使用 ---------------------------*/
+.icon-button, .image-icon{-fx-cursor:hand;}
+
+/*---------------- 用户头像部分 ------------------------------------*/
+.head-img-pane{-fx-background-color:rgb(241,241,241);-fx-padding:0 0 0 10px;}
+.head-img-pane .button{-fx-background-color:transparent;-fx-text-fill:rgb(86,73,81);-fx-cursor:hand;-fx-font-size:16px;}
+.head-img-pane .head-view{-fx-cursor:hand;}
+
+/*-fx-background-color:rgba(78,78,78,0.1);*/
+#bottom-pane{-fx-background-color:rgb(227,227,227);-fx-padding:0 4px 4px 4px;}
+#bottom-pane .label{-fx-text-fill:rgb(157,117,117);-fx-font-size:16px;}
+#bottom-pane ImageView {-fx-cursor:hand;}
+#root{-fx-background-color:rgb(100,100,100);}
+#root #bottom-pane .label{-fx-text-fill:white;}
+#root #bottom-pane{-fx-background-color:rgba(0,0,0,0.2);}
+#root .media-view{-fx-background-color:black;}
+
+/*(全屏/退出全屏) 图标 */
+#full-node{-fx-fill:rgb(184,165,149);-fx-cursor:hand;}
+
+/*弹出式面板 的内容面板 下的标签*/
+.popup-pane .label{-fx-padding:10px 0 10 0;-fx-text-fill:white;-fx-font-size:18px;}
+
+/*倍速播放组件(节点)*/
+#speed-node{
+    -fx-border-color:rgb(184,165,149);-fx-cursor:hand;-fx-padding:1px 10px;-fx-font-size:15px;
+    -fx-border-radius:25px;-fx-border-style:solid;-fx-border-width:1px;
+}
+
+/*播放模式弹出式面板下的标签*/
+#play-model-pane{-fx-padding:20px 0 0 0;}
+#play-model-pane .label{
+    -fx-cursor:hand;-fx-text-fill:white;-fx-padding:8px 10px;-fx-font-size:16px;
+    -fx-graphic-text-gap:8px;-fx-border-width:0 0 1px 0;-fx-border-color:rgb(71,72,75);
+}
+#play-model-pane .last-child-node{-fx-border-width:0;-fx-border-color:none;}
+#play-model-pane .label:hover{-fx-background-color:rgb(43,44,47);}
+
+/***播放队列面板部分***/
+#clear-play-list,#close-play-queue,#play-current,#like-current,
+#delete-current,#more-oper,.play-list-mv{-fx-cursor:hand;}
+
+#play-queue-pane{-fx-background-radius:3px;-fx-background-color:rgb(64,58,86);}
+
+.play-list-view{-fx-border-width:2px 0 0 0;-fx-border-color: rgb(83,77,103);}
+.play-list-view .list-cell .label{-fx-font-size:16px;}
+.play-list-view .list-cell:hover{-fx-background-color: rgb(73,66,97);}
+.play-list-view .list-cell .mv-icon{-fx-cursor:hand;}
+.play-list-view .list-cell .name-label{-fx-max-width:430px;}
+.play-list-view .list-cell:hover .name-label{-fx-max-width:300px;}
+.play-list-view .scroll-bar:vertical .thumb{-fx-background-color:skyblue;}
+
+#mv-queue-view .list-cell{-fx-font-size:16px;-fx-text-fill:white;-fx-graphic-text-gap:16px;-fx-content-display:right;}
+#mv-queue-view .list-cell:selected,#mv-queue-view .list-cell:selected .label{-fx-text-fill:skyblue;}
+
+#lyric-view .list-cell{-fx-alignment:center;-fx-text-fill:white;-fx-font-size:18px;}
+#lyric-view .list-cell:selected{-fx-text-fill:skyblue;-fx-font-size:20px;}
+#lyric-view .placeholder Text{-fx-fill: white;-fx-font-size:18px;}
+#lyric-view .virtual-flow .scroll-bar:vertical{-fx-pref-width:0;-fx-pref-height:0;visibility:collapse;}
+
+/*歌手类别,歌手检索字 ListView*/
+.tag-list-view{-fx-background-color:transparent;-fx-pref-height:32px;}
+.tag-list-view .list-cell{-fx-background-color:transparent;-fx-font-size:16px;}
+.tag-list-view .list-cell:hover{-fx-text-fill:rgb(173,149,129);-fx-cursor:hand;}
+.tag-list-view .list-cell:selected{-fx-background-color:rgb(173,149,129);-fx-background-radius:16px;-fx-text-fill:white;}
+.tag-list-view .list-cell:empty{-fx-cursor:default;}
+/*标签选项卡的水平ListView的滚动条*/
+.tag-list-view .virtual-flow .scroll-bar:horizontal{-fx-pref-height:0;visibility:collapse;}
+
+/*榜单部分*/
+.rank-list-view{-fx-pref-height:32px;-fx-min-height:32px;}
+.rank-list-view .list-cell{-fx-font-size:16px;}
+.rank-list-view .list-cell:hover{-fx-background-color:rgba(173,149,129,0.3);-fx-text-fill:white;-fx-cursor:hand;}
+.rank-list-view .list-cell:selected{-fx-background-color:rgb(173,149,129);-fx-text-fill:white;}
+.rank-list-view .list-cell:empty{-fx-cursor:default;-fx-background-color:transparent;}
+.rank-list-view .virtual-flow .scroll-bar:vertical{-fx-pref-width:0;visibility:collapse;}
+
+.mv-song{-fx-font-size:16px;}
+.mv-singer{-fx-font-size:15px;}
+
+/*歌手、专辑视图部分 */
+#singer-info-box .label *, .singer-intro *,
+#album-info-box .label *, #album-intro-pane .label *{-fx-font-size:16px;-fx-fill:rgb(106,85,102);}
+
+#album-info-box{-fx-alignment:center-left;}
+#album-info-box > VBox{-fx-alignment:center-left;-fx-padding:4px 0 0 0;}
+#album-intro-pane{-fx-padding: 4px;}
+
+/*所有操作音乐数据的按钮样式*/
+.button-music-pane > .button{-fx-background-color:rgb(173,149,129);-fx-text-fill:white;-fx-cursor:hand;}
+
+.dialog .qq-input{-fx-max-width:300px;-fx-font-size:18px;}
+.dialog .login-button{
+    -fx-min-width:300px;-fx-background-color: rgb(226, 155, 208);-fx-background-radius:25px;
+    -fx-text-fill:white;-fx-font-size:18px;-fx-cursor:hand;-fx-padding:6px 12px;-fx-alignment:center;
+}
+/*JavaFX自带样式 => {JAVA_HOME}\jdk1.8.0_241\jre\lib\ext\jfxrt.jar!\com\sun\javafx\scene\control\skin\modena\modena.css*/

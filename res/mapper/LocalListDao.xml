@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.scmq.player.dao.LocalListDao">
+    <resultMap type="com.scmq.player.model.LocalList" id="localListMap">
+        <id property="id" column="li_id"/>
+        <result property="sort" column="sort"/>
+        <result property="createTime" column="create_time"/>
+        <!-- ofType="com.scmq.player.model.Music" -->
+        <collection property="musics" resultMap="com.scmq.player.dao.MusicDao.musicMap"/>
+    </resultMap>
+
+    <!-- 联合查询以获得详细的本地音乐列表信息 -->
+    <select id="findLocalListById" resultMap="localListMap">
+        SELECT li.id li_id,li.sort,li.create_time,m.id m_id,m.title m_title,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,
+        a.id a_id,a.name a_name,a.mid a_mid,a.platform a_platform,m.year m_year,m.duration m_duration,m.size m_size,m.file_name m_file_name,
+        m.path m_path,m.format m_format,m.mid m_mid,m.vid m_vid,m.platform m_platform FROM local_list li LEFT JOIN local_media_item item
+        ON li.id=item.local_list_id LEFT JOIN media m ON item.media_id=m.id LEFT JOIN singer s ON m.singer_id=s.id
+        LEFT JOIN album a ON m.album_id=a.id WHERE li.id=#{id} AND format IN
+        <foreach collection="mediaTypes" item="type" open="(" close=")" separator=",">#{type.format}</foreach>
+    </select>
+
+    <!-- 检索第一条记录以获得本地音乐列表id -->
+    <select id="findLocalListIdOfFirst" resultType="java.lang.Integer">
+		SELECT id FROM local_list LIMIT 0,1;
+	</select>
+
+    <select id="findByInfo" resultMap="localListMap">
+        SELECT li.id li_id,li.sort,li.create_time,m.id m_id,m.title m_title,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,
+        a.id a_id,a.name a_name,a.mid a_mid,a.platform a_platform,m.year m_year,m.duration m_duration,m.size m_size,m.file_name m_file_name,
+        m.path m_path,m.format m_format,m.mid m_mid,m.vid m_vid,m.platform m_platform FROM local_list li LEFT JOIN local_media_item item
+        ON li.id=item.local_list_id LEFT JOIN media m ON item.media_id=m.id LEFT JOIN singer s ON m.singer_id=s.id
+        LEFT JOIN album a ON m.album_id=a.id WHERE li.id=#{id} AND format IN
+        <foreach collection="mediaTypes" item="type" open="(" close=")" separator=",">#{type.format}</foreach>
+        AND (m_title like '%${key}%' OR s_name like '%${key}%' OR a_name like '%${key}%')
+    </select>
+
+    <!-- 新增一个本地音乐列表记录 -->
+    <insert id="saveLocalList" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+		INSERT INTO local_list(sort,create_time) VALUES(#{localList.sort.code},#{localList.createTime})
+	</insert>
+
+    <!-- 批量添加本地音乐到数据库表中(local_media_item,本地音乐列表和媒体表的中间关系表) -->
+    <insert id="saveLocalMediaItem">
+        INSERT INTO local_media_item(media_id,local_list_id) VALUES
+        <foreach collection="musicList" item="music" separator=",">
+            (#{music.id},#{localListId})
+        </foreach>
+    </insert>
+
+    <!-- 批量删除本地音乐列表媒体项 -->
+    <delete id="deleteLocalMediaItem">
+        DELETE FROM local_media_item
+        <if test="mediaIds.length!=0">
+            WHERE media_id IN
+            <foreach collection="mediaIds" item="mediaId" open="(" separator="," close=")">
+                #{mediaId}
+            </foreach>
+        </if>
+    </delete>
+</mapper>

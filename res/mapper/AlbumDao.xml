@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.scmq.player.dao.AlbumDao">
+    <resultMap id="albumMap" type="com.scmq.player.model.Album">
+        <id property="id" column="a_id"/>
+        <result property="name" column="a_name"/>
+        <result property="cover" column="a_cover"/>
+        <result property="introduce" column="a_introduce"/>
+        <result property="year" column="a_year"/>
+        <result property="songNum" column="a_song_num"/>
+        <result property="mid" column="a_mid"/>
+        <result property="platform" column="a_platform"/>
+        <association property="singer" javaType="com.scmq.player.model.Singer">
+            <id property="id" column="s_id"/>
+            <result property="name" column="s_name"/>
+            <result property="mid" column="s_mid"/>
+            <result property="platform" column="s_platform"/>
+        </association>
+    </resultMap>
+
+    <!-- 通过专辑信息查找专辑id.总是返回查询结果的第一个 -->
+    <select id="findIdByInfo" resultType="java.lang.Integer">
+        SELECT id FROM album WHERE platform
+        <choose>
+            <when test="album.platform==null">IS NULL AND name=#{album.name}</when>
+            <otherwise>=#{album.platform} AND mid=#{album.mid}</otherwise>
+        </choose>
+        LIMIT 0,1;
+    </select>
+
+    <!--查询所有专辑信息-->
+    <select id="findAll" resultMap="albumMap">
+        SELECT a.id a_id,a.name a_name,a.cover a_conver,a.introduce a_introduce,a.year a_year,a.song_num a_song_num,
+        a.mid a_mid,a.platform a_platform,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform FROM album a LEFT JOIN singer s on a.singer_id = s.id
+    </select>
+
+    <select id="findAlbumById" resultMap="albumMap">
+        SELECT a.id a_id,a.name a_name,a.cover a_conver,a.introduce a_introduce,a.year a_year,a.song_num a_song_num,
+        a.mid a_mid,a.platform a_platform,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform FROM album a LEFT JOIN singer s on a.singer_id = s.id WHERE a.id=#{id}
+    </select>
+
+    <!-- 保存单个专辑信息 -->
+    <insert id="saveOfSingle" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO album(singer_id, name, cover, introduce, year, song_num, mid, platform) VALUES(
+        <choose>
+            <when test="album.singer!=null">#{album.singer.id}</when>
+            <otherwise>NULL</otherwise>
+        </choose>
+        ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songNum},#{album.mid},#{album.platform})
+    </insert>
+
+    <!-- 批量保存专辑信息 -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO album(singer_id, name, cover, introduce, year, song_num, mid, platform) VALUES
+        <foreach collection="albums" item="album" separator=",">
+            (
+            <choose>
+                <when test="album.singer!=null">#{album.singer.id}</when>
+                <otherwise>NULL</otherwise>
+            </choose>
+            ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songNum},#{album.mid},#{album.platform})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE album
+        <set>
+            <if test="album.singer!=null and album.singer.id!=null">singer_id=#{album.singer.id}</if>
+            <if test="album.name !=null">name=#{album.name}</if>
+            <if test="album.cover !=null">cover=#{album.cover}</if>
+            <if test="album.introduce !=null">introduce=#{album.introduce}</if>
+            <if test="album.song_num !=null">song_num=#{album.songNum}</if>
+            <if test="album.mid !=null">mid=#{album.mid}</if>
+            <if test="album.platform">platform=#{album.platform}</if>
+        </set>
+        WHERE id=#{album.id}
+    </update>
+</mapper>

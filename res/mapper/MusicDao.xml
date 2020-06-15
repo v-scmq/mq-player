@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.scmq.player.dao.MusicDao">
+    <!--Music类映射 -->
+    <resultMap type="com.scmq.player.model.Music" id="musicMap">
+        <id property="id" column="m_id"/>
+        <result property="title" column="m_title"/>
+        <result property="year" column="m_year"/>
+        <result property="duration" column="m_duration"/>
+        <result property="size" column="m_size"/>
+        <result property="fileName" column="m_file_name"/>
+        <result property="path" column="m_path"/>
+        <result property="format" column="m_format"/>
+        <result property="quality" column="m_quality"/>
+        <result property="channels" column="m_channels"/>
+        <result property="sampleRate" column="m_sample_rate"/>
+        <result property="bitRate" column="m_audio_bit_rate"/>
+        <result property="genre" column="m_genre"/>
+        <result property="mid" column="m_mid"/>
+        <result property="vid" column="m_vid"/>
+        <result property="platform" column="m_platform"/>
+        <association property="singer" javaType="com.scmq.player.model.Singer">
+            <id property="id" column="s_id"/>
+            <result property="name" column="s_name"/>
+            <result property="mid" column="s_mid"/>
+            <result property="platform" column="s_platform"/>
+        </association>
+        <association property="album" javaType="com.scmq.player.model.Album">
+            <id property="id" column="a_id"/>
+            <result property="name" column="a_name"/>
+            <result property="mid" column="a_mid"/>
+            <result property="platform" column="a_platform"/>
+        </association>
+    </resultMap>
+
+    <!--查询所有音乐 -->
+    <select id="findAll" resultMap="musicMap" parameterType="java.util.List">
+        SELECT id m_id,m.title m_title,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,a.id a_id,a.name a_name,a.mid a_mid,
+        a.platform a_platform,m.year m_year,m.duration m_duration,m.size m_size,m.file_name m_file_name,m.path m_path,m.format m_format,
+        m.channels m_channels,m.quality m_quality,m.sample_rate m_sample_reate,m.audio_bit_rate m_audio_bit_rate,m.genre m_genre,
+        m.mid m_mid,m.vid m_vid,m.platform m_platform FROM media WHERE format IN
+        <foreach collection="mediaTypes" item="type" open="(" separator="," close=")">#{type.format}</foreach>
+    </select>
+
+    <!-- 通过音乐信息来查找音乐id,如果是本地音乐,只需检查本地路径;否则检查音乐名称和平台 -->
+    <select id="findIdByInfo" resultType="java.lang.Integer">
+        SELECT id FROM media WHERE
+        <choose>
+            <when test="music.platform==null">path=#{music.path}</when>
+            <otherwise>mid=#{music.mid} AND platform=#{music.platform}</otherwise>
+        </choose>
+        LIMIT 0,1;
+    </select>
+
+    <!--批量保存音乐信息; 注意values部分循环开头必须由'('包含,每个循环分割字符串为")," 最后循环完成由')'字符闭合 -->
+    <insert id="save" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO media(title,singer_id,album_id,year,duration,size,file_name,path,format,
+        channels,quality,sample_rate,audio_bit_rate,genre,mid,vid,platform)VALUES
+        <foreach collection="musics" item="music" separator=",">
+            (#{music.title},
+            <choose>
+                <when test="music.singer!=null">#{music.singer.id},</when>
+                <otherwise>NULL,</otherwise>
+            </choose>
+            <choose>
+                <when test="music.album!=null">#{music.album.id},</when>
+                <otherwise>NULL,</otherwise>
+            </choose>
+            #{music.year},#{music.duration},#{music.size},#{music.fileName},#{music.path},#{music.format},#{music.channels},
+            #{music.quality},#{music.sampleRate},#{music.bitRate},#{music.genre},#{music.mid},#{music.vid},#{music.platform})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE media SET path = CASE
+        <foreach collection="musics" item="music">
+            WHEN id=#{music.id} THEN #{music.path}
+        </foreach>
+        END WHERE id in
+        <foreach collection="musics" item="music" open="(" separator="," close=")">
+            #{music.id}
+        </foreach>
+    </update>
+</mapper>

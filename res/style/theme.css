@@ -1,0 +1,18 @@
+/*------------------------- 根面板(在视图控制器中更新样式)---------------*/
+
+/*------------------------- 所有第二层面板(根面板的第一级子面板)----------*/
+/*.background-pane ,.tab-box{-fx-background-color: rgba(100.0, 112.0, 130.0,0.6);}*/
+.background-pane ,.tab-box{-fx-background-color: transparent;}
+/*------------------------ context-menu(右键菜单)--------------- */
+.context-menu{-fx-background-color: rgb(43,45,51);}
+/* 128.0,128.0,128.0	150,157,158	160.0,162.0,168.0 	83.0,82.0,80.0 	100.0,112.0,130.0 	83,98,139*/
+/*歌词其他字体颜色*/
+.lyric-list-view .list-cell{-fx-text-fill: white;}
+/*歌词正在播放的字体*/
+.lyric-list-view .list-cell:selected {-fx-text-fill: skyblue;-fx-font-size: 20px;}
+/*播放队列样式*/
+.play-queue-pane {
+    -fx-background-color: rgb(43, 45, 51);
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: 1px;
+}

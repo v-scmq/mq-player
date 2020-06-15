@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.scmq.player.dao.MVDao">
+    <!--视频信息所用到的所有列(除主键id) -->
+    <sql id="mvColumns">
+		path,duration,format,size,cover,quality,file_name,channels,audio_bit_rate,mid,platform
+	</sql>
+    <!--MV类映射 -->
+    <resultMap type="com.scmq.player.model.MV" id="mvMap">
+        <id property="id" column="m_id"/>
+        <result property="title" column="m_title"/>
+        <result property="duration" column="m_duration"/>
+        <result property="size" column="m_size"/>
+        <result property="fileName" column="m_file_name"/>
+        <result property="path" column="m_path"/>
+        <result property="format" column="m_format"/>
+        <result property="quality" column="m_quality"/>
+        <result property="channels" column="m_channels"/>
+        <result property="vid" column="m_vid"/>
+        <result property="platform" column="m_platform"/>
+        <association property="singer" javaType="com.scmq.player.model.Singer">
+            <id property="id" column="s_id"/>
+            <result property="name" column="s_name"/>
+            <result property="mid" column="s_mid"/>
+            <result property="platform" column="s_platform"/>
+        </association>
+    </resultMap>
+    <!--查询所有MV -->
+    <select id="findAll" resultMap="mvMap" parameterType="java.util.List">
+        SELECT id, <include refid="mvColumns" /> FROM media WHERE format IN
+        <foreach collection="mediaTypes" item="type" open="(" separator="," close=")">#{type.format}</foreach>
+    </select>
+
+    <!--批量保存视频信息; 注意values部分循环开头必须由'('包含,每个循环分割字符串为")," 最后循环完成由')'字符闭合 -->
+    <insert id="save" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO media(<include refid="mvColumns"/>)VALUES
+        <foreach collection="mvList" item="mv" separator=")," close=")">
+            (#{mv.path},#{mv.duration},#{mv.format},#{mv.size},#{mv.cover},#{mv.quality},
+            #{mv.fileName},#{mv.channels},#{mv.title},#{mv.artist},#{mv.album},#{mv.year},
+            #{mv.bitRate},#{mv.sampleRate}
+        </foreach>
+    </insert>
+</mapper>
