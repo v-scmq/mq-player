@@ -70,8 +70,8 @@ MQ音乐是一个构建在Java和JavaFX平台之上的跨平台音乐播放器
 
 + 歌手MV
 
-![歌手MV列表](preview/8.png "歌手MV列表")
+![歌手MV](preview/7.png "歌手MV列表")
 
 + 资源搜索
 
-![歌曲搜索](preview/7.png "资源搜索")
+![歌曲搜索](preview/8.png "资源搜索")
