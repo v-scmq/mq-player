@@ -4,6 +4,7 @@ import com.scmq.player.app.Main;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.Music;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.StringUtil;
 import com.scmq.view.control.EditText;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -129,19 +130,17 @@ public class LocalMusicView extends AnchorPane {
 		columns.add(durationColumn);
 		columns.add(sizeColumn);
 
-		System.out.println(songColumn.getComparator());
-
 		List<Music> list = tableView.getItems();
-
+		// 字符串比较器
 		Collator collator = Collator.getInstance(Locale.CHINA);
+		// 歌曲列表排序
 		songColumn.sortTypeProperty().addListener((observable, oldValue, newValue) -> {
-			System.out.println("newValue=>" + newValue);
 			Comparator<Music> comparator = Comparator.comparing(Music::getTitle, collator::compare).thenComparing(
 					o -> o.getSinger() == null ? null : o.getSinger().getName(), collator::compare);
 			comparator = Comparator.nullsFirst(comparator);
 			list.sort(newValue == TableColumn.SortType.DESCENDING ? comparator.reversed() : comparator);
 		});
-
+		// 歌手列排序
 		singerColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
 			Comparator<Music> comparator = Comparator.<Music, String> comparing(
 					o -> o.getSinger() == null ? null : o.getSinger().getName(), collator::compare).thenComparing(
@@ -149,7 +148,7 @@ public class LocalMusicView extends AnchorPane {
 			comparator = Comparator.nullsFirst(comparator);
 			list.sort(newValue == TableColumn.SortType.DESCENDING ? comparator.reversed() : comparator);
 		}));
-
+		// 专辑列排序
 		albumColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
 			boolean desc = newValue == TableColumn.SortType.DESCENDING;
 			list.sort((o1, o2) -> {
@@ -165,6 +164,19 @@ public class LocalMusicView extends AnchorPane {
 				}
 				return result;
 			});
+		}));
+		// 时长列排序
+		durationColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
+			boolean desc = newValue == TableColumn.SortType.DESCENDING;
+			Comparator<Music> comparator = Comparator.comparing(Music::getDuration,
+					Comparator.nullsFirst(String::compareTo));
+			list.sort(desc ? comparator.reversed() : comparator);
+		}));
+		// 文件大小列排序
+		sizeColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
+			boolean desc = newValue == TableColumn.SortType.DESCENDING;
+			list.sort((o1, o2) -> StringUtil.compare(desc ? o2.getSize() : o1.getSize(),
+					desc ? o1.getSize() : o2.getSize()));
 		}));
 
 		setTopAnchor(tableView, 90.0);
