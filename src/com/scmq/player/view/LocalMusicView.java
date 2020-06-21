@@ -1,10 +1,8 @@
 package com.scmq.player.view;
 
 import com.scmq.player.app.Main;
-import com.scmq.player.model.Album;
 import com.scmq.player.model.Music;
 import com.scmq.player.util.FileUtil;
-import com.scmq.player.util.StringUtil;
 import com.scmq.view.control.EditText;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,7 +24,6 @@ import javafx.scene.layout.AnchorPane;
 
 import java.text.Collator;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Locale;
 
 public class LocalMusicView extends AnchorPane {
@@ -102,23 +99,23 @@ public class LocalMusicView extends AnchorPane {
 		tableView.setRowFactory(TableViewCell.TABLE_ROW_CELL);
 
 		// 设置序号列的单元格工厂
-		TableColumn<Music, String> numColumn = new TableColumn<>("0");
+		TableColumn<Music, Music> numColumn = new TableColumn<>("0");
 		numColumn.setCellFactory(TableViewCell.NUMBER_CELL);
 		numColumn.setPrefWidth(68);
 		numColumn.setResizable(false);
 		numColumn.setSortable(false);// 不可排序
 
-		TableColumn<Music, String> songColumn = new TableColumn<>("歌曲");
+		TableColumn<Music, Music> songColumn = new TableColumn<>("歌曲");
 		songColumn.setCellFactory(TableViewCell.TITLE_CELL);
-		TableColumn<Music, String> singerColumn = new TableColumn<>("歌手");
+		TableColumn<Music, Music> singerColumn = new TableColumn<>("歌手");
 		singerColumn.setCellFactory(TableViewCell.SINGER_CELL);
-		TableColumn<Music, String> albumColumn = new TableColumn<>("专辑");
+		TableColumn<Music, Music> albumColumn = new TableColumn<>("专辑");
 		albumColumn.setCellFactory(TableViewCell.ALBUM_CELL);
-		TableColumn<Music, String> durationColumn = new TableColumn<>("时长");
+		TableColumn<Music, Music> durationColumn = new TableColumn<>("时长");
 		durationColumn.setPrefWidth(80);
 		durationColumn.setResizable(false);
 		durationColumn.setCellFactory(TableViewCell.DURATION_CELL);
-		TableColumn<Music, String> sizeColumn = new TableColumn<>("大小");
+		TableColumn<Music, Music> sizeColumn = new TableColumn<>("大小");
 		sizeColumn.setPrefWidth(80);
 		sizeColumn.setResizable(false);
 		sizeColumn.setCellFactory(TableViewCell.SIZE_CELL);
@@ -130,54 +127,99 @@ public class LocalMusicView extends AnchorPane {
 		columns.add(durationColumn);
 		columns.add(sizeColumn);
 
-		List<Music> list = tableView.getItems();
 		// 字符串比较器
 		Collator collator = Collator.getInstance(Locale.CHINA);
+
 		// 歌曲列表排序
-		songColumn.sortTypeProperty().addListener((observable, oldValue, newValue) -> {
-			Comparator<Music> comparator = Comparator.comparing(Music::getTitle, collator::compare).thenComparing(
-					o -> o.getSinger() == null ? null : o.getSinger().getName(), collator::compare);
-			comparator = Comparator.nullsFirst(comparator);
-			list.sort(newValue == TableColumn.SortType.DESCENDING ? comparator.reversed() : comparator);
+		songColumn.setComparator((o1, o2) -> {
+			String value1 = o1 == null ? null : o1.getTitle();
+			String value2 = o2 == null ? null : o2.getTitle();
+			if (value1 == null) {
+				return value2 == null ? 0 : -1;
+			}
+			if (value2 == null) {
+				return 1;
+			}
+			return collator.compare(value1, value2);
 		});
+
 		// 歌手列排序
-		singerColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
-			Comparator<Music> comparator = Comparator.<Music, String> comparing(
-					o -> o.getSinger() == null ? null : o.getSinger().getName(), collator::compare).thenComparing(
-							Music::getTitle, collator::compare);
-			comparator = Comparator.nullsFirst(comparator);
-			list.sort(newValue == TableColumn.SortType.DESCENDING ? comparator.reversed() : comparator);
-		}));
+		singerColumn.setComparator((o1, o2) -> {
+			String value1 = o1 == null ? null : o1.getSinger() == null ? null : o1.getSinger().getName();
+			String value2 = o2 == null ? null : o2.getSinger() == null ? null : o2.getSinger().getName();
+			if (value1 == null) {
+				return value2 == null ? 0 : -1;
+			}
+			if (value2 == null) {
+				return 1;
+			}
+			return collator.compare(value1, value2);
+		});
+
 		// 专辑列排序
-		albumColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
-			boolean desc = newValue == TableColumn.SortType.DESCENDING;
-			list.sort((o1, o2) -> {
-				Album album = desc ? o2.getAlbum() : o1.getAlbum();
-				Album other = desc ? o1.getAlbum() : o2.getAlbum();
-				String name1 = album == null ? "" : album.getName();
-				String name2 = other == null ? "" : other.getName();
-				int result = collator.compare(name1, name2);
-				if (result == 0) {
-					name1 = desc ? o2.getTitle() : o1.getTitle();
-					name2 = desc ? o1.getTitle() : o2.getTitle();
-					return collator.compare(name1 == null ? "" : name1, name2 == null ? "" : name2);
-				}
-				return result;
-			});
-		}));
+		albumColumn.setComparator((o1, o2) -> {
+			String value1 = o1 == null ? null : o1.getAlbum() == null ? null : o1.getAlbum().getName();
+			String value2 = o2 == null ? null : o2.getAlbum() == null ? null : o2.getAlbum().getName();
+			if (value1 == null) {
+				return value2 == null ? 0 : -1;
+			}
+			if (value2 == null) {
+				return 1;
+			}
+			return collator.compare(value1, value2);
+		});
+
 		// 时长列排序
-		durationColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
-			boolean desc = newValue == TableColumn.SortType.DESCENDING;
-			Comparator<Music> comparator = Comparator.comparing(Music::getDuration,
-					Comparator.nullsFirst(String::compareTo));
-			list.sort(desc ? comparator.reversed() : comparator);
-		}));
+		durationColumn.setComparator((o1, o2) -> {
+			String value1 = o1 == null ? null : o1.getDuration();
+			String value2 = o2 == null ? null : o2.getDuration();
+			if (value1 == null) {
+				return value2 == null ? 0 : -1;
+			}
+			if (value2 == null) {
+				return 1;
+			}
+			// 先按时间字符串的字符个数比较
+			if (value1.length() < value2.length()) {
+				return -1;
+			}
+			if (value1.length() > value2.length()) {
+				return 1;
+			}
+			return value1.compareTo(value2);
+		});
+
 		// 文件大小列排序
-		sizeColumn.sortTypeProperty().addListener(((observable, oldValue, newValue) -> {
-			boolean desc = newValue == TableColumn.SortType.DESCENDING;
-			list.sort((o1, o2) -> StringUtil.compare(desc ? o2.getSize() : o1.getSize(),
-					desc ? o1.getSize() : o2.getSize()));
-		}));
+		sizeColumn.setComparator((o1, o2) -> {
+			String value1 = o1 == null ? null : o1.getSize();
+			String value2 = o2 == null ? null : o2.getSize();
+			if (value1 == null) {
+				return value2 == null ? 0 : -1;
+			}
+			if (value2 == null) {
+				return 1;
+			}
+			return (int) (FileUtil.toLength(value1) - FileUtil.toLength(value2));
+		});
+
+		// 表格视图排序策略回调器
+		tableView.setSortPolicy(table -> {
+			// TableColumnComparatorBase comparatorBase = table.getComparator();
+			ObservableList<TableColumn<Music, ?>> sortOrder = table.getSortOrder();
+			table.getItems().sort((o1, o2) -> {
+				for (TableColumn<Music, ?> column : sortOrder) {
+					@SuppressWarnings("unchecked")
+					Comparator<Music> comparator = (Comparator<Music>) column.getComparator();
+					boolean asc = column.getSortType() == TableColumn.SortType.ASCENDING;
+					int result = comparator.compare(asc ? o1 : o2, asc ? o2 : o1);
+					if (result != 0) {
+						return result;
+					}
+				}
+				return 0;
+			});
+			return true;
+		});
 
 		setTopAnchor(tableView, 90.0);
 		setRightAnchor(tableView, 0.0);

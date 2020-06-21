@@ -56,16 +56,6 @@ public class StringUtil {
 		return value < 10 ? builder.append('0').append(value).toString() : builder.append(value).toString();
 	}
 
-	public static int compare(String text1, String text2) {
-		if (text1 == null) {
-			return text2 == null ? 0 : -1;
-		}
-		if (text2 == null) {
-			return -1;
-		}
-		return (int) (FileUtil.toFileLength(text1) - FileUtil.toFileLength(text2));
-	}
-
 	/**
 	 * 获取字符序列对应的MD5字符序列
 	 *

@@ -150,17 +150,17 @@ public class NetMusicView extends TabPane {
 		// 设置行单元格工厂
 		tableView.setRowFactory(TableViewCell.TABLE_ROW_CELL);
 
-		TableColumn<Music, String> numColumn = new TableColumn<>("0");
+		TableColumn<Music, Music> numColumn = new TableColumn<>("0");
 		numColumn.setCellFactory(TableViewCell.NUMBER_CELL);
 		numColumn.setPrefWidth(68);
 		numColumn.setResizable(false);
-		TableColumn<Music, String> songColumn = new TableColumn<>("歌曲");
+		TableColumn<Music, Music> songColumn = new TableColumn<>("歌曲");
 		songColumn.setCellFactory(TableViewCell.TITLE_CELL);
-		TableColumn<Music, String> singerColumn = new TableColumn<>("歌手");
+		TableColumn<Music, Music> singerColumn = new TableColumn<>("歌手");
 		singerColumn.setCellFactory(TableViewCell.SINGER_CELL);
-		TableColumn<Music, String> albumColumn = new TableColumn<>("专辑");
+		TableColumn<Music, Music> albumColumn = new TableColumn<>("专辑");
 		albumColumn.setCellFactory(TableViewCell.ALBUM_CELL);
-		TableColumn<Music, String> durationColumn = new TableColumn<>("时长");
+		TableColumn<Music, Music> durationColumn = new TableColumn<>("时长");
 		durationColumn.setCellFactory(TableViewCell.DURATION_CELL);
 		durationColumn.setPrefWidth(88);
 		durationColumn.setResizable(false);

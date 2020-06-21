@@ -198,35 +198,47 @@ public class FileUtil {
 	}
 
 	/**
-	 * 将文件大小的字符串转换为long类型的字节表示
-	 *
+	 * 将文件大小的字符串转换为long类型的字节表示<br>
+	 * 字符串可以是"5.8MB"、"0.8MB"、"800.2KB"、".9MB"、"50KB"等, 但必须符合前面是数字类型后面是单位
+	 * 
 	 * @param size
-	 *            文件大小的字符串表示(如1.2B、1KB、2MB、2GB),字符串必须是数字和文件大小单位组成
-	 * @return 文件大小的字节表示
+	 *            文件大小，
+	 * @return long类型所表示的字节大小
 	 */
-	public static long toFileLength(String size) {
-		char[] chars = size.toCharArray();
-		int end = chars.length;
-		for (int i = end - 1; i >= 0; i--) {
-			if (chars[i] >= '0' && chars[i] <= '9') {
-				break;
-			}
-			end--;
+	public static long toLength(String size) {
+		char[] array = size.toCharArray();
+		int covert;
+		int end = array.length - 2;
+		char c = end > 0 ? Character.toUpperCase(array[end]) : 'B';
+		// 避免直接跳到倒数第2个元素时是数字的情况
+		if (c >= '0' && c <= '9') {
+			c = 'B';
+			++end;
 		}
-		float length = StringUtil.parseFloat(new String(chars, 0, end));
-		String type = new String(chars, end, chars.length - end);
-		switch (type.toUpperCase()) {
-		case "B":
-			return (long) length;
-		case "KB":
-			return (long) (length * 1024);
-		case "MB":
-			return (long) (length * 1048576);
-		case "GB":
-			return (long) (length * 1073741824);
+		switch (c) {
+		case 'K':
+			covert = 1024;
+			break;
+		case 'M':
+			covert = 1048576;
+			break;
+		case 'G':
+			covert = 1073741824;
+			break;
 		default:
-			return 0;
+			covert = 1;
+			break;
 		}
+		double result = 0;
+		int middle = (middle = size.indexOf('.')) == -1 ? end : middle;
+		for (int rate = 1, index = middle - 1; index > -1; index--, rate *= 10) {
+			result += (array[index] - 48) * rate;
+		}
+		float rate = 0.1F;
+		for (int index = middle + 1; index < end; index++, rate *= 0.1F) {
+			result += (array[index] - 48) * rate;
+		}
+		return (long) (result * covert);
 	}
 
 	/**

@@ -75,7 +75,7 @@ public class TableViewCell {
 	 * 
 	 * @see Music#getTitle()
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> TITLE_CELL = column -> new TableCell<Music, String>() {
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> TITLE_CELL = column -> new TableCell<Music, Music>() {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
@@ -93,7 +93,7 @@ public class TableViewCell {
 	 * @see Music#getSinger()
 	 * @see Singer#getName()
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> SINGER_CELL = column -> new TableCell<Music, String>() {
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> SINGER_CELL = column -> new TableCell<Music, Music>() {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
@@ -112,7 +112,7 @@ public class TableViewCell {
 	 * @see Music#getAlbum()
 	 * @see Album#getName()
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> ALBUM_CELL = column -> new TableCell<Music, String>() {
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> ALBUM_CELL = column -> new TableCell<Music, Music>() {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
@@ -130,7 +130,7 @@ public class TableViewCell {
 	 * 
 	 * @see Music#getDuration()
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> DURATION_CELL = column -> new TableCell<Music, String>() {
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> DURATION_CELL = column -> new TableCell<Music, Music>() {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
@@ -147,7 +147,7 @@ public class TableViewCell {
 	 * 
 	 * @see Music#getSize()
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> SIZE_CELL = column -> new TableCell<Music, String>() {
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> SIZE_CELL = column -> new TableCell<Music, Music>() {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
@@ -186,7 +186,7 @@ public class TableViewCell {
 	 * @see TableViewCell#PLAY_GRAPHIC
 	 * @see TableViewCell#CHECK_BOX
 	 */
-	public static Callback<TableColumn<Music, String>, TableCell<Music, String>> NUMBER_CELL = column -> new NumberCell();
+	public static Callback<TableColumn<Music, Music>, TableCell<Music, Music>> NUMBER_CELL = column -> new NumberCell();
 
 	/**
 	 * 表格视图行单元格回调工厂.
@@ -214,7 +214,7 @@ public class TableViewCell {
 	 * @author SCMQ
 	 *
 	 */
-	public static class NumberCell extends TableCell<Music, String> implements ChangeListener<Object> {
+	public static class NumberCell extends TableCell<Music, Music> implements ChangeListener<Object> {
 		/** 默认4个字符容量的字符串构建器(减少内存占用) */
 		private static StringBuilder builder = new StringBuilder(4);
 		/** 序号列需要显示的复选框,用于批量操作时使用 */
