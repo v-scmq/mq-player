@@ -137,10 +137,7 @@ public class LocalMusicView extends AnchorPane {
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
-			if (value2 == null) {
-				return 1;
-			}
-			return collator.compare(value1, value2);
+			return value2 == null ? 1 : collator.compare(value1, value2);
 		});
 
 		// 歌手列排序
@@ -150,10 +147,7 @@ public class LocalMusicView extends AnchorPane {
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
-			if (value2 == null) {
-				return 1;
-			}
-			return collator.compare(value1, value2);
+			return value2 == null ? 1 : collator.compare(value1, value2);
 		});
 
 		// 专辑列排序
@@ -163,10 +157,7 @@ public class LocalMusicView extends AnchorPane {
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
-			if (value2 == null) {
-				return 1;
-			}
-			return collator.compare(value1, value2);
+			return value2 == null ? 1 : collator.compare(value1, value2);
 		});
 
 		// 时长列排序
@@ -176,17 +167,12 @@ public class LocalMusicView extends AnchorPane {
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
-			if (value2 == null) {
+			// 若第2个音乐信息没有播放时长信息或第一格音乐的时长比第2个还大
+			if (value2 == null || value1.length() > value2.length()) {
 				return 1;
 			}
-			// 先按时间字符串的字符个数比较
-			if (value1.length() < value2.length()) {
-				return -1;
-			}
-			if (value1.length() > value2.length()) {
-				return 1;
-			}
-			return value1.compareTo(value2);
+			// 若第1个音乐信息时长比2个还小则返回-1; 否则直接
+			return value1.length() < value2.length() ? -1 : value1.compareTo(value2);
 		});
 
 		// 文件大小列排序
@@ -196,10 +182,7 @@ public class LocalMusicView extends AnchorPane {
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
-			if (value2 == null) {
-				return 1;
-			}
-			return (int) (FileUtil.toLength(value1) - FileUtil.toLength(value2));
+			return value2 == null ? 1 : (int) (FileUtil.toLength(value1) - FileUtil.toLength(value2));
 		});
 
 		// 表格视图排序策略回调器

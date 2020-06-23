@@ -79,11 +79,7 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			if (index < 0 || isEmpty()) {
-				setText(null);
-				return;
-			}
-			setText(getTableView().getItems().get(index).getTitle());
+			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getTitle());
 		}
 	};
 
@@ -97,11 +93,7 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			if (index < 0 || isEmpty()) {
-				setText(null);
-				return;
-			}
-			Singer singer = getTableView().getItems().get(index).getSinger();
+			Singer singer = index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getSinger();
 			setText(singer == null ? null : singer.getName());
 		}
 	};
@@ -116,11 +108,7 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			if (index < 0 || isEmpty()) {
-				setText(null);
-				return;
-			}
-			Album album = getTableView().getItems().get(index).getAlbum();
+			Album album = index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getAlbum();
 			setText(album == null ? null : album.getName());
 		}
 	};
@@ -134,11 +122,7 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			if (index < 0 || isEmpty()) {
-				setText(null);
-				return;
-			}
-			setText(getTableView().getItems().get(index).getDuration());
+			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getDuration());
 		}
 	};
 
@@ -151,11 +135,7 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			if (index < 0 || isEmpty()) {
-				setText(null);
-				return;
-			}
-			setText(getTableView().getItems().get(index).getSize());
+			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getSize());
 		}
 	};
 
@@ -367,9 +347,11 @@ public class TableViewCell {
 
 		@Override
 		public void handle(MouseEvent event) {
+			// 若是鼠标按下
 			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				onMousePressed(event);
 			} else {
+				// 否则是鼠标按下并已释放(因为这里只有2种类型的鼠标事件类型)
 				onMouseClicked(event);
 			}
 		}
