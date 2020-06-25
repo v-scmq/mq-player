@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -113,7 +114,19 @@ public class Dialog extends Pane {
 				}
 			}
 		});
+
+		// 关闭标签的鼠标点击事件
 		closeIcon.setOnMouseClicked(getOnMouseReleased());
+
+		// 对话框在ESC按键按下并释放后的事件
+		setOnKeyTyped(e -> {
+			if (e.getCode() == KeyCode.ESCAPE) {
+				Pane pane = (Pane) getParent();
+				if (pane != null) {
+					pane.getChildren().remove(this);
+				}
+			}
+		});
 	}
 
 	/**
