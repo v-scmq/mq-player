@@ -99,7 +99,7 @@ public class EditText extends HBox {
 	 */
 	public EditText(String text, Node left, Node right, boolean onlyNumber) {
 		// 创建输入框
-		textField = onlyNumber ? createNumberField() : new TextField();
+		textField = onlyNumber ? createNumberField() : new TextField(text);
 
 		setLeftNode(left);
 		getChildren().add(textField);
