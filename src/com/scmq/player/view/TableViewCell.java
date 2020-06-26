@@ -145,7 +145,7 @@ public class TableViewCell {
 	 * 序号单元格需要播放动态图标和复选框显示属性(BooleanProperty).<br>
 	 * 当音乐正在播放时,那么表格视图对应的序号单元格就有播放动图显示,以此标记正在播放的音乐.<br>
 	 * 当复选框需要显示的时候,那么所有非空的序号单元格都将显示复选框以此来标记被选中的行单元格.<br>
-	 * 在设置行单元格工厂之前,必须为TableView放入这个播放动态图标和复选框显示属性.以下是一段代码示例:
+	 * 在设置单元格工厂之前,必须为TableView放入这个播放动态图标和复选框显示属性.以下是一段代码示例:
 	 * 
 	 * <pre>
 	 * TableView&lt;Music&gt; tableView = new TableView&lt;&gt;();
@@ -194,7 +194,7 @@ public class TableViewCell {
 	 * @author SCMQ
 	 *
 	 */
-	public static class NumberCell extends TableCell<Music, Music> implements ChangeListener<Object> {
+	private static class NumberCell extends TableCell<Music, Music> implements ChangeListener<Object> {
 		/** 默认4个字符容量的字符串构建器(减少内存占用) */
 		private static StringBuilder builder = new StringBuilder(4);
 		/** 序号列需要显示的复选框,用于批量操作时使用 */
@@ -277,7 +277,7 @@ public class TableViewCell {
 	 * @author SCMQ
 	 *
 	 */
-	public static class TableRowCell extends TableRow<Music> implements EventHandler<MouseEvent> {
+	private static class TableRowCell extends TableRow<Music> implements EventHandler<MouseEvent> {
 		/** 行单元格所关联的表格视图 */
 		private TableView<Music> tableView;
 
