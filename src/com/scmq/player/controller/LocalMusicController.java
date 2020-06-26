@@ -82,7 +82,7 @@ public class LocalMusicController {
 		});
 
 		// 添加本地音乐事件
-		view.getLeadForFlie().setOnAction(e -> {
+		view.getLeadForFile().setOnAction(e -> {
 			if (!StringUtil.isEmpty(view.getInputLocalSearchKey().getText())) {
 				Toast.makeText(Main.getRoot(), "请先清除搜索记录！").show();
 				return;
@@ -118,9 +118,7 @@ public class LocalMusicController {
 			}
 			// 添加到表格中
 			list.addAll(saveList);
-			if (localList == null) {
-				localList = new LocalList();
-			}
+			LocalList localList = this.localList == null ? new LocalList() : this.localList;
 			// 在子线程保存新增音乐
 			localList.setMusics(saveList);
 			Task.async(() -> service.saveLocalList(localList));
@@ -156,9 +154,7 @@ public class LocalMusicController {
 			}
 			// 添加到表格中
 			list.addAll(saveList);
-			if (localList == null) {
-				localList = new LocalList();
-			}
+			LocalList localList = this.localList == null ? new LocalList() : this.localList;
 			localList.setMusics(saveList);
 			// 在子线程保存新增音乐
 			Task.async(() -> service.saveLocalList(localList));
@@ -189,24 +185,30 @@ public class LocalMusicController {
 
 		// 模糊搜索本地音乐
 		view.getInputLocalSearchKey().textProperty().addListener((observable, oldValue, newValue) -> {
-			if (spinner == null) {
-				spinner = new Spinner();
-			}
-			spinner.centerTo(view);
-			view.getInputLocalSearchKey().setDisable(true);
+			// 获取本地音乐列表ID
 			Integer id = localList == null ? null : localList.getId();
+			// 准备进度旋转器组件
+			spinner = spinner == null ? new Spinner() : spinner;
+			// 显示进度旋转器
+			spinner.centerTo(view);
+			// 异步检索音乐信息
 			Task.async(() -> {
+				// 开始执行检索
 				LocalList localList = service.findByInfo(id, newValue);
+				// 获取检索音乐列表记录
 				List<Music> list = localList == null ? null : localList.getMusics();
+				// 同步到UI线程
 				Platform.runLater(() -> {
+					// 清空表格数据
 					view.getTableView().getItems().clear();
+					// 若没有搜索到任何记录
 					if (list == null || list.isEmpty()) {
 						Toast.makeText(Main.getRoot(), "没有找到任何匹配的音乐").show();
 					} else {
+						// 否则添加记录到表格视图中
 						view.getTableView().getItems().addAll(list);
 					}
-					view.getInputLocalSearchKey().setDisable(false);
-					view.getTableView().requestFocus();
+					// 关闭进度旋转器
 					spinner.close();
 				});
 			});

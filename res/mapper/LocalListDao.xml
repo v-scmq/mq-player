@@ -24,6 +24,7 @@
 		SELECT id FROM local_list LIMIT 0,1;
 	</select>
 
+    <!-- 通过关键词模糊查找本地音乐,查找依据是歌曲名称、歌手名称、专辑名称 -->
     <select id="findByInfo" resultMap="localListMap">
         SELECT li.id li_id,li.sort,li.create_time,m.id m_id,m.title m_title,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,
         a.id a_id,a.name a_name,a.mid a_mid,a.platform a_platform,m.year m_year,m.duration m_duration,m.size m_size,m.file_name m_file_name,
@@ -31,7 +32,7 @@
         ON li.id=item.local_list_id LEFT JOIN media m ON item.media_id=m.id LEFT JOIN singer s ON m.singer_id=s.id
         LEFT JOIN album a ON m.album_id=a.id WHERE li.id=#{id} AND format IN
         <foreach collection="mediaTypes" item="type" open="(" close=")" separator=",">#{type.format}</foreach>
-        AND (m_title like '%${key}%' OR s_name like '%${key}%' OR a_name like '%${key}%')
+        AND (m_title like #{key} OR s_name like #{key} OR a_name like #{key})
     </select>
 
     <!-- 新增一个本地音乐列表记录 -->

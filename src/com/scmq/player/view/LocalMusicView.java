@@ -262,18 +262,8 @@ public class LocalMusicView extends AnchorPane {
 			}
 		});
 		// 如果需要显示CheckBox在列标题上
-		checkBoxProperty.addListener(((observable, oldValue, newValue) -> {
-			if (newValue) {
-				// 将复选框显示到序号列的列表题上,并取消序号显示
-				numColumn.setGraphic(numCheckBox);
-				numColumn.setText(null);
-			} else {
-				// 取消复选框在序号列的列表题上显示,并显示序号
-				numColumn.setGraphic(null);
-				int size = tableView.getItems().size();
-				numColumn.setText(new StringBuilder().append(size).toString());
-			}
-		}));
+		checkBoxProperty.addListener(((observable, oldValue, newValue) -> //
+		numColumn.setGraphic(newValue ? numCheckBox : null)));
 
 		// 表格视图行单元格选择列表改变事件
 		selection.getSelectedItems().addListener((Change<? extends Music> c) -> {
@@ -312,7 +302,7 @@ public class LocalMusicView extends AnchorPane {
 		});
 	}
 
-	public MenuItem getLeadForFlie() {
+	public MenuItem getLeadForFile() {
 		return leadForFlie;
 	}
 
