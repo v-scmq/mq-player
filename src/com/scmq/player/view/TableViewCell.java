@@ -12,18 +12,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumnBase;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.TableView.ResizeFeatures;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+
+import java.util.List;
 
 /**
  * @author SCMQ
@@ -79,7 +75,8 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getTitle());
+			Music music = (Music) getTableRow().getItem();
+			setText(music == null ? null : music.getTitle());
 		}
 	};
 
@@ -93,8 +90,8 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			Singer singer = index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getSinger();
-			setText(singer == null ? null : singer.getName());
+			Music music = (Music) getTableRow().getItem();
+			setText(music == null || music.getSinger() == null ? null : music.getSinger().getName());
 		}
 	};
 
@@ -108,8 +105,8 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			Album album = index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getAlbum();
-			setText(album == null ? null : album.getName());
+			Music music = (Music) getTableRow().getItem();
+			setText(music == null || music.getAlbum() == null ? null : music.getAlbum().getName());
 		}
 	};
 
@@ -122,7 +119,8 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getDuration());
+			Music music = (Music) getTableRow().getItem();
+			setText(music == null ? null : music.getDuration());
 		}
 	};
 
@@ -135,7 +133,8 @@ public class TableViewCell {
 		@Override
 		public void updateIndex(int index) {
 			super.updateIndex(index);
-			setText(index < 0 || isEmpty() ? null : getTableView().getItems().get(index).getSize());
+			Music music = (Music) getTableRow().getItem();
+			setText(music == null ? null : music.getSize());
 		}
 	};
 
@@ -204,9 +203,6 @@ public class TableViewCell {
 		/** 复选框显示属性 */
 		private BooleanProperty checkBoxProperty;
 
-		public NumberCell() {
-		}
-
 		@Override
 		public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
 			// 所有表格视图中序号列的单元格中复选框显示属性监听
@@ -230,10 +226,14 @@ public class TableViewCell {
 			super.updateIndex(index);
 			setGraphic(null);
 			setText(null);
-			// 如果是空行单元格
-			if (index < 0 || isEmpty()) {
+
+			// 当前单元格对应的音乐信息
+			Object item = getTableRow().getItem();
+			// 如果列未处于显示状态 或 是空行单元格(isEmpty()检测有些问题)
+			if (item == null) {
 				return;
 			}
+
 			// 若还未初始化复选框属性和播放动态图标,则执行初始化
 			if (checkBoxProperty == null) {
 				ObservableMap<Object, Object> map = getTableView().getProperties();
@@ -245,6 +245,7 @@ public class TableViewCell {
 				// 正在播放的媒体 改变事件
 				Main.mediaProperty().addListener(this);
 			}
+
 			// 如果需要显示复选框(进入批量操作时)
 			if (checkBoxProperty.get()) {
 				// 初始化复选框
@@ -258,10 +259,9 @@ public class TableViewCell {
 				setGraphic(checkBox);
 				return;
 			}
-			// 当前单元格对应的音乐信息
-			Object item = getTableRow().getItem();
+
 			// 若当前单元格对应数据是本地音乐,则比较path; 否则比较mid
-			if (item != null && item.equals(Main.mediaProperty().get())) {
+			if (item.equals(Main.mediaProperty().get())) {
 				setGraphic(playGraph);
 				return;
 			}
@@ -355,5 +355,18 @@ public class TableViewCell {
 				onMouseClicked(event);
 			}
 		}
+	}
+
+	/**
+	 * 检查集合元素索引位置是否在[0,集合size-1]内.
+	 * 
+	 * @param index
+	 *            元素索引
+	 * @param list
+	 *            List集合
+	 * @return 若元素索引在[0,list.size()-1]内,则返回true.
+	 */
+	private static boolean isRanged(int index, List<?> list) {
+		return index > -1 && index < list.size();
 	}
 }
