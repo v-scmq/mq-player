@@ -200,7 +200,6 @@ public final class FXMediaPlayer implements com.scmq.player.core.MediaPlayer, Ch
 	public void registerAudioSpectrum() {
 		if (audioSpectrumListener == null) {
 			audioSpectrumListener = listener::audioSpectrumUpdate;
-
 		}
 		if (player != null) {
 			player.setAudioSpectrumListener(audioSpectrumListener);

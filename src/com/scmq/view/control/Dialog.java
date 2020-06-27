@@ -118,8 +118,8 @@ public class Dialog extends Pane {
 		// 关闭标签的鼠标点击事件
 		closeIcon.setOnMouseClicked(getOnMouseReleased());
 
-		// 对话框在ESC按键按下并释放后的事件
-		setOnKeyTyped(e -> {
+		// 对话框在ESC按键按下然后并释放时的事件
+		setOnKeyReleased(e -> {
 			if (e.getCode() == KeyCode.ESCAPE) {
 				Pane pane = (Pane) getParent();
 				if (pane != null) {
