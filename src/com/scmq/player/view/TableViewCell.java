@@ -6,22 +6,29 @@ import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
 import com.scmq.player.model.Singer;
 import com.scmq.player.util.StringUtil;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumnBase;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.ResizeFeatures;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
-import java.util.List;
-
 /**
+ * 表格视图单元格工具类.
+ * 
  * @author SCMQ
  */
 public class TableViewCell {
@@ -355,18 +362,5 @@ public class TableViewCell {
 				onMouseClicked(event);
 			}
 		}
-	}
-
-	/**
-	 * 检查集合元素索引位置是否在[0,集合size-1]内.
-	 * 
-	 * @param index
-	 *            元素索引
-	 * @param list
-	 *            List集合
-	 * @return 若元素索引在[0,list.size()-1]内,则返回true.
-	 */
-	private static boolean isRanged(int index, List<?> list) {
-		return index > -1 && index < list.size();
 	}
 }
