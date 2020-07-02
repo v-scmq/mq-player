@@ -1,19 +1,18 @@
 package com.scmq.player.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.scmq.player.dao.SingerDao;
 import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.Singer;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 歌手信息数据业务
@@ -25,12 +24,12 @@ public class SingerService {
     @Autowired private SingerDao dao;
 
     /**
-     * 通过歌手歌手信息,来查找对应的歌手id.
+     * 通过歌手信息,来查找对应的歌手id.
      *
      * @param singer 歌手信息
      * @return 歌手id, 总是返回查询结果的第一个
      */
-    public Integer findIdByName(Singer singer) {
+    public Integer findIdByInfo(Singer singer) {
         return dao.findIdByInfo(singer);
     }
 
