@@ -13,7 +13,11 @@ import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Toast;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -159,6 +163,27 @@ public class LocalMusicController {
 			// 在子线程保存新增音乐
 			Task.async(() -> service.saveLocalList(localList));
 		});
+
+		// 排序类型回调
+		EventHandler<ActionEvent> action = e -> {
+			Object menuItem = e.getSource();
+
+			@SuppressWarnings("unchecked")
+			TableColumn<Music, ?> column = (TableColumn<Music, ?>) view.getTableView().getProperties().get(menuItem);
+
+			SortType type = column.getSortType() == SortType.DESCENDING ? SortType.ASCENDING : SortType.DESCENDING;
+
+			column.setSortType(type);
+			view.getTableView().getSortOrder().clear();
+			view.getTableView().getSortOrder().add(column);
+		};
+
+		// 绑定排序菜单项动作事件
+		view.getTitleSort().setOnAction(action);
+		view.getSingerSort().setOnAction(action);
+		view.getAlbumSort().setOnAction(action);
+		view.getDurationSort().setOnAction(action);
+		view.getSizeSort().setOnAction(action);
 
 		// 批量删除按钮事件处理
 		view.getDeleteButton().setOnAction(e -> {

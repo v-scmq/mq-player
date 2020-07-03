@@ -35,8 +35,19 @@ public class LocalMusicView extends AnchorPane {
 	private EditText inputLocalSearchKey;
 	private Button sortMethod;
 
-	private MenuItem leadForFlie;
+	private MenuItem leadForFile;
 	private MenuItem leadForDir;
+
+	/** 歌曲表题排序 */
+	private MenuItem titleSort;
+	/** 歌手名称排序 */
+	private MenuItem singerSort;
+	/** 专辑名称排序 */
+	private MenuItem albumSort;
+	/** 歌曲时长排序 */
+	private MenuItem durationSort;
+	/** 文件大小排序 */
+	private MenuItem sizeSort;
 
 	private TableView<Music> tableView;
 
@@ -73,15 +84,22 @@ public class LocalMusicView extends AnchorPane {
 		setTopAnchor(leadingButton, 28.0);
 		setRightAnchor(leadingButton, 144.0);// 104+20+20
 
-		leadForFlie = new MenuItem("添加本地歌曲");
+		leadForFile = new MenuItem("添加本地歌曲");
 		leadForDir = new MenuItem("添加本地目录");
-		ContextMenu contextMenu = new ContextMenu(leadForFlie, leadForDir);
+		ContextMenu contextMenu = new ContextMenu(leadForFile, leadForDir);
 		contextMenu.setAnchorX(144);
 		contextMenu.setAnchorY(28);
 
 		sortMethod = new Button("排序方式", FileUtil.createView("sort-method", 20, 20));// width=104
 		setTopAnchor(sortMethod, 28.0);
 		setRightAnchor(sortMethod, 20.0);
+
+		titleSort = new MenuItem("歌曲");
+		singerSort = new MenuItem("歌手");
+		albumSort = new MenuItem("专辑");
+		durationSort = new MenuItem("时长");
+		sizeSort = new MenuItem("大小");
+		ContextMenu menu = new ContextMenu(titleSort, singerSort, albumSort, durationSort, sizeSort);
 
 		tableView = new TableView<>();
 		tableView.setTableMenuButtonVisible(true);
@@ -189,18 +207,20 @@ public class LocalMusicView extends AnchorPane {
 		tableView.setSortPolicy(table -> {
 			// TableColumnComparatorBase comparatorBase = table.getComparator();
 			ObservableList<TableColumn<Music, ?>> sortOrder = table.getSortOrder();
-			table.getItems().sort((o1, o2) -> {
-				for (TableColumn<Music, ?> column : sortOrder) {
-					@SuppressWarnings("unchecked")
-					Comparator<Music> comparator = (Comparator<Music>) column.getComparator();
-					boolean asc = column.getSortType() == TableColumn.SortType.ASCENDING;
-					int result = comparator.compare(asc ? o1 : o2, asc ? o2 : o1);
-					if (result != 0) {
-						return result;
+			if (!sortOrder.isEmpty()) {
+				table.getItems().sort((o1, o2) -> {
+					for (TableColumn<Music, ?> column : sortOrder) {
+						@SuppressWarnings("unchecked")
+						Comparator<Music> comparator = (Comparator<Music>) column.getComparator();
+						boolean asc = column.getSortType() == TableColumn.SortType.ASCENDING;
+						int result = comparator.compare(asc ? o1 : o2, asc ? o2 : o1);
+						if (result != 0) {
+							return result;
+						}
 					}
-				}
-				return 0;
-			});
+					return 0;
+				});
+			}
 			return true;
 		});
 
@@ -225,6 +245,20 @@ public class LocalMusicView extends AnchorPane {
 				contextMenu.show(Main.getPrimaryStage());
 			}
 		});
+
+		sortMethod.setOnMouseClicked(e -> {
+			if (e.getButton() == MouseButton.PRIMARY && !menu.isShowing()) {
+				menu.setAnchorX(e.getScreenX() - e.getX());
+				menu.setAnchorY(e.getScreenY() - e.getY() + sortMethod.getHeight());
+				menu.show(Main.getPrimaryStage());
+			}
+		});
+
+		tableView.getProperties().put(titleSort, songColumn);
+		tableView.getProperties().put(singerSort, singerColumn);
+		tableView.getProperties().put(albumSort, albumColumn);
+		tableView.getProperties().put(durationSort, durationColumn);
+		tableView.getProperties().put(sizeSort, sizeColumn);
 
 		// 获得表格视图的选择模式
 		MultipleSelectionModel<Music> selection = tableView.getSelectionModel();
@@ -303,11 +337,31 @@ public class LocalMusicView extends AnchorPane {
 	}
 
 	public MenuItem getLeadForFile() {
-		return leadForFlie;
+		return leadForFile;
 	}
 
 	public MenuItem getLeadForDir() {
 		return leadForDir;
+	}
+
+	public MenuItem getTitleSort() {
+		return titleSort;
+	}
+
+	public MenuItem getSingerSort() {
+		return singerSort;
+	}
+
+	public MenuItem getAlbumSort() {
+		return albumSort;
+	}
+
+	public MenuItem getDurationSort() {
+		return durationSort;
+	}
+
+	public MenuItem getSizeSort() {
+		return sizeSort;
 	}
 
 	public Button getPlayAllButton() {
