@@ -65,7 +65,7 @@ public class LocalMusicController {
 		view.getPlayAllButton().setOnAction(e -> {
 			String text = view.getPlayAllButton().getText();
 			ObservableList<Music> items;
-			if ("播放" == text) {
+			if ("播放".equals(text)) {
 				items = view.getTableView().getSelectionModel().getSelectedItems();
 				if (items.isEmpty()) {
 					Toast.makeText(Main.getRoot(), "至少选择一首音乐，才能播放！").show();

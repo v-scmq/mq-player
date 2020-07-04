@@ -100,28 +100,28 @@ public class NetMusicController implements ChangeListener<Tab> {
 		Tab tab = view.tabProperty().get();
 		String tabText = tab.getText();
 		// 若是“歌手”选项卡,则触发歌手数据更新
-		if ("歌手" == tabText) {
+		if ("歌手".equals(tabText)) {
 			singerPage.reset();
 			singerUpdatable = true;
 			changed(null, null, tab);
 			return;
 		}
 		// 若是“歌单”选项卡,则触发歌单数据更新
-		if ("歌单" == tabText) {
+		if ("歌单".equals(tabText)) {
 			specialPage.reset();
 			specialUpdatable = true;
 			changed(null, null, tab);
 			return;
 		}
 		// 若是“MV”选项卡,则触发MV数据更新
-		if ("MV" == tabText) {
+		if ("MV".equals(tabText)) {
 			mvPage.reset();
 			mvUpdatable = true;
 			changed(null, null, tab);
 			return;
 		}
 		// 若是“排行榜”选项卡 且 newValue(RankItem)不是null,则触发排行榜数据更新
-		if ("排行榜" == tabText && newValue != null) {
+		if ("排行榜".equals(tabText) && newValue != null) {
 			rankPage.reset();
 			rankUpdatable = true;
 			// 重设当前已选 榜单项
@@ -137,7 +137,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 		}
 		Node node = (Node) e.getSource();
 		// 若是 选项卡 或 分页组件
-		if (node instanceof Tab || node.getStyleClass().get(0) == Pagination.SELECTED_CLASS) {
+		if (node instanceof Tab || Pagination.SELECTED_CLASS.equals(node.getStyleClass().get(0))) {
 			e.consume();
 			Toast.makeText(Main.getRoot(), "上一次请求还未完成，请等待！").show();
 			return;
@@ -168,7 +168,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			Node back = Main.getRoot().lookup("#top-pane #back");
 			back.setOnMouseClicked(event -> {
 				Tab tab = tabPane.tabProperty().get();
-				if (tab.getText() == "网络乐库") {
+				if ("网络乐库".equals(tab.getText())) {
 					tab.setContent(view);
 					back.setOnMouseClicked(null);
 				}
@@ -203,7 +203,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 		String tabText = newValue.getText();
 		// 切换的“歌手”选项卡
-		if ("歌手" == tabText) {
+		if ("歌手".equals(tabText)) {
 			if (!singerUpdatable) {
 				view.updatePagination(singerPage);
 				return;
@@ -219,7 +219,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			});
 		}
 		// 切换的“歌单”选项卡
-		else if ("歌单" == tabText) {
+		else if ("歌单".equals(tabText)) {
 			if (!specialUpdatable) {
 				view.updatePagination(specialPage);
 				return;
@@ -234,7 +234,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			});
 		}
 		// 切换的“MV”选项卡
-		else if ("MV" == tabText) {
+		else if ("MV".equals(tabText)) {
 			if (!mvUpdatable) {
 				view.updatePagination(mvPage);
 				return;
@@ -249,7 +249,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			});
 		}
 		// 切换的“排行榜”选项卡
-		else if ("排行榜" == tabText) {
+		else if ("排行榜".equals(tabText)) {
 			if (!rankUpdatable) {
 				view.updatePagination(rankPage);
 				return;
@@ -287,28 +287,28 @@ public class NetMusicController implements ChangeListener<Tab> {
 			String tabText = tab.getText();
 			int current = newPage.intValue();
 			// 若是“歌手”选项卡,且歌手分页对象的当前页和分页组件当前页相同,则不触发更新
-			if ("歌手" == tabText && singerPage.getCurrent() != current) {
+			if ("歌手".equals(tabText) && singerPage.getCurrent() != current) {
 				singerPage.setCurrent(current);
 				singerUpdatable = true;
 				changed(null, null, tab);
 				return;
 			}
 			// 若是“歌单”选项卡,且歌单分页对象的当前页和分页组件当前页相同,则不触发更新
-			if ("歌单" == tabText && specialPage.getCurrent() != current) {
+			if ("歌单".equals(tabText) && specialPage.getCurrent() != current) {
 				specialPage.setCurrent(current);
 				specialUpdatable = true;
 				changed(null, null, tab);
 				return;
 			}
 			// 若是“MV”选项卡,且MV分页对象的当前页和分页组件当前页相同,则不触发更新
-			if ("MV" == tabText && mvPage.getCurrent() != current) {
+			if ("MV".equals(tabText) && mvPage.getCurrent() != current) {
 				mvPage.setCurrent(current);
 				mvUpdatable = true;
 				changed(null, null, tab);
 				return;
 			}
 			// 若是“排行榜”选项卡,且排行榜分页对象的当前页和分页组件当前页相同,则不触发更新
-			if ("排行榜" == tabText && rankPage.getCurrent() != current) {
+			if ("排行榜".equals(tabText) && rankPage.getCurrent() != current) {
 				rankPage.setCurrent(current);
 				rankUpdatable = true;
 				changed(null, null, tab);

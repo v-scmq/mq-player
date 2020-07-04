@@ -77,21 +77,21 @@ public class SingerController implements ChangeListener<Tab> {
 				String tabText = tab.getText();
 				int current = newPage.intValue();
 				// 若是“单曲”选项卡 且 单曲分页对象的当前页和分页组件当前页相同,则不触发更新
-				if ("单曲" == tabText && songPage.getCurrent() != current) {
+				if ("单曲".equals(tabText) && songPage.getCurrent() != current) {
 					songPage.setCurrent(current);
 					songUpdatable = true;
 					changed(null, null, tab);
 					return;
 				}
 				// 若是“专辑”选项卡 且 专辑分页对象的当前页和分页组件当前页相同,则不触发更新
-				if ("专辑" == tabText && albumPage.getCurrent() != current) {
+				if ("专辑".equals(tabText) && albumPage.getCurrent() != current) {
 					albumPage.setCurrent(current);
 					albumUpdatable = true;
 					changed(null, null, tab);
 					return;
 				}
 				// 若是“MV”选项卡 且 MV分页对象的当前页和分页组件当前页相同,则不触发更新
-				if ("MV" == tabText && mvPage.getCurrent() != current) {
+				if ("MV".equals(tabText) && mvPage.getCurrent() != current) {
 					mvPage.setCurrent(current);
 					mvUpdatable = true;
 					changed(null, null, tab);
@@ -120,7 +120,7 @@ public class SingerController implements ChangeListener<Tab> {
 		albumPage.reset();
 		songUpdatable = albumUpdatable = mvUpdatable = true;
 		view.getTableView().getItems().clear();
-		if ("单曲" != view.getTabPane().tabProperty().get().getText()) {
+		if ("单曲".equals(view.getTabPane().tabProperty().get().getText())) {
 			view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
 		} else {
 			changed(null, null, view.getTabPane().tabProperty().get());
@@ -130,7 +130,7 @@ public class SingerController implements ChangeListener<Tab> {
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 		String tabText = newValue.getText();
-		if ("单曲" == tabText) {
+		if ("单曲".equals(tabText)) {
 			if (!songUpdatable) {
 				view.updatePagination(songPage);
 				return;
@@ -145,7 +145,7 @@ public class SingerController implements ChangeListener<Tab> {
 				});
 				musicService.save(list);
 			});
-		} else if ("专辑" == tabText) {
+		} else if ("专辑".equals(tabText)) {
 			if (!albumUpdatable) {
 				view.updatePagination(albumPage);
 				return;
@@ -163,7 +163,7 @@ public class SingerController implements ChangeListener<Tab> {
 					spinner.close();
 				});
 			});
-		} else if ("MV" == tabText) {
+		} else if ("MV".equals(tabText)) {
 			if (!mvUpdatable) {
 				view.updatePagination(mvPage);
 				return;
@@ -181,7 +181,7 @@ public class SingerController implements ChangeListener<Tab> {
 					spinner.close();
 				});
 			});
-		} else if ("简介" == tabText && singer != null) {
+		} else if ("简介".equals(tabText) && singer != null) {
 			view.updateIntroduce(singer);
 		}
 	}
@@ -199,7 +199,7 @@ public class SingerController implements ChangeListener<Tab> {
 			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
 			back.setOnMouseClicked(event -> {
 				Tab tab = tabPane.tabProperty().get();
-				if (tab.getText() == "网络乐库") {
+				if ("网络乐库".equals(tab.getText())) {
 					tab.setContent(view);
 					back.setOnMouseClicked(oldHandler);
 				}
