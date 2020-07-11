@@ -30,8 +30,6 @@ public final class Tab extends Button {
                 }
             }
         }
-
-        ;
     };
 
     /**
