@@ -100,6 +100,7 @@ public class LocalMusicView extends AnchorPane {
 		durationSort = new MenuItem("时长");
 		sizeSort = new MenuItem("大小");
 		ContextMenu menu = new ContextMenu(titleSort, singerSort, albumSort, durationSort, sizeSort);
+		menu.getStyleClass().add("sort-type-menu");
 
 		tableView = new TableView<>();
 		tableView.setTableMenuButtonVisible(true);

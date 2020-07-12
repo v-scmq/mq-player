@@ -218,4 +218,6 @@
     -fx-min-width:300px;-fx-background-color: rgb(226, 155, 208);-fx-background-radius:25px;
     -fx-text-fill:white;-fx-font-size:18px;-fx-cursor:hand;-fx-padding:6px 12px;-fx-alignment:center;
 }
+
+.sort-type-menu .menu-item {-fx-padding: 2px 30px;}
 /*JavaFX自带样式 => {JAVA_HOME}\jdk1.8.0_241\jre\lib\ext\jfxrt.jar!\com\sun\javafx\scene\control\skin\modena\modena.css*/
