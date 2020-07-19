@@ -116,13 +116,14 @@ public final class Music extends Media {
 		super.init(file);
 		try {
 			AudioFile audioFile;
-			if ("mp3".equalsIgnoreCase(getFormat())) {
+			String format = getFormat() == null ? null : getFormat().toLowerCase();
+			if ("mp3".equals(format)) {
 				audioFile = new MP3FileReader().read(file);
-			} else if ("flac".equalsIgnoreCase(getFormat())) {
+			} else if ("flac".equals(format)) {
 				audioFile = new FlacFileReader().read(file);
-			} else if ("wav".equalsIgnoreCase(getFormat())) {
+			} else if ("wav".equals(format)) {
 				audioFile = new WavFileReader().read(file);
-			} else if ("ogg".equalsIgnoreCase(getFormat())) {
+			} else if ("ogg".equals(format)) {
 				audioFile = new OggFileReader().read(file);
 			} else {
 				// 一般执行不到此
@@ -145,20 +146,20 @@ public final class Music extends Media {
 			// 标题
 			setTitle(tag.getFirst(FieldKey.TITLE));
 			// 如果有乱码置为null
-			if (!StringUtil.isEmpty(getTitle()) && StringUtil.isMessyCode(getTitle())) {
+			if (StringUtil.isNotEmpty(getTitle()) && StringUtil.isMessyCode(getTitle())) {
 				setTitle(null);
 			}
 			// 艺术家
 			String artist = tag.getFirst(FieldKey.ARTIST);
 			// 若有歌手信息,且不包含乱码字符
-			if (!StringUtil.isEmpty(artist) && !StringUtil.isMessyCode(artist)) {
+			if (StringUtil.isNotEmpty(artist) && !StringUtil.isMessyCode(artist)) {
 				setSinger(new Singer(artist));
 			}
 
 			// 专辑
 			String album = tag.getFirst(FieldKey.ALBUM);
 			// 若有专辑信息,且不包含乱码字符
-			if (!StringUtil.isEmpty(album) && !StringUtil.isMessyCode(album)) {
+			if (StringUtil.isNotEmpty(album) && !StringUtil.isMessyCode(album)) {
 				setAlbum(new Album(getSinger(), album));
 			}
 
@@ -191,9 +192,7 @@ public final class Music extends Media {
 		handleTitleAndArtist();
 	}
 
-	/**
-	 * 处理歌曲标题和艺术家(歌手)为空的方法
-	 */
+	/** 处理歌曲标题和艺术家(歌手)为空的方法 */
 	private void handleTitleAndArtist() {
 		if (getTitle() != null && getSinger() != null) {
 			return;
