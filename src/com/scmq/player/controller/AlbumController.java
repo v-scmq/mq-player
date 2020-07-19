@@ -54,7 +54,7 @@ public class AlbumController implements ChangeListener<Number> {
 	 * @param netSource
 	 *            网络音乐平台
 	 */
-	public void show(Album album, ObjectProperty<Tab> tabProperty, NetSource netSource) {
+	void show(Album album, ObjectProperty<Tab> tabProperty, NetSource netSource) {
 		if (view == null) {
 			view = new AlbumView();
 			spinner = new Spinner();
