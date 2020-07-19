@@ -1,12 +1,7 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
-import com.scmq.player.model.Album;
-import com.scmq.player.model.MV;
-import com.scmq.player.model.Music;
-import com.scmq.player.model.Page;
-import com.scmq.player.model.PlayList;
-import com.scmq.player.model.Singer;
+import com.scmq.player.model.*;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
@@ -37,31 +32,46 @@ import java.util.List;
  */
 @Controller
 public class SingerController implements ChangeListener<Tab> {
+	/** 音乐业务 */
 	@Autowired
 	private MusicService musicService;
+	/** 专辑业务 */
 	@Autowired
 	private AlbumService albumService;
+	/** MV业务 */
 	@Autowired
 	private MVService mvService;
 
+	/** 专辑控制器 */
 	@Autowired
 	private AlbumController albumController;
 
+	/** 歌手视图 */
 	private SingerView view;
-
+	/** 进度旋转器(网络请求时使用) */
 	private Spinner spinner;
-
+	/** 网络音乐平台 */
 	private NetSource netSource;
-
+	/** 当前歌手视图的歌手信息 */
 	private Singer singer;
-
+	/** 歌曲、专辑、MV的可更新标记 */
 	private boolean songUpdatable, albumUpdatable, mvUpdatable;
-
+	/** 歌曲、专辑、MV的分页对象 */
 	private Page songPage = new Page(), albumPage = new Page(), mvPage = new Page();
 
 	public SingerController() {
 	}
 
+	/**
+	 * 显示歌手视图
+	 * 
+	 * @param singer
+	 *            歌手信息对象
+	 * @param netSource
+	 *            网络音乐平台
+	 * @param tabProperty
+	 *            主选项卡属性
+	 */
 	void show(Singer singer, NetSource netSource, ObjectProperty<Tab> tabProperty) {
 		this.netSource = netSource;
 
@@ -130,6 +140,7 @@ public class SingerController implements ChangeListener<Tab> {
 		}
 	}
 
+	// 歌手视图中的选项卡选择改变事件回调
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 		String tabText = newValue.getText();
@@ -189,6 +200,7 @@ public class SingerController implements ChangeListener<Tab> {
 		}
 	}
 
+	/** 专辑数据节点鼠标点击事件处理器 */
 	private EventHandler<MouseEvent> albumNodeHandler = e -> {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			Node node = (Node) e.getSource();
@@ -221,6 +233,13 @@ public class SingerController implements ChangeListener<Tab> {
 		}
 	};
 
+	/**
+	 * 检查歌手信息是否为空.
+	 * 
+	 * @param singer
+	 *            歌手信息对象
+	 * @return 若歌手信息为空,则返回true
+	 */
 	private boolean isEmptyInfo(Singer singer) {
 		return singer.getSongNum() == null || singer.getAlbumNum() == null || singer.getMvNum() == null
 				|| StringUtil.isEmpty(singer.getFollowNum()) || StringUtil.isEmpty(singer.getIntroduce());
