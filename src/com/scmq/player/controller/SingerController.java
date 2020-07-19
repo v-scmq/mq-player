@@ -64,16 +64,16 @@ public class SingerController implements ChangeListener<Tab> {
 
 	void show(Singer singer, NetSource netSource, ObjectProperty<Tab> tabProperty) {
 		this.netSource = netSource;
+
 		if (view == null) {
 			view = new SingerView();
 			// (进度)旋转器
 			spinner = new Spinner();
-			TabPane tabPane = view.getTabPane();
 			// 添加选项卡切换监听器
-			tabPane.tabProperty().addListener(this);
+			view.getTabPane().tabProperty().addListener(this);
 
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
-				Tab tab = tabPane.tabProperty().get();
+				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
 				int current = newPage.intValue();
 				// 若是“单曲”选项卡 且 单曲分页对象的当前页和分页组件当前页相同,则不触发更新
@@ -98,12 +98,14 @@ public class SingerController implements ChangeListener<Tab> {
 				}
 			});
 		}
+
 		// 切换到歌手视图
 		tabProperty.get().setContent(view);
 		// 还是同一个歌手,不执行任何操作
 		if (this.singer == singer) {
 			return;
 		}
+
 		this.singer = singer;
 		// 更新歌手信息
 		if (isEmptyInfo(singer)) {
@@ -120,7 +122,8 @@ public class SingerController implements ChangeListener<Tab> {
 		albumPage.reset();
 		songUpdatable = albumUpdatable = mvUpdatable = true;
 		view.getTableView().getItems().clear();
-		if ("单曲".equals(view.getTabPane().tabProperty().get().getText())) {
+
+		if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
 			view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
 		} else {
 			changed(null, null, view.getTabPane().tabProperty().get());
