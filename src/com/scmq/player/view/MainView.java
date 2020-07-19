@@ -263,7 +263,7 @@ public class MainView {
 		// 音量滑动条
 		volumeSlider = new Slider(0, 1, 0.5);
 		volumeSlider.setPrefHeight(160);
-		volumeSlider.setBlockIncrement(0.1);// 滑块增量
+		volumeSlider.setBlockIncrement(0.05);// 滑块增量
 		volumeSlider.setOrientation(Orientation.VERTICAL);
 		// 音量大小提示标签
 		Label volumeLabel = new Label("50%");
