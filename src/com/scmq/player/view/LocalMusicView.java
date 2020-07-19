@@ -161,8 +161,8 @@ public class LocalMusicView extends AnchorPane {
 
 		// 歌手列排序
 		singerColumn.setComparator((o1, o2) -> {
-			String value1 = o1 == null ? null : o1.getSinger() == null ? null : o1.getSinger().getName();
-			String value2 = o2 == null ? null : o2.getSinger() == null ? null : o2.getSinger().getName();
+			String value1 = o1 == null || o1.getSinger() == null ? null : o1.getSinger().getName();
+			String value2 = o2 == null || o2.getSinger() == null ? null : o2.getSinger().getName();
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
@@ -171,8 +171,8 @@ public class LocalMusicView extends AnchorPane {
 
 		// 专辑列排序
 		albumColumn.setComparator((o1, o2) -> {
-			String value1 = o1 == null ? null : o1.getAlbum() == null ? null : o1.getAlbum().getName();
-			String value2 = o2 == null ? null : o2.getAlbum() == null ? null : o2.getAlbum().getName();
+			String value1 = o1 == null || o1.getAlbum() == null ? null : o1.getAlbum().getName();
+			String value2 = o2 == null || o2.getAlbum() == null ? null : o2.getAlbum().getName();
 			if (value1 == null) {
 				return value2 == null ? 0 : -1;
 			}
