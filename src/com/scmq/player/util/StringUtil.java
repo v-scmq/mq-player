@@ -17,8 +17,8 @@ public class StringUtil {
 	 * @param builder
 	 *            字符串构建器
 	 */
-	public static void clear(StringBuilder builder) {
-		builder.delete(0, builder.length());
+	public static StringBuilder clear(StringBuilder builder) {
+		return builder.delete(0, builder.length());
 	}
 
 	/**
@@ -149,12 +149,12 @@ public class StringUtil {
 		text = text.replaceAll("\\s*|t*|r*|n*", "");
 		String temp = text.replaceAll("\\p{P}", "");
 		char[] ch = temp.trim().toCharArray();
-		float count = 0;
+		int count = 0;
 		for (char c : ch) {
 			if (!Character.isLetterOrDigit(c) && !isChinese(c)) {
 				count++;
 			}
 		}
-		return count / (float) ch.length > 0.4;
+		return count / (float) ch.length > 0.4F;
 	}
 }
