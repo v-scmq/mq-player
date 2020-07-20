@@ -15,6 +15,7 @@ import com.scmq.player.model.Special;
 import com.scmq.player.model.Tag;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 音乐平台网络资源库
@@ -115,15 +116,19 @@ public interface NetSource {
 	boolean handleSingerInfo(Singer singer);
 
 	/**
-	 * 搜索歌曲,这个搜索关键词可以是歌曲名、歌手名、专辑名
-	 *
+	 * 搜索歌曲,这个搜索关键词可以是歌曲名、歌手名、专辑名.<br>
+	 * 在之前的基础之上新增了一个map集合参数,可以收集某些信息.这些信息可以是异常信息,也可以是歌手、歌手热门歌曲等信息.
+	 * 当map集合不能空且能够获得直达歌手信息时,那么map集合就一定有一个key为"callback-singer"值为new Singer()的键值对.
+	 * 
 	 * @param key
 	 *            搜索关键词(也可以是拼音),参数可以是null或是一个空串
 	 * @param page
 	 *            分页对象,不能为null
+	 * @param map
+	 *            Map集合,允许为null.(由于单个返回值不能收集更多信息,若要获取更多信息,可传入一个Map集合.比如获取直达歌手信息)
 	 * @return 音乐信息列表集合
 	 */
-	List<Music> songSearch(String key, Page page);
+	List<Music> songSearch(String key, Page page, Map<Object, Object> map);
 
 	/**
 	 * 处理音乐信息,以获得播放地址

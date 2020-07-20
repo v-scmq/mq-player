@@ -13,6 +13,7 @@ import com.scmq.player.model.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultSource implements NetSource {
 	private List<Tag> singerTags = new ArrayList<>(5);
@@ -99,7 +100,7 @@ public class DefaultSource implements NetSource {
 	}
 
 	@Override
-	public List<Music> songSearch(String key, Page page) {
+	public List<Music> songSearch(String key, Page page, Map<Object, Object> map) {
 		return new ArrayList<>();
 	}
 
