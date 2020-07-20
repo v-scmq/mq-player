@@ -192,7 +192,7 @@ public final class HttpClient {
 		// 允许URL连接输入,默认为true
 		connection.setDoInput(true);
 		// 如果是“POST”请求(不需要使用equals)
-		if (POST_METHOD == method) {
+		if (POST_METHOD.equals(method)) {
 			// 允许通过输出流发送数据
 			connection.setDoOutput(true);
 			// 关闭缓冲
