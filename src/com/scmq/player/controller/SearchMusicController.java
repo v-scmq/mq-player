@@ -5,6 +5,7 @@ import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
 import com.scmq.player.model.PlayList;
+import com.scmq.player.model.Singer;
 import com.scmq.player.model.Special;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.service.MVService;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 网络音乐搜索模块控制器
@@ -56,9 +59,9 @@ public class SearchMusicController implements ChangeListener<Tab> {
 		if (view == null) {
 			view = new NetSearchView();
 			spinner = new Spinner();
-			view.tabProperty().addListener(this);
+			view.getTabPane().tabProperty().addListener(this);
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
-				Tab tab = view.tabProperty().get();
+				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
 				int current = newPage.intValue();
 				// 若是“单曲”选项卡 且 单曲分页对象的当前页和分页组件当前页相同,则不触发更新
@@ -83,18 +86,21 @@ public class SearchMusicController implements ChangeListener<Tab> {
 				}
 			});
 		}
+
 		mainTabPane.centerProperty().set(view);
 		view.requestFocus();
-		if (this.text == null || !this.text.equals(text)) {
+
+		if (!Objects.equals(this.text, text)) {
 			this.text = text;
 			mvPage.setCurrent(1);
 			songPage.setCurrent(1);
 			specialPage.setCurrent(1);
 			songUpdatable = specialUpdatable = mvUpdatable = true;
-			if (!"单曲".equals(view.tabProperty().get().getText())) {
-				view.tabProperty().set(view.getTabs().get(0));
+
+			if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
+				view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
 			} else {
-				changed(null, null, view.tabProperty().get());
+				changed(null, null, view.getTabPane().tabProperty().get());
 			}
 		}
 	}
@@ -109,14 +115,16 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			}
 			spinner.centerTo(view);
 			songUpdatable = false;
+			Map<Object, Object> properties = view.getTableView().getProperties();
 			Task.async(() -> {
-				List<Music> list = netSource.songSearch(text, songPage);
+				List<Music> list = netSource.songSearch(text, songPage, properties);
 				Platform.runLater(() -> {
-					view.updateSong(list, songPage);
+					view.updateSong(list, songPage, (Singer) properties.get("callback-singer"));
 					spinner.close();
 				});
 				musicService.save(list);
 			});
+
 		} else if ("歌单".equals(tabText)) {
 			if (!specialUpdatable) {
 				view.updatePagination(specialPage);
@@ -133,6 +141,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 					spinner.close();
 				});
 			});
+
 		} else if ("MV".equals(tabText)) {
 			if (!mvUpdatable) {
 				view.updatePagination(mvPage);

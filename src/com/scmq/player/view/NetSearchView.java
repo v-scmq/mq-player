@@ -3,8 +3,10 @@ package com.scmq.player.view;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
+import com.scmq.player.model.Singer;
 import com.scmq.player.model.Special;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.StringUtil;
 import com.scmq.view.control.Pagination;
 import com.scmq.view.control.Tab;
 import com.scmq.view.control.TabPane;
@@ -25,9 +27,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.List;
 
@@ -37,9 +41,25 @@ import java.util.List;
  * @author SCMQ
  *
  */
-public class NetSearchView extends TabPane {
-	private TableView<Music> tableView;
+public class NetSearchView extends VBox {
+	/** 显示歌手图片 */
+	private ImageView singerImageView;
+	/** 显示歌手名称 */
+	private Label nameLabel;
+	/** 歌曲数量 */
+	private Label songNumLabel;
+	/** 专辑数量 */
+	private Label albumNumLabel;
+	/** MV数量 */
+	private Label mvNumLabel;
+	/** 粉丝数量 */
+	private Label followNumLabel;
+	/** 歌手视图布局盒子 */
+	private HBox singerBox;
+
+	private TabPane tabPane;
 	private Pagination pagination;
+	private TableView<Music> tableView;
 
 	private ObservableList<Node> specialNodes;
 	private ObservableList<Node> mvNodes;
@@ -84,8 +104,8 @@ public class NetSearchView extends TabPane {
 		columns.add(durationColumn);
 
 		// TableView数据行改变事件,修改列值为行数
-		tableView.getItems().addListener((Change<? extends Music> c) -> numColumn.setText(
-				new StringBuilder().append(tableView.getItems().size()).toString()));
+		tableView.getItems().addListener((Change<? extends Music> c) -> //
+		numColumn.setText(new StringBuilder().append(tableView.getItems().size()).toString()));
 
 		// 歌单模块
 		FlowPane flowPane = new FlowPane(20, 20);
@@ -103,14 +123,60 @@ public class NetSearchView extends TabPane {
 		pagination = new Pagination();
 		pagination.setManaged(false);
 		pagination.setVisible(false);
-		setBottom(pagination);
-		setMargin(pagination, new Insets(4, 0, 0, 0));
 
-		getTabs().addAll(new Tab("单曲", tableView), new Tab("歌单", specialPane), new Tab("MV", mvPane));
+		tabPane = new TabPane();
+		tabPane.setBottom(pagination);
+		tabPane.getTabs().addAll(new Tab("单曲", tableView), new Tab("歌单", specialPane), new Tab("MV", mvPane));
+		tabPane.tabLineProperty().set(true);
 
-		tabLineProperty().set(true);
-		setId("search-result-tab-pane");
+		setSpacing(20);
+		getChildren().add(tabPane);
 		getStyleClass().add("content");
+		setMargin(pagination, new Insets(4, 0, 0, 0));
+	}
+
+	/** 创建直达歌手部分的视图 */
+	private void createSingerView() {
+		int size = 180;
+		singerImageView = new ImageView();
+		singerImageView.setFitWidth(size);
+		singerImageView.setFitHeight(size);
+		singerImageView.setClip(new Circle(size >>= 1, size, size));
+
+		nameLabel = new Label();
+
+		songNumLabel = new Label("-", new Text("单曲："));
+		albumNumLabel = new Label("-", new Text("专辑："));
+		mvNumLabel = new Label("-", new Text("MV："));
+		followNumLabel = new Label("-", new Text("粉丝："));
+
+		singerBox = new HBox(30, singerImageView, nameLabel, songNumLabel, new Text("|"), albumNumLabel, new Text("|"),
+				mvNumLabel, new Text("|"), followNumLabel);
+		singerBox.setId("singer-info-box");
+
+		getChildren().add(0, singerBox);
+	}
+
+	private void updateSinger(Singer singer) {
+		// 设置歌手图片
+		singerImageView.setImage(new Image(singer.getCover(), true));
+		// 设置歌手名称
+		nameLabel.setText(StringUtil.isEmpty(singer.getName()) ? "-" : singer.getName());
+		// 设置歌曲数量
+		songNumLabel.setText(singer.getSongNum() == null ? "-" : singer.getSongNum().toString());
+		// 设置专辑数量
+		albumNumLabel.setText(singer.getAlbumNum() == null ? "-" : singer.getAlbumNum().toString());
+		// 设置MV数量
+		mvNumLabel.setText(singer.getMvNum() == null ? "-" : singer.getMvNum().toString());
+		// 设置粉丝数量
+		followNumLabel.setText(StringUtil.isEmpty(singer.getFollowNum()) ? "-" : singer.getFollowNum());
+	}
+
+	/** 移除歌手视图 */
+	public void removeSingerView() {
+		if (singerBox != null) {
+			getChildren().remove(singerBox);
+		}
 	}
 
 	/**
@@ -120,9 +186,23 @@ public class NetSearchView extends TabPane {
 	 *            音乐信息List集合
 	 * @param page
 	 *            分页对象
+	 * @param singer
+	 *            (直达)歌手信息对象
 	 */
-	public void updateSong(List<Music> list, Page page) {
+	public void updateSong(List<Music> list, Page page, Singer singer) {
+		// 若搜索的是歌手且已获得歌手信息
+		if (singer != null) {
+			if (singerBox == null) {
+				createSingerView();
+			}
+			updateSinger(singer);
+		} else {
+			removeSingerView();
+		}
+
+		// 更新音乐表格视图
 		tableView.getItems().setAll(list);
+		// 更新分页数据
 		updatePagination(page);
 	}
 
@@ -214,5 +294,13 @@ public class NetSearchView extends TabPane {
 
 	public Pagination getPagination() {
 		return pagination;
+	}
+
+	public TableView<Music> getTableView() {
+		return tableView;
+	}
+
+	public TabPane getTabPane() {
+		return tabPane;
 	}
 }
