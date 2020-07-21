@@ -32,27 +32,18 @@ public class TimeUtil {
         // 获取总秒数包含的小时数
         if (second >= 3600) {
             number = second / 3600;
-            if (number < 10) {
-                builder.append('0');
-            }
-            builder.append(number).append(':');
-            // 计算剩余的总秒数
-            second %= 3600;
-        }
-        // 计算包含的分钟数;如果小于60,则分钟数为0
-        number = second < 60 ? 0 : second / 60;
-        // 如果数字小于10,补0
-        if (number < 10) {
-            builder.append('0');
-        }
-        builder.append(number).append(':');
-        // 计算秒数;如果小于60,则秒数为time,否则为 time % 60
-        number = second < 60 ? second : second % 60;
-        if (number < 10) {
-            builder.append('0');
-        }
-        return builder.append(number).toString();
-    }
+			(number < 10 ? builder.append('0') : builder).append(number).append(':');
+			// 计算剩余的总秒数
+			second %= 3600;
+		}
+		// 计算包含的分钟数;如果小于60,则分钟数为0
+		number = second < 60 ? 0 : second / 60;
+		// 如果数字小于10,补0
+		(number < 10 ? builder.append('0') : builder).append(number).append(':');
+		// 计算秒数;如果小于60,则秒数为time,否则为 time % 60
+		number = second < 60 ? second : second % 60;
+		return (number < 10 ? builder.append('0') : builder).append(number).toString();
+	}
 
     /**
      * 将一个标准的时间字符串转换为 毫秒时间值.<br>
