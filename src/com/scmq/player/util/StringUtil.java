@@ -53,7 +53,7 @@ public class StringUtil {
 	 * @return 填充后的字符序列
 	 */
 	public static String fillString(StringBuilder builder, int value) {
-		return value < 10 ? builder.append('0').append(value).toString() : builder.append(value).toString();
+		return (value < 10 ? builder.append('0') : builder).append(value).toString();
 	}
 
 	/**
