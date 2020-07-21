@@ -173,6 +173,11 @@ public class DefaultSource implements NetSource {
 	}
 
 	@Override
+	public List<Singer> singerSearch(String keyword) {
+		return new ArrayList<>();
+	}
+
+	@Override
 	public List<LyricLine> handleLyric(Music music) {
 		return null;
 	}
