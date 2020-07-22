@@ -16,7 +16,7 @@ public final class Task {
 	private boolean state = true;
 
 	/**
-	 * 异步执行任务。
+	 * 异步执行任务.
 	 * 
 	 * 该方法启动的线程,不具有状态标记,用于执行无进度管理的任务.
 	 *
