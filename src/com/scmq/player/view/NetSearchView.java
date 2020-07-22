@@ -26,6 +26,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author SCMQ
  *
  */
-public class NetSearchView extends VBox {
+public class NetSearchView extends AnchorPane {
 	/** 显示歌手图片 */
 	private ImageView singerImageView;
 	/** 显示歌手名称 */
@@ -54,8 +55,6 @@ public class NetSearchView extends VBox {
 	private Label mvNumLabel;
 	/** 粉丝数量 */
 	private Label followNumLabel;
-	/** 歌手视图布局盒子 */
-	private HBox singerBox;
 
 	private TabPane tabPane;
 	private Pagination pagination;
@@ -128,33 +127,59 @@ public class NetSearchView extends VBox {
 		tabPane.setBottom(pagination);
 		tabPane.getTabs().addAll(new Tab("单曲", tableView), new Tab("歌单", specialPane), new Tab("MV", mvPane));
 		tabPane.tabLineProperty().set(true);
+		AnchorPane.setTopAnchor(tabPane, 0.0);
+		AnchorPane.setRightAnchor(tabPane, 0.0);
+		AnchorPane.setBottomAnchor(tabPane, 0.0);
+		AnchorPane.setLeftAnchor(tabPane, 0.0);
 
-		setSpacing(20);
 		getChildren().add(tabPane);
 		getStyleClass().add("content");
-		setMargin(pagination, new Insets(4, 0, 0, 0));
+		TabPane.setMargin(pagination, new Insets(4, 0, 0, 0));
 	}
 
 	/** 创建直达歌手部分的视图 */
 	private void createSingerView() {
-		int size = 180;
+		int size = 120;
 		singerImageView = new ImageView();
 		singerImageView.setFitWidth(size);
 		singerImageView.setFitHeight(size);
 		singerImageView.setClip(new Circle(size >>= 1, size, size));
+		AnchorPane.setLeftAnchor(singerImageView, 0.0);
 
-		nameLabel = new Label();
+		nameLabel = new Label("-");
+		nameLabel.getStyleClass().add("singer-name");
+		AnchorPane.setTopAnchor(nameLabel, (double) ((size >> 1) - 4));
+		AnchorPane.setRightAnchor(nameLabel, 0.0);
+		AnchorPane.setLeftAnchor(nameLabel, (double) ((size <<= 1) + 20));
 
 		songNumLabel = new Label("-", new Text("单曲："));
 		albumNumLabel = new Label("-", new Text("专辑："));
 		mvNumLabel = new Label("-", new Text("MV："));
 		followNumLabel = new Label("-", new Text("粉丝："));
 
-		singerBox = new HBox(30, singerImageView, nameLabel, songNumLabel, new Text("|"), albumNumLabel, new Text("|"),
-				mvNumLabel, new Text("|"), followNumLabel);
-		singerBox.setId("singer-info-box");
+		HBox box = new HBox(28, songNumLabel, albumNumLabel, mvNumLabel, followNumLabel);
+		box.setAlignment(Pos.CENTER_LEFT);
+		box.getStyleClass().add("singer-info-box");
+		AnchorPane.setRightAnchor(box, 0.0);
+		AnchorPane.setLeftAnchor(box, getLeftAnchor(nameLabel));
+		AnchorPane.setTopAnchor(box, getTopAnchor(nameLabel) + 40.0);
 
-		getChildren().add(0, singerBox);
+		// 重新设置约束选项卡面板的上方向约束
+		setTopAnchor(tabPane, (double) size);
+		// 歌手信息布局面板放入缓存
+		getProperties().put("singer-info-box", box);
+		// 添加歌手相关展示的节点
+		getChildren().addAll(singerImageView, nameLabel, box);
+	}
+
+	/** 移除歌手视图 */
+	public void removeSingerView() {
+		if (singerImageView == null) {
+			return;
+		}
+		// 重新设置约束选项卡面板的上方向约束
+		setTopAnchor(tabPane, 0.0);
+		getChildren().removeAll(singerImageView, nameLabel, (Node) getProperties().get("singer-info-box"));
 	}
 
 	private void updateSinger(Singer singer) {
@@ -172,13 +197,6 @@ public class NetSearchView extends VBox {
 		followNumLabel.setText(StringUtil.isEmpty(singer.getFollowNum()) ? "-" : singer.getFollowNum());
 	}
 
-	/** 移除歌手视图 */
-	public void removeSingerView() {
-		if (singerBox != null) {
-			getChildren().remove(singerBox);
-		}
-	}
-
 	/**
 	 * 更新歌曲表格视图
 	 * 
@@ -192,8 +210,13 @@ public class NetSearchView extends VBox {
 	public void updateSong(List<Music> list, Page page, Singer singer) {
 		// 若搜索的是歌手且已获得歌手信息
 		if (singer != null) {
-			if (singerBox == null) {
+			if (singerImageView == null) {
 				createSingerView();
+			} else {
+				ObservableList<Node> nodes = getChildren();
+				if (!nodes.contains(singerImageView)) {
+					nodes.addAll(singerImageView, nameLabel, (Node) getProperties().get("singer-info-box"));
+				}
 			}
 			updateSinger(singer);
 		} else {

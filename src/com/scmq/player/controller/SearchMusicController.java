@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -107,7 +106,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-		String tabText = newValue.getText();
+		String keyword = this.text, tabText = newValue.getText();
 		if ("单曲".equals(tabText)) {
 			if (!songUpdatable) {
 				view.updatePagination(songPage);
@@ -115,11 +114,14 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			}
 			spinner.centerTo(view);
 			songUpdatable = false;
-			Map<Object, Object> properties = view.getTableView().getProperties();
+			// Map<Object, Object> properties = view.getTableView().getProperties();
 			Task.async(() -> {
-				List<Music> list = netSource.songSearch(text, songPage, properties);
+				List<Singer> singerList = netSource.singerSearch(keyword);
+				Singer singer = singerList == null || singerList.isEmpty() ? null : singerList.get(0);
+
+				List<Music> list = netSource.songSearch(keyword, songPage, null);
 				Platform.runLater(() -> {
-					view.updateSong(list, songPage, (Singer) properties.get("callback-singer"));
+					view.updateSong(list, songPage, singer);
 					spinner.close();
 				});
 				musicService.save(list);
@@ -133,7 +135,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			specialUpdatable = false;
 			Task.async(() -> {
-				List<Special> list = netSource.specialSearch(text, specialPage);
+				List<Special> list = netSource.specialSearch(keyword, specialPage);
 				specialService.save(list);
 				specialService.handlePictures(list);
 				Platform.runLater(() -> {
@@ -150,7 +152,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			mvUpdatable = false;
 			Task.async(() -> {
-				List<MV> list = netSource.mvSearch(text, mvPage);
+				List<MV> list = netSource.mvSearch(keyword, mvPage);
 				// 批量保存MV信息
 				mvService.save(list);
 				// 批量保存MV图片
