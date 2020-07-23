@@ -17,10 +17,12 @@ import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
 import com.scmq.view.control.TabPane;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,20 +38,32 @@ import java.util.Objects;
  */
 @Controller
 public class SearchMusicController implements ChangeListener<Tab> {
+	/** 音乐业务 */
 	@Autowired
 	private MusicService musicService;
+	/** 歌单业务 */
 	@Autowired
 	private SpecialService specialService;
+	/** MV业务 */
 	@Autowired
 	private MVService mvService;
 
+	/** 搜索模块视图 */
 	private NetSearchView view;
+	/** 进度旋转器 */
 	private Spinner spinner;
-	private String text;
 
+	/** 歌曲、歌单、MV更新标记 */
 	private boolean songUpdatable, specialUpdatable, mvUpdatable;
+	/** 歌曲、歌单、MV分页对象 */
 	private Page songPage = new Page(), specialPage = new Page(), mvPage = new Page();
+	/** 网络音乐平台 */
 	public static NetSource netSource;
+
+	/** 搜索关键词 */
+	private String text;
+	/** 搜索匹配的歌手 */
+	private Singer singer;
 
 	public SearchMusicController() {
 	}
@@ -121,7 +135,10 @@ public class SearchMusicController implements ChangeListener<Tab> {
 
 				List<Music> list = netSource.songSearch(keyword, songPage, null);
 				Platform.runLater(() -> {
-					view.updateSong(list, songPage, singer);
+					view.updateSong(list, songPage, this.singer = singer);
+					if (view.getSingerImageView() != null && view.getSingerImageView().getOnMouseClicked() == null) {
+						bind();
+					}
 					spinner.close();
 				});
 				musicService.save(list);
@@ -181,4 +198,30 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			Main.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
+
+	@Autowired
+	private SingerController singerController;
+
+	private void bind() {
+		ImageView imageView = view.getSingerImageView();
+		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+		ObjectProperty<Tab> property = tabPane.tabProperty();
+
+		imageView.setOnMouseClicked(e -> {
+			Tab tab = property.get();
+			if (tab == null) {
+				tab = tabPane.getTabs().get(0);
+				property.set(tab);
+			}
+			Node oldView = tab.getContent();
+			singerController.show(singer, netSource, property);
+
+			Node back = Main.getRoot().lookup("#top-pane #back");
+			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
+			back.setOnMouseClicked(event -> {
+				property.get().setContent(oldView);
+				back.setOnMouseClicked(oldHandler);
+			});
+		});
+	}
 }

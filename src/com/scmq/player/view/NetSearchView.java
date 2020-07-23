@@ -326,4 +326,8 @@ public class NetSearchView extends AnchorPane {
 	public TabPane getTabPane() {
 		return tabPane;
 	}
+
+	public ImageView getSingerImageView() {
+		return singerImageView;
+	}
 }
