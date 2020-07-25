@@ -17,16 +17,12 @@ public class IOUtil {
 	 * @return 若写入成功则返回true, 否则返回false
 	 */
 	public static boolean write(byte[] buff, File dest) {
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest);
+		try (FileOutputStream out = new FileOutputStream(dest)) {
 			out.write(buff);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			close(out);
 		}
 	}
 
@@ -34,12 +30,10 @@ public class IOUtil {
 		if (stream == null) {
 			return false;
 		}
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest);
-			byte[] buff = new byte[1024 * 1024];
+		try (FileOutputStream out = new FileOutputStream(dest)) {
 			int length;
-			for (; (length = stream.read(buff)) != -1;) {
+			byte[] buff = new byte[1048576];// 1048576 = 1024 * 1024
+			while ((length = stream.read(buff)) != -1) {
 				out.write(buff, 0, length);
 			}
 			return true;
@@ -49,7 +43,6 @@ public class IOUtil {
 		} finally {
 			// 不论前面是否有return语句,这里始终得以执行
 			close(stream);
-			close(out);
 		}
 	}
 
