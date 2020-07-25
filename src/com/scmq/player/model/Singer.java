@@ -1,5 +1,7 @@
 package com.scmq.player.model;
 
+import java.util.Objects;
+
 /**
  * 歌手信息
  *
@@ -224,4 +226,27 @@ public class Singer {
     public String toString() {
         return "Singer [name=" + name + ", mid=" + mid + ", cover=" + cover + ", introduce=" + introduce + ", songNum=" + songNum + "]";
     }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof Singer) {
+			Singer other = (Singer) o;
+			String platform1 = getPlatform(), platform2 = getPlatform();
+			if (!Objects.equals(platform1, platform2)) {
+				return false;
+			}
+			String key = platform1 == null ? getName() : getMid();
+			return Objects.equals(key, platform1 == null ? getName() : getMid());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		String key = getPlatform() == null ? getName() : getMid();
+		return key == null ? 0 : 31 + key.hashCode();
+	}
 }
