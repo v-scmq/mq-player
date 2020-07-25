@@ -242,7 +242,7 @@ public class SingerController implements ChangeListener<Tab> {
 	 * @return 若歌手信息为空,则返回true
 	 */
 	private boolean isEmptyInfo(Singer singer) {
-		return singer.getSongNum() == null || singer.getAlbumNum() == null || singer.getMvNum() == null
-				|| StringUtil.isEmpty(singer.getFollowNum()) || StringUtil.isEmpty(singer.getIntroduce());
+		return singer.getSongCount() == null || singer.getAlbumCount() == null || singer.getMvCount() == null
+				|| StringUtil.isEmpty(singer.getFansCount()) || StringUtil.isEmpty(singer.getIntroduce());
 	}
 }
