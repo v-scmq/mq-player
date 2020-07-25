@@ -21,7 +21,18 @@ import java.util.List;
  */
 @Service("singerService")
 public class SingerService {
-    @Autowired private SingerDao dao;
+	/** 歌手数据访问、操作对象 */
+	@Autowired
+	private SingerDao dao;
+
+    /**
+     * 查询所有歌手信息
+     *
+     * @return 歌手信息列表集合
+     */
+    public List<Singer> findAll() {
+        return dao.findAll();
+    }
 
     /**
      * 通过歌手信息,来查找对应的歌手id.
@@ -34,15 +45,6 @@ public class SingerService {
     }
 
     /**
-     * 查询所有歌手信息
-     *
-     * @return 歌手信息列表集合
-     */
-    public List<Singer> findAll() {
-        return dao.findAll();
-    }
-
-    /**
      * 通过id查询歌手信息
      *
      * @return 歌手信息
@@ -50,6 +52,17 @@ public class SingerService {
     public Singer findSingerById(Integer id) {
         return dao.findSingerById(id);
     }
+
+    /**
+     * 通过歌手名精确查找指定音乐平台的歌手信息
+     *
+     * @param name 歌手名
+     * @param platformId 音乐平台id(若为null,则为本地音乐平台的歌手数据)
+     * @return 歌手信息
+     */
+	public Singer findSingerByName(String name, String platformId) {
+		return StringUtil.isEmpty(name) ? null : dao.findSingerByName(name, platformId);
+	}
 
     /**
      * 批量保存歌手信息
@@ -124,7 +137,10 @@ public class SingerService {
      *
      * @param list 歌手信息List集合
      */
-    public void handlePictures(List<Singer> list) {
+	public void handlePictures(List<Singer> list) {
+		if (list == null || list.isEmpty()) {
+			return;
+		}
         HttpClient client = HttpClient.createClient(null).removeAcceptHeader();
         // 默认歌手图片地址(程序内部)
         String uri = null;
@@ -155,5 +171,38 @@ public class SingerService {
             }
         }
         client.close();
+    }
+
+    /**
+     * 处理歌手图片
+     * @param singer 歌手信息
+     */
+    public void handlePicture(Singer singer){
+        String platform = singer.getPlatform(), cover = singer.getCover();
+        File file = FileUtil.toFile(singer.getMid(), "jpg", "picture\\singer", platform);
+        // 若歌手图片文件存在
+        if (file.isFile()) {
+            // 设置歌手图片地址
+            singer.setCover(file.toURI().toString());
+			return;
+        }
+        // 若没有歌手图片地址
+        if (StringUtil.isEmpty(cover)) {
+            singer.setCover( FileUtil.getImageURI("_singer") );
+            return;
+        }
+		HttpClient client = HttpClient.createClient(null).removeAcceptHeader();
+        // 是否写入到本地文件
+        boolean write = IOUtil.write(client.get(cover).openStream(), file);
+        // 重置client
+		client.close();
+        // 若没保存成功删除文件
+        if (write) {
+            singer.setCover(file.toURI().toString());
+        } else {
+            singer.setCover( FileUtil.getImageURI("_singer"));
+            file.delete();
+        }
+
     }
 }

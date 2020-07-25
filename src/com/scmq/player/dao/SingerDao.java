@@ -12,6 +12,13 @@ import java.util.List;
  */
 public interface SingerDao {
     /**
+     * 查询所有歌手信息
+     *
+     * @return 歌手信息列表集合
+     */
+    List<Singer> findAll();
+
+    /**
      * 通过歌手名称和可选的平台id,来查找对应的歌手id.总是返回查询结果的第一个
      *
      * @param singer 歌手信息
@@ -20,18 +27,20 @@ public interface SingerDao {
     Integer findIdByInfo(@Param("singer") Singer singer);
 
     /**
-     * 查询所有歌手信息
-     *
-     * @return 歌手信息列表集合
-     */
-    List<Singer> findAll();
-
-    /**
      * 通过id查询歌手信息
      *
      * @return 歌手信息
      */
     Singer findSingerById(@Param("id") Integer id);
+
+	/**
+	 * 通过歌手名精确查找指定音乐平台的歌手信息
+	 *
+	 * @param name 歌手名
+	 * @param platformId 音乐平台id(若为null,则为本地音乐平台的歌手数据)
+	 * @return 歌手信息
+	 */
+	Singer findSingerByName(@Param("name") String name, @Param("platform") String platformId);
 
     /**
      * 保存单个歌手信息

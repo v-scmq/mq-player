@@ -11,6 +11,11 @@
         <result property="platform" column="platform"/>
     </resultMap>
 
+    <!--查询所有歌手信息-->
+    <select id="findAll" resultMap="singerMap">
+        SELECT id,name,cover,introduce,song_num,mid,platform FROM singer
+    </select>
+
     <!-- 通过歌手名称和可选的平台id,来查找对应的歌手id.总是返回查询结果的第一个 -->
     <select id="findIdByInfo" resultType="java.lang.Integer">
         SELECT id FROM singer WHERE platform
@@ -18,17 +23,22 @@
             <when test="singer.platform==null">IS NULL AND name=#{singer.name}</when>
             <otherwise>=#{singer.platform} AND mid=#{singer.mid}</otherwise>
         </choose>
-        LIMIT 0,1;
-    </select>
-
-    <!--查询所有歌手信息-->
-    <select id="findAll" resultMap="singerMap">
-        SELECT id,name,cover,introduce,song_num,mid,platform FROM singer
+        LIMIT 0,1
     </select>
 
     <!--通过id查询歌手信息-->
     <select id="findSingerById" resultMap="singerMap">
         SELECT id,name,cover,introduce,song_num,mid,platform FROM singer WHERE id=#{id}
+    </select>
+
+    <!-- 通过歌手名精确查找指定音乐平台的歌手信息 -->
+    <select id="findSingerByName" resultMap="singerMap">
+        SELECT id,name,cover,introduce,song_num,mid,platform FROM singer WHERE name=#{name} AND platform
+        <choose>
+            <when test="platform==null">IS NULL</when>
+            <otherwise>=#{platform}</otherwise>
+        </choose>
+        LIMIT 0,1
     </select>
 
     <!-- 保存单个歌手信息 -->
