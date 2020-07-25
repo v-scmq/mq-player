@@ -19,13 +19,13 @@ public class Singer {
     /** 歌手介绍 */
     private String introduce;
     /** 歌手包含的歌曲数量 */
-    private Integer songNum;
+    private Integer songCount;
     /** 歌手包含的专辑数量 */
-    private Integer albumNum;
+    private Integer albumCount;
     /** 歌手包含的MV数量 */
-    private Integer mvNum;
+    private Integer mvCount;
     /** 歌手关注(粉丝)量 */
-    private String followNum;
+    private String fansCount;
     /** 歌手所属音乐平台(如“酷狗音乐”) */
     private String platform;
 
@@ -137,17 +137,17 @@ public class Singer {
      *
      * @return 歌曲数量
      */
-    public Integer getSongNum() {
-        return songNum;
+    public Integer getSongCount() {
+        return songCount;
     }
 
     /**
      * 设置歌手的歌曲数量
      *
-     * @param songNum 歌曲数量
+     * @param songCount 歌曲数量
      */
-    public void setSongNum(Integer songNum) {
-        this.songNum = songNum;
+    public void setSongCount(Integer songCount) {
+        this.songCount = songCount;
     }
 
     /**
@@ -155,17 +155,17 @@ public class Singer {
      *
      * @return 专辑数量
      */
-    public Integer getAlbumNum() {
-        return albumNum;
+    public Integer getAlbumCount() {
+        return albumCount;
     }
 
     /**
      * 设置专辑数量
      *
-     * @param albumNum 专辑数量
+     * @param albumCount 专辑数量
      */
-    public void setAlbumNum(Integer albumNum) {
-        this.albumNum = albumNum;
+    public void setAlbumCount(Integer albumCount) {
+        this.albumCount = albumCount;
     }
 
     /**
@@ -173,17 +173,17 @@ public class Singer {
      *
      * @return MV数量
      */
-    public Integer getMvNum() {
-        return mvNum;
+    public Integer getMvCount() {
+        return mvCount;
     }
 
     /**
      * 设置MV数量
      *
-     * @param mvNum MV数量
+     * @param mvCount MV数量
      */
-    public void setMvNum(Integer mvNum) {
-        this.mvNum = mvNum;
+    public void setMvCount(Integer mvCount) {
+        this.mvCount = mvCount;
     }
 
     /**
@@ -191,17 +191,17 @@ public class Singer {
      *
      * @return 关注量/粉丝数量
      */
-    public String getFollowNum() {
-        return followNum;
+    public String getFansCount() {
+        return fansCount;
     }
 
     /**
      * 设置歌手关注量
      *
-     * @param followNum 关注(粉丝 )量
+     * @param fansCount 关注(粉丝 )量
      */
-    public void setFollowNum(String followNum) {
-        this.followNum = followNum;
+    public void setFansCount(String fansCount) {
+        this.fansCount = fansCount;
     }
 
     /**
@@ -222,10 +222,13 @@ public class Singer {
         this.platform = platform;
     }
 
-    @Override
-    public String toString() {
-        return "Singer [name=" + name + ", mid=" + mid + ", cover=" + cover + ", introduce=" + introduce + ", songNum=" + songNum + "]";
-    }
+
+	@Override
+	public String toString() {
+		return "Singer{" + "id=" + id + ", name='" + name + '\'' + ", mid='" + mid + '\'' + ", cover='" + cover + '\''
+				+ ", introduce='" + introduce + '\'' + ", songCount=" + songCount + ", albumCount=" + albumCount
+				+ ", mvCount=" + mvCount + ", fansCount='" + fansCount + '\'' + ", platform='" + platform + '\'' + '}';
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -239,7 +242,7 @@ public class Singer {
 				return false;
 			}
 			String key = platform1 == null ? getName() : getMid();
-			return Objects.equals(key, platform1 == null ? getName() : getMid());
+			return Objects.equals(key, platform1 == null ? other.getName() : other.getMid());
 		}
 		return false;
 	}
