@@ -16,35 +16,30 @@
 
     <!--通过id查询播放列表 -->
     <select id="findPlayListById" resultMap="playListMap">
-        SELECT li.id li_id,li.sort,li.create_time,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,a.id a_id,a.name a_name,
-        a.mid a_mid,a.platform a_platform,m.id m_id,m.title m_title,m.year m_year,m.duration m_duration,m.size m_size,
-        m.file_name m_file_name,m.path m_path,m.format m_format,m.mid m_mid,m.vid m_vid,m.platform m_platform FROM play_list li
-        LEFT JOIN play_media_item item ON li.id=item.play_list_id LEFT JOIN media m ON item.media_id=m.id LEFT JOIN singer s ON
-        m.singer_id=s.id LEFT JOIN album a ON m.album_id=a.id WHERE li.id=#{id} AND format IN
-        <foreach collection="mediaTypes" item="type" open="(" close=")" separator=",">
-            #{type.format}
-        </foreach>
+        SELECT li.id li_id, li.sort, li.create_time, s.id s_id, s.name s_name, s.mid s_mid, s.platform s_platform, a.id a_id,
+               a.name a_name, a.mid a_mid, a.platform a_platform, m.id m_id, m.title m_title, m.year m_year, m.duration m_duration,
+               m.size m_size, m.file_name m_file_name, m.path m_path, m.format m_format, m.mid m_mid, m.vid m_vid, m.platform m_platform
+        FROM play_list li LEFT JOIN play_media_item item ON li.id=item.play_list_id LEFT JOIN media m ON item.media_id=m.id
+            LEFT JOIN singer s ON m.singer_id=s.id LEFT JOIN album a ON m.album_id=a.id WHERE li.id=#{id} AND format IN
+        <foreach collection="mediaTypes" item="type" open="(" close=")" separator=",">#{type.format}</foreach>
     </select>
 
     <!--保存播放列表到数据库 -->
     <insert id="savePlayList" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
-		INSERT INTO play_list(sort,create_time) VALUES(#{playList.sort.code},#{playList.createTime})
+		INSERT INTO play_list(sort, create_time) VALUES (#{playList.sort.code}, #{playList.createTime})
 	</insert>
 
     <!--批量保存播放队列列表id和和音乐id到播放队列列表与媒体表的中间表local_media_item -->
     <insert id="savePlayMediaItem">
-        INSERT INTO play_media_item(media_id,play_list_id) VALUES
-        <foreach collection="list" item="music" separator=",">(#{music.id},#{id})</foreach>
+        INSERT INTO play_media_item(media_id, play_list_id) VALUES
+        <foreach collection="list" item="music" separator=",">(#{music.id}, #{id})</foreach>
     </insert>
 
     <!--批量删除播放列表媒体项 -->
     <delete id="deletePlayMediaItem">
         DELETE FROM play_media_item
         <if test="mediaIds.length!=0">
-            WHERE media_id IN
-            <foreach collection="mediaIds" item="mediaId" open="(" separator="," close=")" >
-                #{mediaId}
-            </foreach>
+            WHERE media_id IN <foreach collection="mediaIds" item="mediaId" open="(" separator="," close=")">#{mediaId}</foreach>
         </if>
     </delete>
 </mapper>

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.scmq.player.dao.MVDao">
-    <!--视频信息所用到的所有列(除主键id) -->
-    <sql id="mvColumns">
-		path,duration,format,size,cover,quality,file_name,channels,audio_bit_rate,mid,platform
-	</sql>
     <!--MV类映射 -->
     <resultMap type="com.scmq.player.model.MV" id="mvMap">
         <id property="id" column="m_id"/>
@@ -27,17 +23,17 @@
     </resultMap>
     <!--查询所有MV -->
     <select id="findAll" resultMap="mvMap" parameterType="java.util.List">
-        SELECT id, <include refid="mvColumns" /> FROM media WHERE format IN
+        SELECT id, title, singer_id, size, duration, file_name, path, cover, format, channels, vid, platform
+        FROM media WHERE format IN
         <foreach collection="mediaTypes" item="type" open="(" separator="," close=")">#{type.format}</foreach>
     </select>
 
     <!--批量保存视频信息; 注意values部分循环开头必须由'('包含,每个循环分割字符串为")," 最后循环完成由')'字符闭合 -->
     <insert id="save" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO media(<include refid="mvColumns"/>)VALUES
-        <foreach collection="mvList" item="mv" separator=")," close=")">
-            (#{mv.path},#{mv.duration},#{mv.format},#{mv.size},#{mv.cover},#{mv.quality},
-            #{mv.fileName},#{mv.channels},#{mv.title},#{mv.artist},#{mv.album},#{mv.year},
-            #{mv.bitRate},#{mv.sampleRate}
+        INSERT INTO media(title, singer_id, size, duration, file_name, path, cover, format, vid, platform)VALUES
+        <foreach collection="mvList" item="mv" separator="," close=")">
+            (#{mv.title}, #{mv.singer.id}, #{mv.size}, #{mv.duration}, #{mv.fileName}, #{mv.path}, #{mv.cover},
+             #{mv.format}, #{mv.vid}, #{mv.platform})
         </foreach>
     </insert>
 </mapper>

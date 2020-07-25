@@ -34,11 +34,10 @@
     </resultMap>
 
     <!--查询所有音乐 -->
-    <select id="findAll" resultMap="musicMap" parameterType="java.util.List">
-        SELECT id m_id,m.title m_title,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform,a.id a_id,a.name a_name,a.mid a_mid,
-        a.platform a_platform,m.year m_year,m.duration m_duration,m.size m_size,m.file_name m_file_name,m.path m_path,m.format m_format,
-        m.channels m_channels,m.quality m_quality,m.sample_rate m_sample_reate,m.audio_bit_rate m_audio_bit_rate,m.genre m_genre,
-        m.mid m_mid,m.vid m_vid,m.platform m_platform FROM media WHERE format IN
+    <select id="findAll" resultMap="musicMap">
+        SELECT id, title, singer_id, album_id, year, size, duration, file_name, path, format, channels,
+               quality, sample_rate, audio_bit_rate, genre, mid, vid, platform
+        FROM media WHERE format IN
         <foreach collection="mediaTypes" item="type" open="(" separator="," close=")">#{type.format}</foreach>
     </select>
 
@@ -54,8 +53,8 @@
 
     <!--批量保存音乐信息; 注意values部分循环开头必须由'('包含,每个循环分割字符串为")," 最后循环完成由')'字符闭合 -->
     <insert id="save" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO media(title,singer_id,album_id,year,duration,size,file_name,path,format,
-        channels,quality,sample_rate,audio_bit_rate,genre,mid,vid,platform)VALUES
+        INSERT INTO media(title, singer_id, album_id, year, duration, size, file_name, path, format,
+        channels, quality, sample_rate, audio_bit_rate, genre, mid, vid, platform) VALUES
         <foreach collection="musics" item="music" separator=",">
             (#{music.title},
             <choose>

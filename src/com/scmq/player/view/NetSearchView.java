@@ -188,13 +188,13 @@ public class NetSearchView extends AnchorPane {
 		// 设置歌手名称
 		nameLabel.setText(StringUtil.isEmpty(singer.getName()) ? "-" : singer.getName());
 		// 设置歌曲数量
-		songNumLabel.setText(singer.getSongNum() == null ? "-" : singer.getSongNum().toString());
+		songNumLabel.setText(singer.getSongCount() == null ? "-" : singer.getSongCount().toString());
 		// 设置专辑数量
-		albumNumLabel.setText(singer.getAlbumNum() == null ? "-" : singer.getAlbumNum().toString());
+		albumNumLabel.setText(singer.getAlbumCount() == null ? "-" : singer.getAlbumCount().toString());
 		// 设置MV数量
-		mvNumLabel.setText(singer.getMvNum() == null ? "-" : singer.getMvNum().toString());
+		mvNumLabel.setText(singer.getMvCount() == null ? "-" : singer.getMvCount().toString());
 		// 设置粉丝数量
-		followNumLabel.setText(StringUtil.isEmpty(singer.getFollowNum()) ? "-" : singer.getFollowNum());
+		followNumLabel.setText(StringUtil.isEmpty(singer.getFansCount()) ? "-" : singer.getFansCount());
 	}
 
 	/**

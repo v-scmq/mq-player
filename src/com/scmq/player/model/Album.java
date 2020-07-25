@@ -21,7 +21,7 @@ public class Album {
 	/** 发行时间 */
 	private String year;
 	/** 专辑所包含的歌曲总数 */
-	private Integer songNum;
+	private Integer songCount;
 	/** 专辑所属音乐平台 */
 	private String platform;
 
@@ -129,12 +129,12 @@ public class Album {
 		this.year = year;
 	}
 
-	public Integer getSongNum() {
-		return songNum;
+	public Integer getSongCount() {
+		return songCount;
 	}
 
-	public void setSongNum(Integer songNum) {
-		this.songNum = songNum;
+	public void setSongCount(Integer songCount) {
+		this.songCount = songCount;
 	}
 
 	public String getPlatform() {
@@ -148,6 +148,6 @@ public class Album {
 	@Override
 	public String toString() {
 		return "Album [name=" + name + ", mid=" + mid + ", cover=" + cover + ", singerName=" + singer + ", introduce="
-				+ introduce + ", year=" + year + ", songNum=" + songNum + "]";
+				+ introduce + ", year=" + year + ", songNum=" + songCount + "]";
 	}
 }

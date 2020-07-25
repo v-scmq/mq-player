@@ -109,11 +109,14 @@ CREATE TABLE "local_media_item"
 CREATE TABLE "singer"
 (
     "id"        INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, -- 歌手ID
+    "mid"       TEXT, -- 歌手MID
     "name"      TEXT, -- 歌手名称
     "cover"     TEXT, -- 歌手封面URI
     "introduce" TEXT, -- 歌手简介
-    "song_num"  INTEGER, -- 歌曲数量
-    "mid"       TEXT, -- 歌手MID
+    "song_count"  INTEGER, -- 歌曲数量
+    "album_count" INTEGER, -- 专辑数量
+    "mv_count"    INTEGER, -- MV数量
+    "fans_count"  INTEGER, -- 粉丝数量
     "platform"  TEXT -- 所属音乐平台(本地音乐为NULL)
 );
 
@@ -121,13 +124,13 @@ CREATE TABLE "singer"
 CREATE TABLE "album"
 (
     "id"        INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, -- 专辑ID
+    "mid"       TEXT, -- 专辑MID
     "singer_id" INTEGER, -- 歌手ID
     "name"      TEXT, -- 专辑名称
     "cover"     TEXT, -- 专辑封面URI
-    "introduce" TEXT, -- 专辑简介
     "year"      TEXT, -- 专辑发布年份
-    "song_num"  INTEGER, -- 歌曲数量
-    "mid"       TEXT, -- 专辑MID
+    "introduce" TEXT, -- 专辑简介
+    "song_count"  INTEGER, -- 歌曲数量
     "platform"  TEXT, -- 所属音乐平台(本地音乐为NULL)
     CONSTRAINT "album_singer_id" FOREIGN KEY ("singer_id") REFERENCES "singer" ("id")
 );

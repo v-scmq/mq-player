@@ -7,7 +7,7 @@
         <result property="cover" column="a_cover"/>
         <result property="introduce" column="a_introduce"/>
         <result property="year" column="a_year"/>
-        <result property="songNum" column="a_song_num"/>
+        <result property="songCount" column="a_song_count"/>
         <result property="mid" column="a_mid"/>
         <result property="platform" column="a_platform"/>
         <association property="singer" javaType="com.scmq.player.model.Singer">
@@ -30,35 +30,37 @@
 
     <!--查询所有专辑信息-->
     <select id="findAll" resultMap="albumMap">
-        SELECT a.id a_id,a.name a_name,a.cover a_conver,a.introduce a_introduce,a.year a_year,a.song_num a_song_num,
-        a.mid a_mid,a.platform a_platform,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform FROM album a LEFT JOIN singer s on a.singer_id = s.id
+        SELECT a.id a_id, a.mid a_mid, a.name a_name, a.cover a_conver, a.introduce a_introduce, a.year a_year ,
+               a.song_count a_song_count,  a.platform a_platform, s.id s_id, s.name s_name, s.mid s_mid, s.platform s_platform
+        FROM album a LEFT JOIN singer s on a.singer_id = s.id
     </select>
 
     <select id="findAlbumById" resultMap="albumMap">
-        SELECT a.id a_id,a.name a_name,a.cover a_conver,a.introduce a_introduce,a.year a_year,a.song_num a_song_num,
-        a.mid a_mid,a.platform a_platform,s.id s_id,s.name s_name,s.mid s_mid,s.platform s_platform FROM album a LEFT JOIN singer s on a.singer_id = s.id WHERE a.id=#{id}
+        SELECT a.id a_id, a.name a_name, a.cover a_conver, a.introduce a_introduce, a.year a_year, a.song_count a_song_count,
+               a.mid a_mid, a.platform a_platform, s.id s_id, s.name s_name, s.mid s_mid, s.platform s_platform
+        FROM album a LEFT JOIN singer s on a.singer_id = s.id WHERE a.id=#{id}
     </select>
 
     <!-- 保存单个专辑信息 -->
     <insert id="saveOfSingle" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO album(singer_id, name, cover, introduce, year, song_num, mid, platform) VALUES(
+        INSERT INTO album(singer_id, name, cover, introduce, year, song_count, mid, platform) VALUES(
         <choose>
             <when test="album.singer!=null">#{album.singer.id}</when>
             <otherwise>NULL</otherwise>
         </choose>
-        ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songNum},#{album.mid},#{album.platform})
+        ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songCount},#{album.mid},#{album.platform})
     </insert>
 
     <!-- 批量保存专辑信息 -->
     <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO album(singer_id, name, cover, introduce, year, song_num, mid, platform) VALUES
+        INSERT INTO album(singer_id, name, cover, introduce, year, song_count, mid, platform) VALUES
         <foreach collection="albums" item="album" separator=",">
             (
             <choose>
                 <when test="album.singer!=null">#{album.singer.id}</when>
                 <otherwise>NULL</otherwise>
             </choose>
-            ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songNum},#{album.mid},#{album.platform})
+            ,#{album.name},#{album.cover},#{album.introduce},#{album.year},#{album.songCount},#{album.mid},#{album.platform})
         </foreach>
     </insert>
 
@@ -69,7 +71,7 @@
             <if test="album.name !=null">name=#{album.name}</if>
             <if test="album.cover !=null">cover=#{album.cover}</if>
             <if test="album.introduce !=null">introduce=#{album.introduce}</if>
-            <if test="album.song_num !=null">song_num=#{album.songNum}</if>
+            <if test="album.songCount !=null">song_count=#{album.songCount}</if>
             <if test="album.mid !=null">mid=#{album.mid}</if>
             <if test="album.platform">platform=#{album.platform}</if>
         </set>
