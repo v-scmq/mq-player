@@ -239,14 +239,14 @@ public class NetSearchView extends AnchorPane {
 		if (!specialNodes.isEmpty()) {
 			specialNodes.clear();
 		}
-		int size = 200, xYR = size >> 1;
+		int size = 200, circle = size >> 1;
 		for (Special special : specials) {
 			ImageView imageView = new ImageView(new Image(special.getCover(), true));
 			imageView.setFitWidth(size);
 			imageView.setFitHeight(size);
 			imageView.setPickOnBounds(true);
 			imageView.getStyleClass().add("image-icon");
-			imageView.setClip(new Circle(xYR, xYR, xYR));
+			imageView.setClip(new Circle(circle, circle, circle));
 			Label label = new Label(special.getName());
 			VBox box = new VBox(imageView, label);
 			box.setPrefSize(300, size + 20);

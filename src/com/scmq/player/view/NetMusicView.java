@@ -207,7 +207,7 @@ public class NetMusicView extends TabPane {
 		if (!singerNodes.isEmpty()) {
 			singerNodes.clear();
 		}
-		int size = 200, xYR = size >> 1;
+		int size = 200, circle = size >> 1;
 		for (Singer singer : singers) {
 			// 让Image异步加载，否则将阻塞UI线程
 			ImageView imageView = new ImageView(new Image(singer.getCover(), true));
@@ -217,7 +217,7 @@ public class NetMusicView extends TabPane {
 			imageView.setPickOnBounds(true);
 			imageView.setOnMouseClicked(handler);
 			imageView.getStyleClass().add("image-icon");
-			imageView.setClip(new Circle(xYR, xYR, xYR));
+			imageView.setClip(new Circle(circle, circle, circle));
 			Label label = new Label(singer.getName());
 			label.getStyleClass().add("singer-name");
 			VBox box = new VBox(imageView, label);
@@ -239,14 +239,14 @@ public class NetMusicView extends TabPane {
 		if (!specialNodes.isEmpty()) {
 			specialNodes.clear();
 		}
-		int size = 200, xYR = size >> 1;
+		int size = 200, circle = size >> 1;
 		for (Special special : specials) {
 			ImageView imageView = new ImageView(new Image(special.getCover(), true));
 			imageView.setFitWidth(size);
 			imageView.setFitHeight(size);
 			imageView.setPickOnBounds(true);
 			imageView.getStyleClass().add("image-icon");
-			imageView.setClip(new Circle(xYR, xYR, xYR));
+			imageView.setClip(new Circle(circle, circle, circle));
 			Label label = new Label(special.getName());
 			VBox box = new VBox(imageView, label);
 			box.setPrefSize(300, size + 20);
@@ -300,8 +300,8 @@ public class NetMusicView extends TabPane {
 		Tab tab = tabProperty().get();
 		String tabText = tab.getText();
 
-		Node node = "歌手" == tabText ? singerScrollPane : "歌单" == tabText ? //
-				specialScrollPane : "MV" == tabText ? mvScrollPane : tableView;
+		Node node = "歌手".equals(tabText) ? singerScrollPane : "歌单".equals(tabText) ? //
+				specialScrollPane : "MV".equals(tabText) ? mvScrollPane : tableView;
 		// 重设分页组件在布局面板中的右约束
 		AnchorPane.setRightAnchor(pagination, node == tableView ? 202.0 : 0.0);
 

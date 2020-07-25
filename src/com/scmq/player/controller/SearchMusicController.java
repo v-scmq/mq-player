@@ -10,6 +10,7 @@ import com.scmq.player.model.Special;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
+import com.scmq.player.service.SingerService;
 import com.scmq.player.service.SpecialService;
 import com.scmq.player.util.Task;
 import com.scmq.player.view.NetSearchView;
@@ -38,15 +39,22 @@ import java.util.Objects;
  */
 @Controller
 public class SearchMusicController implements ChangeListener<Tab> {
+	/** MV业务 */
+	@Autowired
+	private MVService mvService;
 	/** 音乐业务 */
 	@Autowired
 	private MusicService musicService;
 	/** 歌单业务 */
 	@Autowired
 	private SpecialService specialService;
-	/** MV业务 */
+	/** 歌手业务 */
 	@Autowired
-	private MVService mvService;
+	private SingerService singerService;
+
+	/** 歌手模块控制器 */
+	@Autowired
+	private SingerController singerController;
 
 	/** 搜索模块视图 */
 	private NetSearchView view;
@@ -68,7 +76,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 	public SearchMusicController() {
 	}
 
-	public void show(String text, TabPane mainTabPane) {
+	void show(String text, TabPane mainTabPane) {
 		if (view == null) {
 			view = new NetSearchView();
 			spinner = new Spinner();
@@ -128,14 +136,26 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			}
 			spinner.centerTo(view);
 			songUpdatable = false;
-			// Map<Object, Object> properties = view.getTableView().getProperties();
-			Task.async(() -> {
-				List<Singer> singerList = netSource.singerSearch(keyword);
-				Singer singer = singerList == null || singerList.isEmpty() ? null : singerList.get(0);
 
+			Task.async(() -> {
+				// 先从本地数据库查找
+				Singer singer = singerService.findSingerByName(keyword, netSource.platformId());
+				if (singer == null) {
+					// 若未找到歌手信息,则从网络平台上查找
+					List<Singer> singerList = netSource.singerSearch(keyword);
+					// 缓存歌手数据到数据库
+					singerService.save(singerList);
+					// 缓存歌手图片到本地磁盘
+					singerService.handlePictures(singerList);
+					singer = singerList == null || singerList.isEmpty() ? null : singerList.get(0);
+				} else {
+					singerService.handlePicture(singer);
+				}
+
+				final Singer entity = singer;
 				List<Music> list = netSource.songSearch(keyword, songPage, null);
 				Platform.runLater(() -> {
-					view.updateSong(list, songPage, this.singer = singer);
+					view.updateSong(list, songPage, this.singer = entity);
 					if (view.getSingerImageView() != null && view.getSingerImageView().getOnMouseClicked() == null) {
 						bind();
 					}
@@ -199,12 +219,10 @@ public class SearchMusicController implements ChangeListener<Tab> {
 		}
 	};
 
-	@Autowired
-	private SingerController singerController;
-
 	private void bind() {
 		ImageView imageView = view.getSingerImageView();
 		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+		Node back = Main.getRoot().lookup("#top-pane #back");
 		ObjectProperty<Tab> property = tabPane.tabProperty();
 
 		imageView.setOnMouseClicked(e -> {
@@ -216,7 +234,6 @@ public class SearchMusicController implements ChangeListener<Tab> {
 			Node oldView = tab.getContent();
 			singerController.show(singer, netSource, property);
 
-			Node back = Main.getRoot().lookup("#top-pane #back");
 			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
 			back.setOnMouseClicked(event -> {
 				property.get().setContent(oldView);

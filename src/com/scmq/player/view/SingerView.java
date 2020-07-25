@@ -230,7 +230,7 @@ public class SingerView extends AnchorPane {
 		if (!albumNodes.isEmpty()) {
 			albumNodes.clear();
 		}
-		int size = 200, xYR = size >> 1;
+		int size = 200, circle = size >> 1;
 		for (Album album : list) {
 			// 让Image异步加载，否则将阻塞UI线程
 			ImageView imageView = new ImageView(new Image(album.getCover(), true));
@@ -239,7 +239,7 @@ public class SingerView extends AnchorPane {
 			imageView.setPickOnBounds(true);
 			imageView.setOnMouseClicked(handler);
 			imageView.getStyleClass().add("image-icon");
-			imageView.setClip(new Circle(xYR, xYR, xYR));
+			imageView.setClip(new Circle(circle, circle, circle));
 
 			Label nameLabel = new Label(album.getName());
 			Label publishLabel = new Label(album.getYear());

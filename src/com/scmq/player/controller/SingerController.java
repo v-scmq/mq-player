@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 歌手模块控制器
@@ -112,7 +113,7 @@ public class SingerController implements ChangeListener<Tab> {
 		// 切换到歌手视图
 		tabProperty.get().setContent(view);
 		// 还是同一个歌手,不执行任何操作
-		if (this.singer == singer) {
+		if (Objects.equals(this.singer, singer)) {
 			return;
 		}
 
