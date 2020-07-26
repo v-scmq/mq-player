@@ -1,11 +1,18 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
-import com.scmq.player.model.*;
+import com.scmq.player.model.Album;
+import com.scmq.player.model.MV;
+import com.scmq.player.model.Music;
+import com.scmq.player.model.Page;
+import com.scmq.player.model.PlayList;
+import com.scmq.player.model.Singer;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
+import com.scmq.player.util.NavigationManager;
+import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.StringUtil;
 import com.scmq.player.util.Task;
 import com.scmq.player.view.SingerView;
@@ -13,7 +20,6 @@ import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
 import com.scmq.view.control.TabPane;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -60,6 +66,8 @@ public class SingerController implements ChangeListener<Tab> {
 	/** 歌曲、专辑、MV的分页对象 */
 	private Page songPage = new Page(), albumPage = new Page(), mvPage = new Page();
 
+	private TabPane mainTabPane;
+
 	public SingerController() {
 	}
 
@@ -70,10 +78,8 @@ public class SingerController implements ChangeListener<Tab> {
 	 *            歌手信息对象
 	 * @param netSource
 	 *            网络音乐平台
-	 * @param tabProperty
-	 *            主选项卡属性
 	 */
-	void show(Singer singer, NetSource netSource, ObjectProperty<Tab> tabProperty) {
+	void show(Singer singer, NetSource netSource) {
 		this.netSource = netSource;
 
 		if (view == null) {
@@ -81,8 +87,8 @@ public class SingerController implements ChangeListener<Tab> {
 			// (进度)旋转器
 			spinner = new Spinner();
 			// 添加选项卡切换监听器
-			view.getTabPane().tabProperty().addListener(this);
-
+			view.getTabPane().setTabChangeListener(this);
+			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
@@ -109,9 +115,10 @@ public class SingerController implements ChangeListener<Tab> {
 				}
 			});
 		}
-
+		Tab mainTab = mainTabPane.tabProperty().get();
+		NavigationManager.addToBack(new Navigation(mainTab, mainTab.getContent(), mainTabPane));
 		// 切换到歌手视图
-		tabProperty.get().setContent(view);
+		mainTab.setContent(view);
 		// 还是同一个歌手,不执行任何操作
 		if (Objects.equals(this.singer, singer)) {
 			return;
@@ -144,6 +151,11 @@ public class SingerController implements ChangeListener<Tab> {
 	// 歌手视图中的选项卡选择改变事件回调
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+		if (observable != null && oldValue != null) {
+			// 添加到后退视图列表
+			NavigationManager.addToBack(new Navigation(oldValue, oldValue.getContent(), view.getTabPane()));
+		}
+
 		String tabText = newValue.getText();
 		if ("单曲".equals(tabText)) {
 			if (!songUpdatable) {

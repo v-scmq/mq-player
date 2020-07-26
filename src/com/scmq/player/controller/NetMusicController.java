@@ -16,6 +16,8 @@ import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
 import com.scmq.player.service.SingerService;
 import com.scmq.player.service.SpecialService;
+import com.scmq.player.util.NavigationManager;
+import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.Task;
 import com.scmq.player.view.NetMusicView;
 import com.scmq.view.control.Pagination;
@@ -163,16 +165,16 @@ public class NetMusicController implements ChangeListener<Tab> {
 			// 获取主选项卡面板
 			TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			// 显示歌手内容页面
-			singerController.show(singer, netSource, tabPane.tabProperty());
-			// 获取返回图标节点
-			Node back = Main.getRoot().lookup("#top-pane #back");
-			back.setOnMouseClicked(event -> {
-				Tab tab = tabPane.tabProperty().get();
-				if ("网络乐库".equals(tab.getText())) {
-					tab.setContent(view);
-					back.setOnMouseClicked(null);
-				}
-			});
+			singerController.show(singer, netSource);
+			// // 获取返回图标节点
+			// Node back = Main.getRoot().lookup("#top-pane #back");
+			// back.setOnMouseClicked(event -> {
+			// Tab tab = tabPane.tabProperty().get();
+			// if ("网络乐库".equals(tab.getText())) {
+			// tab.setContent(view);
+			// back.setOnMouseClicked(null);
+			// }
+			// });
 		}
 	};
 
@@ -201,6 +203,12 @@ public class NetMusicController implements ChangeListener<Tab> {
 
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+		if (observable != null && oldValue != null) {
+			// 获得主选项卡
+			// 添加到后退视图列表
+			NavigationManager.addToBack(new Navigation(oldValue, oldValue.getContent(), view));
+		}
+
 		String tabText = newValue.getText();
 		// 切换的“歌手”选项卡
 		if ("歌手".equals(tabText)) {
@@ -279,7 +287,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 		view.getSpecialTagListView().setCellFactory(call);
 
 		// 选项卡切换事件
-		view.tabProperty().addListener(this);
+		view.setTabChangeListener(this);
 
 		// 分页组件,当前页编号改变事件
 		view.getPagination().addListener((observable, oldPage, newPage) -> {

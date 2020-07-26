@@ -8,6 +8,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
@@ -26,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 这个{@link TabPane}类,它充分利用{@link BorderPane}布局面板的特性,即上、右、下、左、中5个部分.<br>
@@ -279,5 +281,36 @@ public class TabPane extends BorderPane {
 			timeLine.getKeyFrames().setAll(kf1, kf2);
 			timeLine.play();
 		};
+	}
+
+	/** 选项卡切换监听器 */
+	private ChangeListener<Tab> tabChangeListener;
+
+	/**
+	 * 设置选项卡切换监听器.
+	 * 
+	 * @param listener
+	 *            选项卡切换事件监听器
+	 */
+	public void setTabChangeListener(ChangeListener<Tab> listener) {
+		ChangeListener<Tab> oldListener = this.tabChangeListener;
+		// 若是同一个监听器,什么也不做
+		if (Objects.equals(oldListener, listener)) {
+			return;
+		}
+
+		this.tabChangeListener = listener;
+		// 若之前的监听器不为空,则移除
+		if (oldListener != null) {
+			tabProperty.removeListener(oldListener);
+		}
+		// 添加新的监听器
+		if (listener != null) {
+			tabProperty.addListener(listener);
+		}
+	}
+
+	public ChangeListener<Tab> getTabChangeListener() {
+		return tabChangeListener;
 	}
 }

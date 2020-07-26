@@ -12,6 +12,8 @@ import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
 import com.scmq.player.service.SingerService;
 import com.scmq.player.service.SpecialService;
+import com.scmq.player.util.NavigationManager;
+import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.Task;
 import com.scmq.player.view.NetSearchView;
 import com.scmq.view.control.Spinner;
@@ -73,14 +75,17 @@ public class NetSearchController implements ChangeListener<Tab> {
 	/** 搜索匹配的歌手 */
 	private Singer singer;
 
+	private TabPane mainTabPane;
+
 	public NetSearchController() {
 	}
 
-	void show(String text, TabPane mainTabPane) {
+	void show(String text) {
 		if (view == null) {
 			view = new NetSearchView();
 			spinner = new Spinner();
-			view.getTabPane().tabProperty().addListener(this);
+			view.getTabPane().setTabChangeListener(this);
+			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
@@ -108,7 +113,12 @@ public class NetSearchController implements ChangeListener<Tab> {
 			});
 		}
 
-		mainTabPane.centerProperty().set(view);
+		// 获得主选项卡
+		Tab mainTab = mainTabPane.tabProperty().get();
+		// 添加到后退视图列表
+		NavigationManager.addToBack(new Navigation(mainTab, mainTab.getContent(), mainTabPane));
+		// 设置新的视图
+		mainTab.setContent(view);
 		view.requestFocus();
 
 		if (!Objects.equals(this.text, text)) {
@@ -128,6 +138,12 @@ public class NetSearchController implements ChangeListener<Tab> {
 
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+		if (observable != null && oldValue != null) {
+			// 获得主选项卡
+			// 添加到后退视图列表
+			NavigationManager.addToBack(new Navigation(oldValue, oldValue.getContent(), view.getTabPane()));
+		}
+
 		String keyword = this.text, tabText = newValue.getText();
 		if ("单曲".equals(tabText)) {
 			if (!songUpdatable) {
@@ -232,7 +248,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 				property.set(tab);
 			}
 			Node oldView = tab.getContent();
-			singerController.show(singer, netSource, property);
+			singerController.show(singer, netSource);
 
 			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
 			back.setOnMouseClicked(event -> {

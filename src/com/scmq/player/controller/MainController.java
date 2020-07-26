@@ -18,6 +18,8 @@ import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.service.PlayListService;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.NavigationManager;
+import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.StringUtil;
 import com.scmq.player.util.Task;
 import com.scmq.player.util.TimeUtil;
@@ -245,6 +247,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		// 注册播放数据源改变事件
 		Main.playListProperty().addListener(this);
 
+		// 监听主选项卡面板的选项卡切换事件
+		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+		tabPane.setTabChangeListener((observable, oldTab, newTab) -> //
+		NavigationManager.addToBack(new Navigation(oldTab, oldTab.getContent(), tabPane)));
+
 		/* 为 窗口 注册 键盘 (按下 后 释放)事件 */
 		Main.getPrimaryStage().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
 			switch (e.getCode()) {
@@ -322,16 +329,15 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		});
 
 		// 音量滑动条值改变事件,设置播放器音量
-		view.getVolumeSlider().valueProperty().addListener((observ, ov, value) -> //
+		view.getVolumeSlider().valueProperty().addListener((observable, ov, value) -> //
 		player.setVolume(value.floatValue()));
 
 		// 倍速控制滑动条值改变事件,设置播放器播放速率
-		view.getSpeedSlider().valueProperty().addListener((observ, ov, value) -> {
+		view.getSpeedSlider().valueProperty().addListener((observable, ov, value) -> {
 			Float rate = (Float) view.getSpeedSlider().getUserData();
 			player.setRate(rate == null ? 1 : rate);
 		});
 
-		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 		// 搜索框回车事件
 		EditText editText = view.getSearchInput();
 		editText.setOnAction(e -> {
@@ -343,22 +349,16 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				}
 				editText.textProperty().set(text);
 			}
+
+			// 获得当前选项卡
+			Tab oldTab = tabPane.tabProperty().get();
 			// 若已经处于搜索视图
-			if (searchController.getView() == tabPane.getCenter()) {
-				searchController.show(text, tabPane);
+			if (oldTab == null || oldTab.getContent() == searchController.getView()) {
 				return;
 			}
 			// 准备显示搜索视图
-			Tab oldTab = tabPane.tabProperty().get();
-			tabPane.tabProperty().set(null);
-			searchController.show(text, tabPane);
-
-			Node node = view.getBackNode();
-			EventHandler<? super MouseEvent> handler = node.getOnMouseClicked();
-			node.setOnMouseClicked(event -> {
-				tabPane.tabProperty().set(oldTab);
-				node.setOnMouseClicked(handler);
-			});
+			// tabPane.tabProperty().set(null);
+			searchController.show(text);
 		});
 
 		// 绑定用户控制模块

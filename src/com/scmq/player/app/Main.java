@@ -8,6 +8,7 @@ import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.Reflect;
 import com.scmq.player.util.Task;
 import com.scmq.player.util.TimeUtil;
@@ -87,6 +88,7 @@ public class Main extends javafx.application.Application {
 				clazz = NetMusicController.class;
 				method = Reflect.getMethod(clazz, "bind", NetMusicView.class);
 				Reflect.invoke(context.getBean(clazz), method, app.netMusicView);
+				NavigationManager.init(app.mainView.getBackNode(), app.mainView.getForwardNode());
 			});
 		});
 	}
