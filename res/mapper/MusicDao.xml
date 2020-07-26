@@ -53,20 +53,14 @@
 
     <!--批量保存音乐信息; 注意values部分循环开头必须由'('包含,每个循环分割字符串为")," 最后循环完成由')'字符闭合 -->
     <insert id="save" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO media(title, singer_id, album_id, year, duration, size, file_name, path, format,
-        channels, quality, sample_rate, audio_bit_rate, genre, mid, vid, platform) VALUES
+        INSERT INTO media(title, year, duration, size, file_name, path, format,
+        channels, quality, sample_rate, audio_bit_rate, genre, mid, vid, platform, singer_id, album_id) VALUES
         <foreach collection="musics" item="music" separator=",">
-            (#{music.title},
-            <choose>
-                <when test="music.singer!=null">#{music.singer.id},</when>
-                <otherwise>NULL,</otherwise>
-            </choose>
-            <choose>
-                <when test="music.album!=null">#{music.album.id},</when>
-                <otherwise>NULL,</otherwise>
-            </choose>
-            #{music.year},#{music.duration},#{music.size},#{music.fileName},#{music.path},#{music.format},#{music.channels},
-            #{music.quality},#{music.sampleRate},#{music.bitRate},#{music.genre},#{music.mid},#{music.vid},#{music.platform})
+            (#{music.title}, #{music.year}, #{music.duration}, #{music.size}, #{music.fileName}, #{music.path},
+             #{music.format}, #{music.channels}, #{music.quality}, #{music.sampleRate}, #{music.bitRate},
+             #{music.genre}, #{music.mid},#{music.vid},#{music.platform},
+             <choose><when test="music.singer!=null">#{music.singer.id}</when><otherwise>NULL</otherwise></choose>
+             ,<choose><when test="music.album!=null">#{music.album.id}</when><otherwise>NULL</otherwise></choose>)
         </foreach>
     </insert>
 
