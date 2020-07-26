@@ -38,7 +38,7 @@ import java.util.Objects;
  * @author SCMQ
  */
 @Controller
-public class SearchMusicController implements ChangeListener<Tab> {
+public class NetSearchController implements ChangeListener<Tab> {
 	/** MV业务 */
 	@Autowired
 	private MVService mvService;
@@ -73,7 +73,7 @@ public class SearchMusicController implements ChangeListener<Tab> {
 	/** 搜索匹配的歌手 */
 	private Singer singer;
 
-	public SearchMusicController() {
+	public NetSearchController() {
 	}
 
 	void show(String text, TabPane mainTabPane) {

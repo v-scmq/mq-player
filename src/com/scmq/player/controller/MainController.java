@@ -75,7 +75,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	private PlayListService playListService;
 	/** 网络音乐搜索模块控制器 */
 	@Autowired
-	private SearchMusicController searchController;
+	private NetSearchController searchController;
 	/** 用户控制器 */
 	@Autowired
 	UserController userController;

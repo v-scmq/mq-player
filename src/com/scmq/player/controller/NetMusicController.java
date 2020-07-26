@@ -196,7 +196,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 	public NetMusicController(List<NetSource> netSourceList) {
 		this.netSource = netSourceList.get(0);
 		MainController.netSource = this.netSource;
-		SearchMusicController.netSource = this.netSource;
+		NetSearchController.netSource = this.netSource;
 	}
 
 	@Override

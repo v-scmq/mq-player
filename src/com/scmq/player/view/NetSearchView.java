@@ -143,6 +143,7 @@ public class NetSearchView extends AnchorPane {
 		singerImageView = new ImageView();
 		singerImageView.setFitWidth(size);
 		singerImageView.setFitHeight(size);
+		singerImageView.getStyleClass().add("image-icon");
 		singerImageView.setClip(new Circle(size >>= 1, size, size));
 		AnchorPane.setLeftAnchor(singerImageView, 0.0);
 
