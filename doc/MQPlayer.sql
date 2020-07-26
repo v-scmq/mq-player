@@ -116,8 +116,8 @@ CREATE TABLE "singer"
     "song_count"  INTEGER, -- 歌曲数量
     "album_count" INTEGER, -- 专辑数量
     "mv_count"    INTEGER, -- MV数量
-    "fans_count"  INTEGER, -- 粉丝数量
-    "platform"  TEXT -- 所属音乐平台(本地音乐为NULL)
+    "fans_count"  TEXT,    -- 粉丝数量
+    "platform"    TEXT     -- 所属音乐平台(本地音乐为NULL)
 );
 
 -- 专辑信息数据表
