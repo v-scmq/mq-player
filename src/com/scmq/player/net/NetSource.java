@@ -240,7 +240,7 @@ public interface NetSource {
 	List<Album> albumSearch(String key, Page page);
 
 	/**
-	 * 搜素歌手
+	 * 搜索歌手
 	 * 
 	 * @param keyword
 	 *            歌手名关键词
