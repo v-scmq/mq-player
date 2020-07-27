@@ -47,6 +47,12 @@ public final class NavigationManager {
 		forwardNode.setOnMouseClicked(NavigationManager::forward);
 	}
 
+	/**
+	 * 开始后退
+	 * 
+	 * @param event
+	 *            鼠标事件(后退图标被点击时触发)
+	 */
 	private static void back(MouseEvent event) {
 		if (event.getButton() != MouseButton.PRIMARY) {
 			return;
