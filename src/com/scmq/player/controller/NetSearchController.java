@@ -20,7 +20,6 @@ import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
 import com.scmq.view.control.TabPane;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -173,7 +172,9 @@ public class NetSearchController implements ChangeListener<Tab> {
 				Platform.runLater(() -> {
 					view.updateSong(list, songPage, this.singer = entity);
 					if (view.getSingerImageView() != null && view.getSingerImageView().getOnMouseClicked() == null) {
-						bind();
+						// 歌手图片点击事件,跳转到歌手详情视图
+						ImageView imageView = view.getSingerImageView();
+						imageView.setOnMouseClicked(e -> singerController.show(entity, netSource));
 					}
 					spinner.close();
 				});
@@ -234,27 +235,4 @@ public class NetSearchController implements ChangeListener<Tab> {
 			Main.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
-
-	private void bind() {
-		ImageView imageView = view.getSingerImageView();
-		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
-		Node back = Main.getRoot().lookup("#top-pane #back");
-		ObjectProperty<Tab> property = tabPane.tabProperty();
-
-		imageView.setOnMouseClicked(e -> {
-			Tab tab = property.get();
-			if (tab == null) {
-				tab = tabPane.getTabs().get(0);
-				property.set(tab);
-			}
-			Node oldView = tab.getContent();
-			singerController.show(singer, netSource);
-
-			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
-			back.setOnMouseClicked(event -> {
-				property.get().setContent(oldView);
-				back.setOnMouseClicked(oldHandler);
-			});
-		});
-	}
 }

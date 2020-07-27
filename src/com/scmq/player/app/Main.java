@@ -88,7 +88,9 @@ public class Main extends javafx.application.Application {
 				clazz = NetMusicController.class;
 				method = Reflect.getMethod(clazz, "bind", NetMusicView.class);
 				Reflect.invoke(context.getBean(clazz), method, app.netMusicView);
-				NavigationManager.init(app.mainView.getBackNode(), app.mainView.getForwardNode());
+
+				// 初始化并关联后退和前进图标的事件
+				NavigationManager.initialize(app.mainView.getBackNode(), app.mainView.getForwardNode());
 			});
 		});
 	}

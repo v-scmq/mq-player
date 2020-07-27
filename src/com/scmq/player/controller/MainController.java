@@ -1,6 +1,8 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
+import com.scmq.player.core.MediaPlayer;
+import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.io.IOUtil;
 import com.scmq.player.io.LyricReader;
 import com.scmq.player.io.LyricWriter;
@@ -14,8 +16,6 @@ import com.scmq.player.model.PlayModel;
 import com.scmq.player.model.Singer;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.net.NetSource;
-import com.scmq.player.core.MediaPlayer;
-import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.service.PlayListService;
 import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.NavigationManager;
@@ -25,7 +25,6 @@ import com.scmq.player.util.Task;
 import com.scmq.player.util.TimeUtil;
 import com.scmq.player.view.MainView;
 import com.scmq.view.control.EditText;
-import com.scmq.view.control.Tab;
 import com.scmq.view.control.TabPane;
 import com.scmq.view.control.Toast;
 import javafx.application.Platform;
@@ -350,14 +349,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				editText.textProperty().set(text);
 			}
 
-			// 获得当前选项卡
-			Tab oldTab = tabPane.tabProperty().get();
-			// 若已经处于搜索视图
-			if (oldTab == null || oldTab.getContent() == searchController.getView()) {
-				return;
-			}
 			// 准备显示搜索视图
-			// tabPane.tabProperty().set(null);
 			searchController.show(text);
 		});
 
