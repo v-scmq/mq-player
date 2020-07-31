@@ -115,7 +115,7 @@ public class AudioSpectrumView extends HBox {
 
 			// 计算每个矩形线性渐变填充颜色的数量
 			int number = colors.length - 1;
-			for (; number >= 0; number--) {
+			for (; number >= 0; --number) {
 				if (rectHeight >= number * averageHeight) {
 					number++;
 					break;
