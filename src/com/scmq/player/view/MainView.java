@@ -16,6 +16,7 @@ import com.scmq.view.control.TabPane;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -478,23 +479,25 @@ public class MainView {
 			}
 			Main.getRoot().setId(need ? "root" : null);
 			ObservableList<Node> nodes = Main.getRoot().getChildren();
-			if (need) {
-				// 若歌词列表视图在播放详情页,则显示歌词视图
-				if (detailBox.getChildren().contains(lyricView)) {
-					nodes.setAll(effectView, detailBox, bottomPane);
-					setVisibility(fullScreen, false);
+			Platform.runLater(() -> {
+				if (need) {
+					// 若歌词列表视图在播放详情页,则显示歌词视图
+					if (detailBox.getChildren().contains(lyricView)) {
+						nodes.setAll(effectView, detailBox, bottomPane);
+						setVisibility(fullScreen, false);
+					} else {
+						setVisibility(fullScreen, true);
+						// 否则显示视频视图,不需要 effectView
+						nodes.setAll(detailBox, bottomPane);
+					}
 				} else {
-					setVisibility(fullScreen, true);
-					// 否则显示视频视图,不需要 effectView
-					nodes.setAll(detailBox, bottomPane);
+					nodes.setAll(box, topPane, mainTabPane, bottomPane);
+					setVisibility(fullScreen, false);
+					if (spinner != null) {
+						nodes.add(spinner);
+					}
 				}
-			} else {
-				nodes.setAll(box, topPane, mainTabPane, bottomPane);
-				setVisibility(fullScreen, false);
-				if (spinner != null) {
-					nodes.add(spinner);
-				}
-			}
+			});
 		});
 
 		Image volumeImage = volume.getImage();
