@@ -310,7 +310,43 @@ public class TabPane extends BorderPane {
 		}
 	}
 
+	/** 获取选项卡切换监听器. */
 	public ChangeListener<Tab> getTabChangeListener() {
 		return tabChangeListener;
+	}
+
+	/** 选项卡面板的空占位选项卡. */
+	private Tab placeHolderTab;
+
+	/**
+	 * 设置选项卡面板的空占位选项卡. <br>
+	 * 这是非常有用的,因为很多情况下,切换到某些页面时,并不需要一个明确的选项卡来展示.
+	 * 
+	 * @param tab
+	 *            选项卡(这个选项卡最好具有最少的信息,因为它在视图上是不可见的)
+	 */
+	public void setPlaceHolderTab(Tab tab) {
+		Tab oldTab = placeHolderTab;
+		if (Objects.equals(oldTab, tab)) {
+			return;
+		}
+
+		this.placeHolderTab = tab;
+
+		if (oldTab != null) {
+			tabs.remove(oldTab);
+		}
+
+		if (tab != null) {
+			tab.getStyleClass().clear();
+			tab.setVisible(false);
+			tab.setManaged(false);
+			tabs.add(tab);
+		}
+	}
+
+	/** 获取选项卡面板的空占位选项卡. */
+	public Tab getPlaceHolderTab() {
+		return placeHolderTab;
 	}
 }

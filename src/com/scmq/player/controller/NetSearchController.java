@@ -116,8 +116,16 @@ public class NetSearchController implements ChangeListener<Tab> {
 		Tab mainTab = mainTabPane.tabProperty().get();
 		// 添加到后退视图列表
 		NavigationManager.addToBack(new Navigation(mainTab, mainTab.getContent(), mainTabPane));
+
+		ChangeListener<Tab> listener = mainTabPane.getTabChangeListener();
+		mainTabPane.setTabChangeListener(null);
+		Tab placeHolder = mainTabPane.getPlaceHolderTab();
 		// 设置新的视图
-		mainTab.setContent(view);
+		placeHolder.setContent(view);
+		mainTabPane.tabProperty().set(placeHolder);
+		// 重设置监听器
+		mainTabPane.setTabChangeListener(listener);
+
 		view.requestFocus();
 
 		if (!Objects.equals(this.text, text)) {
@@ -171,12 +179,14 @@ public class NetSearchController implements ChangeListener<Tab> {
 				List<Music> list = netSource.songSearch(keyword, songPage, null);
 				Platform.runLater(() -> {
 					view.updateSong(list, songPage, this.singer = entity);
-					if (view.getSingerImageView() != null && view.getSingerImageView().getOnMouseClicked() == null) {
-						// 歌手图片点击事件,跳转到歌手详情视图
-						ImageView imageView = view.getSingerImageView();
-						imageView.setOnMouseClicked(e -> singerController.show(entity, netSource));
-					}
+
 					spinner.close();
+
+					// 歌手图片点击事件,跳转到歌手详情视图
+					ImageView view = this.view.getSingerImageView();
+					if (view != null && view.getOnMouseClicked() == null) {
+						view.setOnMouseClicked(e -> singerController.show(entity, netSource));
+					}
 				});
 				musicService.save(list);
 			});

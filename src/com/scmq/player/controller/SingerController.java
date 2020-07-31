@@ -115,10 +115,19 @@ public class SingerController implements ChangeListener<Tab> {
 				}
 			});
 		}
+
 		Tab mainTab = mainTabPane.tabProperty().get();
 		NavigationManager.addToBack(new Navigation(mainTab, mainTab.getContent(), mainTabPane));
+
+		ChangeListener<Tab> listener = mainTabPane.getTabChangeListener();
+		mainTabPane.setTabChangeListener(null);
 		// 切换到歌手视图
-		mainTab.setContent(view);
+		Tab placeHolder = mainTabPane.getPlaceHolderTab();
+		placeHolder.setContent(view);
+		mainTabPane.tabProperty().set(placeHolder);
+		// 重设置监听器
+		mainTabPane.setTabChangeListener(listener);
+
 		// 还是同一个歌手,不执行任何操作
 		if (Objects.equals(this.singer, singer)) {
 			return;
@@ -218,20 +227,9 @@ public class SingerController implements ChangeListener<Tab> {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			Node node = (Node) e.getSource();
 			Album album = (Album) node.getUserData();
-			// 获取主选项卡面板
-			TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+
 			// 显示歌手内容页面
-			albumController.show(album, tabPane.tabProperty(), netSource);
-			// 获取返回图标节点
-			Node back = Main.getRoot().lookup("#top-pane #back");
-			EventHandler<? super MouseEvent> oldHandler = back.getOnMouseClicked();
-			back.setOnMouseClicked(event -> {
-				Tab tab = tabPane.tabProperty().get();
-				if ("网络乐库".equals(tab.getText())) {
-					tab.setContent(view);
-					back.setOnMouseClicked(oldHandler);
-				}
-			});
+			albumController.show(album, netSource);
 		}
 	};
 

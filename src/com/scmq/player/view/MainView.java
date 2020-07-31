@@ -197,6 +197,7 @@ public class MainView {
 		downloadTab.setGraphic(FileUtil.createView("down-manage", 20, 20));
 
 		TabPane mainTabPane = new TabPane(Side.LEFT, localTab, netTab, likeTab, specialTab, downloadTab);
+		mainTabPane.setPlaceHolderTab(new Tab());
 		AnchorPane.setTopAnchor(mainTabPane, 60.0);
 		AnchorPane.setRightAnchor(mainTabPane, 0.0);
 		AnchorPane.setLeftAnchor(mainTabPane, 0.0);

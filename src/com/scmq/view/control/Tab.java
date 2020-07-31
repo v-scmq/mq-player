@@ -32,6 +32,9 @@ public final class Tab extends Button {
         }
     };
 
+	/** 构造一个默认的选项卡(Tab)组件对象. */
+	public Tab() {}
+
     /**
      * 构造一个选项卡(Tab)组件对象
      *
