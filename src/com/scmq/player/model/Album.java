@@ -1,5 +1,7 @@
 package com.scmq.player.model;
 
+import java.util.Objects;
+
 /**
  * 音乐专辑信息
  *
@@ -149,5 +151,28 @@ public class Album {
 	public String toString() {
 		return "Album [name=" + name + ", mid=" + mid + ", cover=" + cover + ", singerName=" + singer + ", introduce="
 				+ introduce + ", year=" + year + ", songNum=" + songCount + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof Album) {
+			Album other = (Album) o;
+			String platform1 = getPlatform(), platform2 = getPlatform();
+			if (!Objects.equals(platform1, platform2)) {
+				return false;
+			}
+			String key = platform1 == null ? getName() : getMid();
+			return Objects.equals(key, platform1 == null ? other.getName() : other.getMid());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		String key = getPlatform() == null ? getName() : getMid();
+		return key == null ? 0 : 31 + key.hashCode();
 	}
 }
