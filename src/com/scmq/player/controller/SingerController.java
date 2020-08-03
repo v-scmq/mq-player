@@ -116,8 +116,8 @@ public class SingerController implements ChangeListener<Tab> {
 			});
 		}
 
-		Tab mainTab = mainTabPane.tabProperty().get();
-		NavigationManager.addToBack(new Navigation(mainTab, mainTab.getContent(), mainTabPane));
+		Tab oldTab = mainTabPane.tabProperty().get();
+		NavigationManager.addToBack(new Navigation(oldTab, oldTab.getContent(), mainTabPane));
 
 		ChangeListener<Tab> listener = mainTabPane.getTabChangeListener();
 		mainTabPane.setTabChangeListener(null);

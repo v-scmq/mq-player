@@ -341,7 +341,7 @@ public class TabPane extends BorderPane {
 			tab.getStyleClass().clear();
 			tab.setVisible(false);
 			tab.setManaged(false);
-			tabs.add(tab);
+			// tabs.add(tab);
 		}
 	}
 

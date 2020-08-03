@@ -216,6 +216,7 @@ public class NetSearchView extends AnchorPane {
 			} else {
 				ObservableList<Node> nodes = getChildren();
 				if (!nodes.contains(singerImageView)) {
+					AnchorPane.setTopAnchor(tabPane, singerImageView.getFitHeight());
 					nodes.addAll(singerImageView, nameLabel, (Node) getProperties().get("singer-info-box"));
 				}
 			}

@@ -84,6 +84,7 @@ public final class NavigationManager {
 			navigation.tab.setContent(navigation.content);
 			// 设置新的选项卡
 			tabPane.tabProperty().set(navigation.tab);
+			// navigation.viewRestore.handle(navigation.viewRestore.getData());
 
 			// 重新设置之前的监听器
 			tabPane.setTabChangeListener(listener);
@@ -181,13 +182,16 @@ public final class NavigationManager {
 	}
 
 	/** 这个类包装了视图导航的基本信息 */
-	public static class Navigation {
+	public static class Navigation{
 		/** 导航必需的选项卡 */
 		private Tab tab;
 		/** 导航必需的选项卡内容视图 */
 		private Node content;
 		/** 导航必需的选项卡面板 */
 		private TabPane tabPane;
+
+		/** 视图数据恢复处理器 */
+		private ViewRestore viewRestore;
 
 		/**
 		 * 构造一个视图导航数据对象
@@ -203,6 +207,23 @@ public final class NavigationManager {
 			this.tab = tab;
 			this.content = content;
 			this.tabPane = tabPane;
+		}
+
+		/**
+		 * 构造一个视图导航数据对象
+		 *
+		 * @param tab
+		 *            导航必需的选项卡属性
+		 * @param content
+		 *            导航必需的选项卡内容视图
+		 * @param tabPane
+		 *            导航必需的选项卡面板
+		 * @param restore
+		 *            视图数据恢复处理器
+		 */
+		public Navigation(Tab tab, Node content, TabPane tabPane, ViewRestore restore) {
+			this(tab, content, tabPane);
+			this.viewRestore = restore;
 		}
 
 		/** 让对象内部成员属性脱离引用 */
