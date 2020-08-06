@@ -166,15 +166,6 @@ public class NetMusicController implements ChangeListener<Tab> {
 			TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			// 显示歌手内容页面
 			singerController.show(singer, netSource);
-			// // 获取返回图标节点
-			// Node back = Main.getRoot().lookup("#top-pane #back");
-			// back.setOnMouseClicked(event -> {
-			// Tab tab = tabPane.tabProperty().get();
-			// if ("网络乐库".equals(tab.getText())) {
-			// tab.setContent(view);
-			// back.setOnMouseClicked(null);
-			// }
-			// });
 		}
 	};
 

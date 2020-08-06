@@ -48,10 +48,6 @@ public class AlbumController implements ChangeListener<Number> {
 	/** 主选项卡面板 */
 	private TabPane mainTabPane;
 
-	/** 构造一个默认的专辑控制器 */
-	public AlbumController() {
-	}
-
 	private void restore(Object data) {
 		if (Objects.equals(album, data)) {
 			return;

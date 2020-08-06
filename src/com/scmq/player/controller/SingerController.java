@@ -69,9 +69,6 @@ public class SingerController implements ChangeListener<Tab> {
 
 	private TabPane mainTabPane;
 
-	public SingerController() {
-	}
-
 	private void restore(Object data) {
 		if (Objects.equals(singer, data)) {
 			return;
@@ -111,15 +108,15 @@ public class SingerController implements ChangeListener<Tab> {
 	 */
 	void show(Singer singer, NetSource netSource) {
 		if (view == null) {
-			view = new SingerView();
 			// (进度)旋转器
 			spinner = new Spinner();
+			view = new SingerView();
 			this.netSource = netSource;
+			// 绑定视图数据恢复
+			ViewRestore.bind(view, this::restore);
 			// 添加选项卡切换监听器
 			view.getTabPane().setTabChangeListener(this);
 			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
-			// 绑定视图数据恢复
-			ViewRestore.bind(view, this::restore);
 
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();

@@ -77,9 +77,6 @@ public class NetSearchController implements ChangeListener<Tab> {
 
 	private TabPane mainTabPane;
 
-	public NetSearchController() {
-	}
-
 	private void restore(Object data) {
 		if (Objects.equals(text, data)) {
 			return;
@@ -99,11 +96,12 @@ public class NetSearchController implements ChangeListener<Tab> {
 
 	void show(String text) {
 		if (view == null) {
-			view = new NetSearchView();
 			spinner = new Spinner();
-			view.getTabPane().setTabChangeListener(this);
+			view = new NetSearchView();
 			// 绑定视图数据恢复
 			ViewRestore.bind(view, this::restore);
+
+			view.getTabPane().setTabChangeListener(this);
 
 			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
