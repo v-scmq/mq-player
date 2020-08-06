@@ -9,6 +9,7 @@ import com.scmq.player.service.MusicService;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.Task;
+import com.scmq.player.util.ViewRestore;
 import com.scmq.player.view.AlbumView;
 import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
@@ -51,6 +52,21 @@ public class AlbumController implements ChangeListener<Number> {
 	public AlbumController() {
 	}
 
+	private void restore(Object data) {
+		if (Objects.equals(album, data)) {
+			return;
+		}
+
+		page.reset();
+		ViewRestore.setData(view, album = (Album) data);
+		spinner.centerTo(view);
+		view.updateAlbum(album);
+		Task.async(() -> {
+			List<Music> list = netSource.songList(album, page);
+			Platform.runLater(() -> updateSongList(list, album));
+		});
+	}
+
 	/**
 	 * 显示专辑视图页面
 	 *
@@ -65,6 +81,8 @@ public class AlbumController implements ChangeListener<Number> {
 			spinner = new Spinner();
 			this.netSource = netSource;
 			view.getPagination().addListener(this);
+			// 绑定视图数据恢复
+			ViewRestore.bind(view, this::restore);
 			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 		}
 
@@ -87,7 +105,7 @@ public class AlbumController implements ChangeListener<Number> {
 		}
 
 		page.reset();
-		this.album = album;
+		ViewRestore.setData(view, this.album = album);
 		spinner.centerTo(view);
 		view.updateAlbum(album);
 

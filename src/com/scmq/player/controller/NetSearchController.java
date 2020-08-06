@@ -15,6 +15,7 @@ import com.scmq.player.service.SpecialService;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.Task;
+import com.scmq.player.util.ViewRestore;
 import com.scmq.player.view.NetSearchView;
 import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
@@ -79,11 +80,31 @@ public class NetSearchController implements ChangeListener<Tab> {
 	public NetSearchController() {
 	}
 
+	private void restore(Object data) {
+		if (Objects.equals(text, data)) {
+			return;
+		}
+		mvPage.setCurrent(1);
+		songPage.setCurrent(1);
+		specialPage.setCurrent(1);
+		ViewRestore.setData(view, text = (String) data);
+		songUpdatable = specialUpdatable = mvUpdatable = true;
+
+		if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
+			view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
+		} else {
+			changed(null, null, view.getTabPane().tabProperty().get());
+		}
+	}
+
 	void show(String text) {
 		if (view == null) {
 			view = new NetSearchView();
 			spinner = new Spinner();
 			view.getTabPane().setTabChangeListener(this);
+			// 绑定视图数据恢复
+			ViewRestore.bind(view, this::restore);
+
 			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
@@ -138,10 +159,10 @@ public class NetSearchController implements ChangeListener<Tab> {
 		view.requestFocus();
 
 		if (!noChanged) {
-			this.text = text;
 			mvPage.setCurrent(1);
 			songPage.setCurrent(1);
 			specialPage.setCurrent(1);
+			ViewRestore.setData(view, this.text = text);
 			songUpdatable = specialUpdatable = mvUpdatable = true;
 
 			if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {

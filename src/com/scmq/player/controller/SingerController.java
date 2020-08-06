@@ -15,6 +15,7 @@ import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.StringUtil;
 import com.scmq.player.util.Task;
+import com.scmq.player.util.ViewRestore;
 import com.scmq.player.view.SingerView;
 import com.scmq.view.control.Spinner;
 import com.scmq.view.control.Tab;
@@ -71,6 +72,35 @@ public class SingerController implements ChangeListener<Tab> {
 	public SingerController() {
 	}
 
+	private void restore(Object data) {
+		if (Objects.equals(singer, data)) {
+			return;
+		}
+
+		ViewRestore.setData(view, singer = (Singer) data);
+		// 更新歌手信息
+		if (isEmptyInfo(singer)) {
+			Task.async(() -> {
+				netSource.handleSingerInfo(singer);
+				Platform.runLater(() -> view.updateSinger(singer));
+			});
+		} else {
+			view.updateSinger(singer);
+		}
+
+		mvPage.reset();
+		songPage.reset();
+		albumPage.reset();
+		songUpdatable = albumUpdatable = mvUpdatable = true;
+		view.getTableView().getItems().clear();
+
+		if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
+			view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
+		} else {
+			changed(null, null, view.getTabPane().tabProperty().get());
+		}
+	}
+
 	/**
 	 * 显示歌手视图
 	 * 
@@ -80,15 +110,17 @@ public class SingerController implements ChangeListener<Tab> {
 	 *            网络音乐平台
 	 */
 	void show(Singer singer, NetSource netSource) {
-		this.netSource = netSource;
-
 		if (view == null) {
 			view = new SingerView();
 			// (进度)旋转器
 			spinner = new Spinner();
+			this.netSource = netSource;
 			// 添加选项卡切换监听器
 			view.getTabPane().setTabChangeListener(this);
 			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+			// 绑定视图数据恢复
+			ViewRestore.bind(view, this::restore);
+
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
@@ -117,7 +149,14 @@ public class SingerController implements ChangeListener<Tab> {
 		}
 
 		Tab oldTab = mainTabPane.tabProperty().get();
-		NavigationManager.addToBack(new Navigation(oldTab, oldTab.getContent(), mainTabPane));
+		Node oldContent = oldTab.getContent();
+
+		boolean noChanged = Objects.equals(this.singer, singer);
+		if (noChanged && oldContent == view) {
+			return;
+		}
+
+		NavigationManager.addToBack(new Navigation(oldTab, oldContent, mainTabPane));
 
 		ChangeListener<Tab> listener = mainTabPane.getTabChangeListener();
 		mainTabPane.setTabChangeListener(null);
@@ -129,11 +168,11 @@ public class SingerController implements ChangeListener<Tab> {
 		mainTabPane.setTabChangeListener(listener);
 
 		// 还是同一个歌手,不执行任何操作
-		if (Objects.equals(this.singer, singer)) {
+		if (noChanged) {
 			return;
 		}
 
-		this.singer = singer;
+		ViewRestore.setData(view, this.singer = singer);
 		// 更新歌手信息
 		if (isEmptyInfo(singer)) {
 			Task.async(() -> {
