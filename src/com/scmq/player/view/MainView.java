@@ -110,7 +110,7 @@ public class MainView {
 	private SVGPath fullScreenNode;
 
 	/** 音乐频谱可更新属性 */
-	private BooleanProperty audioSpectrumUpdateProperty = new SimpleBooleanProperty();
+	private BooleanProperty audioSpectrumUpdateProperty;
 
 	// 全屏图标
 	private String fullIcon = "M23 25h-4v-2h2.63l-5.753-5.658 1.354-1.331 5.769 5.674v-2.685h2v6h-2zm0-15.669l-5.658 5.658-1.331-1.331 5.658-5.658h-2.669v-2h6v6h-2v-2.669zm-15.027 15.669h4.027v-2h-2.676l5.676-5.658-1.335-1.331-5.692 5.674v-2.685h-1.973v6h1.973zm0-15.669l5.581 5.658 1.313-1.331-5.582-5.658h2.715v-2h-6v6h1.973v-2.669z";
