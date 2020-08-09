@@ -196,13 +196,21 @@ public final class FXMediaPlayer implements com.scmq.player.core.MediaPlayer, Ch
 		return true;
 	}
 
+	private AudioSpectrumListener oldSpectrumListener;
+
 	@Override
-	public void registerAudioSpectrum() {
-		if (audioSpectrumListener == null) {
-			audioSpectrumListener = listener::audioSpectrumUpdate;
+	public void bindAudioSpectrum(boolean isBind) {
+		AudioSpectrumListener listener = audioSpectrumListener;
+
+		if (isBind) {
+			listener = listener == null ? oldSpectrumListener : listener;
+			listener = listener == null ? this.listener::audioSpectrumUpdate : listener;
+			audioSpectrumListener = oldSpectrumListener = listener;
+		} else {
+			listener = audioSpectrumListener = null;
 		}
 		if (player != null) {
-			player.setAudioSpectrumListener(audioSpectrumListener);
+			player.setAudioSpectrumListener(listener);
 		}
 	}
 

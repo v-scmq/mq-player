@@ -175,7 +175,7 @@ public class VlcMediaPlayer implements com.scmq.player.core.MediaPlayer {
 	}
 
 	@Override
-	public void registerAudioSpectrum() {
+	public void bindAudioSpectrum(boolean bind) {
 	}
 
 	@Override

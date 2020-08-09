@@ -119,9 +119,12 @@ public interface MediaPlayer {
 	boolean supportAudioSpectrum();
 
 	/**
-	 * 注册音乐频谱数据回调.若播放器不支持,则此方法将没有任何作用.
+	 * 绑定或解绑音乐频谱数据回调.若播放器不支持,则此方法将没有任何作用.
+	 * 
+	 * @param isBind
+	 *            是否绑定
 	 */
-	void registerAudioSpectrum();
+	void bindAudioSpectrum(boolean isBind);
 
 	/**
 	 * 获取媒体播放器对应的视频显示组件
