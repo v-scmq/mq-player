@@ -16,8 +16,9 @@ import com.scmq.view.control.TabPane;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
@@ -106,7 +107,10 @@ public class MainView {
 	private ImageView effectView;
 	private ListView<LyricLine> lyricView;
 	private AudioSpectrumView audioSpectrumView;
-	private SVGPath fullScreen;
+	private SVGPath fullScreenNode;
+
+	/** 音乐频谱可更新属性 */
+	private BooleanProperty audioSpectrumUpdateProperty = new SimpleBooleanProperty();
 
 	// 全屏图标
 	private String fullIcon = "M23 25h-4v-2h2.63l-5.753-5.658 1.354-1.331 5.769 5.674v-2.685h2v6h-2zm0-15.669l-5.658 5.658-1.331-1.331 5.658-5.658h-2.669v-2h6v6h-2v-2.669zm-15.027 15.669h4.027v-2h-2.676l5.676-5.658-1.335-1.331-5.692 5.674v-2.685h-1.973v6h1.973zm0-15.669l5.581 5.658 1.313-1.331-5.582-5.658h2.715v-2h-6v6h1.973v-2.669z";
@@ -361,14 +365,14 @@ public class MainView {
 		// “播放队列 列表视图” 的高度绑定到 “播放队列面板” 的高度
 		musicQueueView.prefHeightProperty().bind(playQueuePane.prefHeightProperty());
 
-		fullScreen = new SVGPath();
-		fullScreen.setContent(fullIcon);
-		fullScreen.setId("full-node");
-		fullScreen.setPickOnBounds(true);
-		setVisibility(fullScreen, false);
+		fullScreenNode = new SVGPath();
+		fullScreenNode.setContent(fullIcon);
+		fullScreenNode.setId("full-node");
+		fullScreenNode.setPickOnBounds(true);
+		setVisibility(fullScreenNode, false);
 
 		// 底部面板的内容右水平盒子
-		HBox rightBox = new HBox(16, like, speed, download, fullScreen, playQueue);
+		HBox rightBox = new HBox(16, like, speed, download, fullScreenNode, playQueue);
 		rightBox.setAlignment(Pos.CENTER_RIGHT);
 
 		// 底部面板
@@ -480,25 +484,27 @@ public class MainView {
 			}
 			Main.getRoot().setId(need ? "root" : null);
 			ObservableList<Node> nodes = Main.getRoot().getChildren();
-			Platform.runLater(() -> {
-				if (need) {
-					// 若歌词列表视图在播放详情页,则显示歌词视图
-					if (detailBox.getChildren().contains(lyricView)) {
-						nodes.setAll(effectView, detailBox, bottomPane);
-						setVisibility(fullScreen, false);
-					} else {
-						setVisibility(fullScreen, true);
-						// 否则显示视频视图,不需要 effectView
-						nodes.setAll(detailBox, bottomPane);
-					}
-				} else {
-					nodes.setAll(box, topPane, mainTabPane, bottomPane);
-					setVisibility(fullScreen, false);
-					if (spinner != null) {
-						nodes.add(spinner);
-					}
+			if (need) {
+				// 若歌词列表视图在播放详情页,则显示歌词视图
+				need = detailBox.getChildren().contains(lyricView);
+
+				// 否则显示视频视图,不需要 effectView
+				nodes.setAll(need ? new Node[] { effectView, detailBox, bottomPane } //
+						: new Node[] { detailBox, bottomPane });
+
+				setVisibility(fullScreenNode, !need);
+
+			} else {
+				nodes.setAll(box, topPane, mainTabPane, bottomPane);
+				setVisibility(fullScreenNode, false);
+				if (spinner != null) {
+					nodes.add(spinner);
 				}
-			});
+			}
+
+			if (audioSpectrumUpdateProperty != null) {
+				audioSpectrumUpdateProperty.set(need);
+			}
 		});
 
 		Image volumeImage = volume.getImage();
@@ -553,17 +559,14 @@ public class MainView {
 			Set<Node> nodes = speedSlider.lookupAll("Text");
 			// 每个刻度值的文本(字符串)长度(字符个数)
 			StringBuilder builder = new StringBuilder(8);
-			int length;// 原始 刻度标签的文本长度
 			for (Node item : nodes) {
 				Text node = (Text) item;
 				String text = node.getText();
-				length = text.length();
+				int length = text.length();
 				if (length != 0) {
 					builder.append(' ').append(' ').append(text);
-					if (length == 1) {
-						builder.append('.').append('0');
-					}
-					node.setText(builder.append(' ').append(' ').append(' ').toString());
+					(length == 1 ? builder.append('.').append('0') : builder).append(' ');
+					node.setText(builder.append(' ').append(' ').toString());
 					builder.delete(0, builder.length());
 				}
 			}
@@ -751,7 +754,7 @@ public class MainView {
 
 	public void fullScreen(boolean value) {
 		ObservableList<Node> nodes = Main.getRoot().getChildren();
-		fullScreen.setContent(value ? exitIcon : fullIcon);
+		fullScreenNode.setContent(value ? exitIcon : fullIcon);
 		// 不是全屏
 		if (!value) {
 			if (timeLine != null) {
@@ -917,6 +920,12 @@ public class MainView {
 	}
 
 	public Node getScreenOperNode() {
-		return fullScreen;
+		return fullScreenNode;
+	}
+
+	/** 获取音乐频谱可更新属性 */
+	public BooleanProperty audioSpectrumUpdateProperty() {
+		BooleanProperty property = audioSpectrumUpdateProperty;
+		return property == null ? audioSpectrumUpdateProperty = new SimpleBooleanProperty() : property;
 	}
 }

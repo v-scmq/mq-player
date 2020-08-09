@@ -28,6 +28,7 @@ import com.scmq.view.control.EditText;
 import com.scmq.view.control.TabPane;
 import com.scmq.view.control.Toast;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -104,9 +105,6 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	private int index;
 	/** 是否单曲循环 */
 	private boolean singleLoop;
-
-	public MainController() {
-	}
 
 	/*------------- MediaPlayer事件监听器 回调方法  start -------------*/
 	@Override
@@ -236,15 +234,18 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			// Platform.runLater(() -> view.getSearchInput().setPromptText(key));
 			// }
 		});
-		// 如果播放器支持音乐频谱图
-		if (player.supportAudioSpectrum()) {
-			// 注册音乐频谱回调
-			player.registerAudioSpectrum();
-		}
+
 		player.setVolume(0.5f);
 
 		// 注册播放数据源改变事件
 		Main.playListProperty().addListener(this);
+
+		// 如果播放器支持音乐频谱图
+		if (player.supportAudioSpectrum()) {
+			BooleanProperty property = view.audioSpectrumUpdateProperty();
+			// 注册音乐频谱回调
+			property.addListener(((observable, oldValue, newValue) -> player.bindAudioSpectrum(newValue)));
+		}
 
 		// 监听主选项卡面板的选项卡切换事件
 		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
