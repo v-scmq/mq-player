@@ -277,7 +277,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				}
 				break;
 			case F:
-				if (view.isFullable() && !(e.getTarget() instanceof TextField)) {
+				if (view.isFullAble() && !(e.getTarget() instanceof TextField)) {
 					view.getScreenOperNode().getOnMouseClicked().handle(null);
 				}
 				break;
