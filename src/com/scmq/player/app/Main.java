@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.FileNotFoundException;
@@ -54,6 +55,7 @@ public class Main extends javafx.application.Application {
 	private static ClassPathXmlApplicationContext context;
 
 	static {
+		Task.async(StageHandler::loadWin32Library);
 		// 重定向输出流,以打印日志.
 		// setLog();
 		// 销毁空格按键的相关事件
@@ -107,8 +109,11 @@ public class Main extends javafx.application.Application {
 		primaryStage.getScene().getStylesheets().add(FileUtil.getStyleSheet("style"));
 		// primaryStage.getScene().setCursor(new ImageCursor(new Image("cursor.png")));
 		primaryStage.getIcons().add(FileUtil.createImage("player"));
+		primaryStage.initStyle(StageStyle.UNDECORATED);
+		primaryStage.setResizable(false);
 		primaryStage.setTitle("MQ音乐");
 		primaryStage.show();
+		StageHandler.getHandler().bind();
 	}
 
 	/** 主进程结束的回调方法 */

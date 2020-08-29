@@ -2,6 +2,7 @@
 package com.scmq.player.view;
 
 import com.scmq.player.app.Main;
+import com.scmq.player.app.StageHandler;
 import com.scmq.player.model.LyricLine;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Media;
@@ -47,7 +48,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
@@ -60,15 +63,14 @@ public class MainView {
 	private ImageView headImageView;
 	private Button userNameButton;
 
-	private ImageView backButton;
-	private ImageView forwardButton;
-	private ImageView refreshButton;
+	private Button backButton;
+	private Button forwardButton;
+	private Button refreshButton;
 	private EditText searchInput;
 
-	private ImageView erjiButton;
-	private ImageView skinButton;
-
-	private ImageView settingButton;
+	private Button headsetButton;
+	private Button skinButton;
+	private Button settingButton;
 
 	/** 进度旋转器(提示正在加载) */
 	private Spinner spinner;
@@ -134,53 +136,97 @@ public class MainView {
 		box.setPrefSize(size, 60);
 
 		// ---------------顶部面板部分----------
-		backButton = FileUtil.createView("back");
-		backButton.setId("back");
-		backButton.getStyleClass().add("icon-button");
-		AnchorPane.setTopAnchor(backButton, 10.0);
-		AnchorPane.setLeftAnchor(backButton, 0.0);
+		SVGPath backPath = new SVGPath();
+		backPath.setContent("M8 0 L0 8 L8 16");
+		backPath.setStrokeWidth(1.5);
+		backButton = new Button(null, backPath);
+		backButton.getStyleClass().setAll("svg-button");
+		backButton.setDisable(true);
 
-		forwardButton = new ImageView(backButton.getImage());
-		forwardButton.getStyleClass().add("icon-button");
-		forwardButton.setPickOnBounds(true);
-		forwardButton.setRotate(180);
-		AnchorPane.setTopAnchor(forwardButton, 10.0);
-		AnchorPane.setLeftAnchor(forwardButton, 60.0);
+		SVGPath forwardPath = new SVGPath();
+		forwardPath.setContent("M8 0 L16 8 L8 16");
+		forwardPath.setStroke(Color.rgb(34, 34, 34));
+		forwardPath.setStrokeWidth(1.5);
+		forwardButton = new Button(null, forwardPath);
+		forwardButton.getStyleClass().setAll("svg-button");
+		forwardButton.setDisable(true);
 
-		refreshButton = FileUtil.createView("refresh", 26, 26);
-		refreshButton.getStyleClass().add("icon-button");
-		AnchorPane.setTopAnchor(refreshButton, 13.0);
-		AnchorPane.setLeftAnchor(refreshButton, 120.0);
+		SVGPath refreshPath = new SVGPath();
+		refreshPath.setContent(
+				"M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z");
+		refreshPath.setStrokeWidth(0.65);
+		refreshPath.setRotate(20);
+		refreshButton = new Button(null, refreshPath);
+		refreshButton.getStyleClass().setAll("svg-button");
 
 		searchInput = new EditText(null, FileUtil.createView("search", 20, 20), true);
 		searchInput.setPromptText("九张机");
 		searchInput.setPrefWidth(300);
+		searchInput.setMaxHeight(30);
 		searchInput.setFocusTraversable(false);
-		AnchorPane.setTopAnchor(searchInput, 10.0);
-		AnchorPane.setLeftAnchor(searchInput, 180.0);
 
-		erjiButton = FileUtil.createView("headset2", 20, 20);
-		erjiButton.getStyleClass().add("icon-button");
-		AnchorPane.setTopAnchor(erjiButton, 16.0);
-		AnchorPane.setRightAnchor(erjiButton, 140.0);
+		HBox hBox = new HBox(20, backButton, forwardButton, refreshButton, searchInput);
+		hBox.setAlignment(Pos.CENTER_LEFT);
 
-		skinButton = FileUtil.createView("skin2", 20, 20);
-		skinButton.getStyleClass().add("icon-button");
-		AnchorPane.setTopAnchor(skinButton, 16.0);
-		AnchorPane.setRightAnchor(skinButton, 80.0);
+		SVGPath headsetPath = new SVGPath();
+		headsetPath.setContent(
+				"M8 3a5 5 0 0 0-5 5v4.5H2V8a6 6 0 1 1 12 0v4.5h-1V8a5 5 0 0 0-5-5z M11 10a1 1 0 0 1 1-1h2v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-3zm-6 0a1 1 0 0 0-1-1H2v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3z");
+		headsetPath.setScaleX(1.2);
+		headsetPath.setScaleY(1.2);
+		headsetPath.setFillRule(FillRule.EVEN_ODD);
+		headsetButton = new Button(null, headsetPath);
+		headsetButton.getStyleClass().setAll("svg-button");
 
-		settingButton = FileUtil.createView("setting2", 20, 20);
-		settingButton.getStyleClass().add("icon-button");
-		AnchorPane.setTopAnchor(settingButton, 16.0);
-		AnchorPane.setRightAnchor(settingButton, 20.0);
+		SVGPath skinPath = new SVGPath();
+		skinPath.setManaged(false);
+		skinPath.setContent(
+				"M772.8 96v64L936 321.6l-91.2 91.2c-12.8-11.2-27.2-16-43.2-16-36.8 0-65.6 28.8-65.6 65.6V800c0 35.2-28.8 64-64 64H352c-35.2 0-64-28.8-64-64V462.4c0-36.8-28.8-65.6-65.6-65.6-16 0-32 6.4-43.2 16L88 321.6 249.6 160h40l1.6 1.6C336 228.8 420.8 272 512 272c91.2 0 176-41.6 220.8-110.4 0-1.6 1.6-1.6 1.6-1.6h38.4V96m-481.6 0H256c-22.4 0-38.4 6.4-49.6 19.2L43.2 276.8c-25.6 25.6-25.6 65.6 0 89.6l94.4 94.4c11.2 11.2 27.2 17.6 41.6 17.6s30.4-6.4 41.6-17.6h1.6c1.6 0 1.6 0 1.6 1.6V800c0 70.4 57.6 128 128 128h320c70.4 0 128-57.6 128-128V462.4c0-1.6 0-1.6 1.6-1.6h1.6c11.2 11.2 27.2 17.6 41.6 17.6 16 0 30.4-6.4 41.6-17.6l94.4-94.4c25.6-25.6 25.6-65.6 0-89.6L819.2 115.2C806.4 102.4 790.4 96 772.8 96h-40c-22.4 0-41.6 11.2-54.4 30.4-33.6 49.6-96 81.6-168 81.6s-134.4-33.6-168-81.6C332.8 107.2 312 96 291.2 96z");
+		skinPath.setLayoutX(-500);
+		skinPath.setLayoutY(-490);
+		HBox skin = new HBox(skinPath);
+		skin.setStyle("-fx-scale-x:0.02;-fx-scale-y:0.02;-fx-min-width:16px;-fx-min-height:16px");
 
-		AnchorPane topPane = new AnchorPane(backButton, forwardButton, refreshButton, searchInput, erjiButton,
-				skinButton, settingButton);
+		skinButton = new Button(null, skin);
+		skinButton.getStyleClass().setAll("svg-button", "skin-button");
+
+		SVGPath settingPath = new SVGPath();
+		settingPath.setContent(
+				"M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z");
+		settingButton = new Button(null, settingPath);
+		settingButton.getStyleClass().setAll("svg-button");
+
+		SVGPath minimize = new SVGPath();
+		minimize.setContent("M6 6 h12");
+		minimize.setStrokeWidth(0.65);
+		Button minimized = new Button(null, minimize);
+		minimized.getStyleClass().setAll("minimize-button");
+		minimized.setOnAction(e -> Main.getPrimaryStage().setIconified(true));
+
+		SVGPath maximize = new SVGPath();
+		maximize.setContent("M0 0 h12 v12 h-12 v-12");
+		maximize.setStrokeWidth(0.65);
+		Button maximized = new Button(null, maximize);
+		maximized.getStyleClass().setAll("maximize-button");
+		maximized.setOnAction(e -> StageHandler.getHandler().setMaximized(maximize));
+
+		SVGPath closeable = new SVGPath();
+		closeable.setContent("M0 0 L12 12 M12 0 L0 12");
+		Button closed = new Button(null, closeable);
+		closed.getStyleClass().setAll("close-button");
+		closed.setOnAction(e -> Main.getPrimaryStage().close());
+		HBox.setMargin(closed, new Insets(0, 16, 0, 0));
+
+		HBox hBox1Top = new HBox(20, headsetButton, skinButton, settingButton, minimized, maximized, closed);
+		hBox1Top.setAlignment(Pos.CENTER_LEFT);
+
+		BorderPane topPane = new BorderPane(hBox);
+		topPane.setRight(hBox1Top);
 		topPane.setId("top-pane");
 		topPane.setPrefHeight(60);
 		AnchorPane.setTopAnchor(topPane, 0.0);
 		AnchorPane.setRightAnchor(topPane, 0.0);
 		AnchorPane.setLeftAnchor(topPane, (double) size);
+		StageHandler.getHandler().bindMoveListener(topPane);
 
 		// -----------主选项卡面板部分-----------
 		Tab localTab = new Tab("本地音乐", localModuleView);
@@ -815,15 +861,15 @@ public class MainView {
 		return userNameButton;
 	}
 
-	public ImageView getBackNode() {
+	public Button getBackNode() {
 		return backButton;
 	}
 
-	public ImageView getForwardNode() {
+	public Button getForwardNode() {
 		return forwardButton;
 	}
 
-	public ImageView getRefreshNode() {
+	public Button getRefreshNode() {
 		return refreshButton;
 	}
 
@@ -831,15 +877,15 @@ public class MainView {
 		return searchInput;
 	}
 
-	public ImageView getErjiNode() {
-		return erjiButton;
+	public Button getHeadsetButton() {
+		return headsetButton;
 	}
 
-	public ImageView getSkinNode() {
+	public Button getSkinNode() {
 		return skinButton;
 	}
 
-	public ImageView getSettingNode() {
+	public Button getSettingNode() {
 		return settingButton;
 	}
 

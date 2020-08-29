@@ -125,6 +125,18 @@
 /*---------------- 所有图标 ,当做按钮使用 ---------------------------*/
 .icon-button, .image-icon{-fx-cursor:hand;}
 
+.svg-button{-fx-padding: 4px;-fx-cursor:hand}
+.svg-button > *{-fx-fill:null;-fx-stroke:rgb(34,34,34)}
+.svg-button:hover > *, .skin-button:hover > * > *{-fx-stroke:red;}
+.svg-button:disabled > *{-fx-opacity:0.6}
+
+
+.maximize-button, .minimize-button, .close-button{-fx-padding:6px 8px}
+.maximize-button > *,.minimize-button > *,.close-button > *{-fx-fill:null;-fx-stroke-line-cap:butt;-fx-stroke:rgb(34,34,34)}
+.maximize-button:hover, .minimize-button:hover{-fx-background-color:rgba(210,212,216,0.8)}
+.close-button:hover{-fx-background-color:rgb(232,17,35)}
+.close-button:hover > *{-fx-stroke:white}
+
 /*---------------- 用户头像部分 ------------------------------------*/
 .head-img-pane{-fx-background-color:rgb(241,241,241);-fx-padding:0 0 0 10px;}
 .head-img-pane .button{-fx-background-color:transparent;-fx-text-fill:rgb(86,73,81);-fx-cursor:hand;-fx-font-size:16px;}
