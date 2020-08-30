@@ -8,7 +8,9 @@ import com.sun.jna.platform.win32.WinUser;
 
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Screen;
@@ -46,6 +48,39 @@ public class StageHandler {
 				int style = user32.GetWindowLong(window, WinUser.GWL_STYLE);// WS_MINIMIZEBOX = 0x00020000
 				user32.SetWindowLong(window, WinUser.GWL_STYLE, (style | WinUser.WS_MINIMIZEBOX));
 			});
+		});
+
+		Stage stage = Main.getPrimaryStage();
+		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
+			if (maximized) {
+				Main.getRoot().setCursor(Cursor.DEFAULT);
+				return;
+			}
+
+			boolean x = e.getX() + 5 > Main.getRoot().getWidth(), y = e.getY() + 5 > Main.getRoot().getHeight();
+			Cursor cursor = x && y ? Cursor.SE_RESIZE : x ? Cursor.E_RESIZE : y ? Cursor.S_RESIZE : Cursor.DEFAULT;
+			Main.getRoot().setCursor(cursor);
+		});
+
+		Main.getRoot().addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+			if (Main.getRoot().getCursor() != Cursor.DEFAULT) {
+				e.consume();
+			}
+		});
+		Main.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
+			if (maximized) {
+				return;
+			}
+			System.out.println(stage.getWidth() + " | " + stage.getHeight() + " x=" + e.getX() + " | y=" + e.getY());
+			Cursor cursor = Main.getRoot().getCursor();
+			if (cursor == Cursor.SE_RESIZE) {
+				stage.setWidth(e.getX() < 180 ? 180 : e.getX());
+				stage.setHeight(e.getY() < 60 ? 60 : e.getY());
+			} else if (cursor == Cursor.E_RESIZE) {
+				stage.setWidth(e.getX() < 180 ? 180 : e.getX());
+			} else if (cursor == Cursor.S_RESIZE) {
+				stage.setHeight(e.getY() < 60 ? 60 : e.getY());
+			}
 		});
 	}
 
