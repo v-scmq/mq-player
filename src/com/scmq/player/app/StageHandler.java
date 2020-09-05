@@ -74,16 +74,31 @@ public class StageHandler implements EventHandler<MouseEvent> {
 			if (maximized) {
 				return;
 			}
+
 			Stage stage = Main.getPrimaryStage();
 			Cursor cursor = Main.getRoot().getCursor();
+
+			// 鼠标窗口右下角边界上,可以改变宽度和高度
 			if (cursor == Cursor.SE_RESIZE) {
-				stage.setWidth(event.getX() < 180 ? 180 : event.getX());
-				stage.setHeight(event.getY() < 60 ? 60 : event.getY());
+				Rectangle2D rect = Screen.getPrimary().getVisualBounds();
+				double size = (size = event.getX()) < 180 ? 180 : size > rect.getWidth() ? rect.getWidth() : size;
+				stage.setWidth(size);
+				size = (size = event.getY()) < 60 ? 60 : size > rect.getHeight() ? rect.getHeight() : size;
+				stage.setHeight(size);
+
+				// 鼠标在窗口右水平方向时,可以改变宽度
 			} else if (cursor == Cursor.E_RESIZE) {
-				stage.setWidth(event.getX() < 180 ? 180 : event.getX());
+				double max = Screen.getPrimary().getVisualBounds().getWidth();
+				double size = (size = event.getX()) < 180 ? 180 : size > max ? max : size;
+				stage.setWidth(size);
+
+				// 鼠标在窗口上垂直方向时,可以改变高度
 			} else if (cursor == Cursor.S_RESIZE) {
-				stage.setHeight(event.getY() < 60 ? 60 : event.getY());
+				double max = Screen.getPrimary().getVisualBounds().getHeight();
+				double size = (size = event.getY()) < 60 ? 60 : size > max ? max : size;
+				stage.setHeight(size);
 			}
+
 			return;
 		}
 
@@ -98,14 +113,29 @@ public class StageHandler implements EventHandler<MouseEvent> {
 		Main.getRoot().setCursor(cursor);
 	}
 
-	double x, y, width, height, x2, y2;
+	/** 记录窗口在最大化之前的x和y坐标 */
+	double x, y;
+	/** 记录窗口在最大化之前的宽度和高度,以及鼠标按下装饰栏时的误差x和y坐标 */
+	double width, height, offsetX, offsetY;
+	/** 窗口是否最大化 */
 	boolean maximized;
 
+	/** 窗口最大化时显示的图标 */
+	private static final String MAXIMIZED_ICON = "M3 0 h9 v9 h-3 M3 0 v3 h-3 v9 h9 v-9 h-6";
+	/** 窗口为最大化时显示的图标 */
+	private static final String MAXIMIZE_ICON = "M0 0 h12 v12 h-12 v-12";
+
+	/**
+	 * 最大化窗口或还原窗口
+	 * 
+	 * @param node
+	 *            最大化图标
+	 */
 	public void setMaximized(SVGPath node) {
 		Stage stage = Main.getPrimaryStage();
-		maximized = !maximized;
-		node.setContent(maximized ? "M3 0 h9 v9 h-3 M3 0 v3 h-3 v9 h9 v-9 h-6" : "M0 0 h12 v12 h-12 v-12");
+		node.setContent((maximized = !maximized) ? MAXIMIZED_ICON : MAXIMIZE_ICON);
 
+		// 需要最大化
 		if (maximized) {
 			x = stage.getX();
 			y = stage.getY();
@@ -118,47 +148,69 @@ public class StageHandler implements EventHandler<MouseEvent> {
 			Main.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
 			return;
 		}
+
+		// 还原窗口
 		setBounds(stage, x, y, width, height);
 		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
-
 	}
 
-	public void bindMoveListener(Node node) {
-		node.setOnMousePressed(e -> {
+	/**
+	 * 设置装饰栏拖动处理
+	 * 
+	 * @param decorative
+	 *            装饰栏
+	 */
+	public void setDragHandler(Node decorative) {
+		// 鼠标在装饰栏上按下时
+		decorative.setOnMousePressed(e -> {
 			if (e.getTarget() instanceof Pane) {
-				x2 = e.getScreenX() - Main.getPrimaryStage().getX();
-				y2 = e.getScreenY() - Main.getPrimaryStage().getY();
+				offsetX = e.getScreenX() - Main.getPrimaryStage().getX();
+				offsetY = e.getScreenY() - Main.getPrimaryStage().getY();
 			}
 		});
 
-		node.setOnMouseReleased(e -> {
-			if (maximized || e.getScreenY() > 0 || !(e.getTarget() instanceof Pane)) {
+		// 鼠标在装饰栏上释放时
+		decorative.setOnMouseReleased(e -> {
+			if (!maximized && e.getScreenY() == 0 && e.getTarget() instanceof Pane) {
+				setMaximized((SVGPath) ((Labeled) decorative.lookup(".maximize-button")).getGraphic());
+			}
+		});
+
+		// 鼠标正在拖动装饰栏
+		decorative.setOnMouseDragged(e -> {
+			// 若不是装饰栏(布局面板)本身,则什么也不做
+			if (!(e.getTarget() instanceof Pane)) {
 				return;
 			}
-			setMaximized((SVGPath) ((Labeled) node.lookup(".maximize-button")).getGraphic());
-		});
 
-		node.setOnMouseDragged(e -> {
-			if (e.getTarget() instanceof Pane) {
-				System.out.println("x=" + this.x + " | y=" + this.y);
-				double y = e.getY();
-				System.out.println("e-y=" + y);
-				if (maximized && e.getScreenY() > 1) {
-					maximized = false;
-					Stage stage = Main.getPrimaryStage();
-					SVGPath path = (SVGPath) ((Labeled) node.lookup(".maximize-button")).getGraphic();
-//					path.setContent("M0 0 h12 v12 h-12 v-12");
-//					setBounds(stage, this.x+e.getScreenX(), this.y, width, height);
-//					Main.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
-					setMaximized(path);
-					return;
-				}
+			Stage stage = Main.getPrimaryStage();
 
-				Stage stage = Main.getPrimaryStage();
-				stage.setX(e.getScreenX() - x2);
-				if (e.getScreenY() < Screen.getPrimary().getVisualBounds().getHeight() - 5) {
-					stage.setY(e.getScreenY() - y2);
-				}
+			// 当前窗口已经最大化 并且 鼠标向下拖动. 那么先还原窗口,然后继续拖动
+			if (maximized && e.getScreenY() > 1) {
+				maximized = false;
+				SVGPath path = (SVGPath) ((Labeled) decorative.lookup(".maximize-button")).getGraphic();
+				path.setContent(MAXIMIZE_ICON);
+
+				// 获取屏幕可见最大宽度
+				double max = Screen.getPrimary().getVisualBounds().getWidth();
+				// 当前鼠标在屏幕上的x坐标, 新设置窗口坐标x=鼠标在屏幕上的x坐标-之前窗口宽度的一半
+				double screenX = e.getScreenX(), x = screenX - (width / 2);
+				// 需要注意计算出的x坐标 不能超过 (屏幕最大宽度 - 窗口之前的宽度)
+				x = x < 0 ? 0 : x > (max -= width) ? max : x;
+
+				setBounds(stage, x, e.getScreenY(), width, height);
+
+				// 必须重新计算offsetX(这个时候认为是鼠标的重新按下,所以误差x重算)
+				offsetX = screenX - x;
+
+				Main.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
+				Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+				return;
+			}
+
+			stage.setX(e.getScreenX() - offsetX);
+			if (e.getScreenY() + 5 < Screen.getPrimary().getVisualBounds().getHeight()) {
+				stage.setY(e.getScreenY() - offsetY);
 			}
 		});
 	}

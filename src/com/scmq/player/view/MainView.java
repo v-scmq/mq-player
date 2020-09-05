@@ -226,7 +226,7 @@ public class MainView {
 		AnchorPane.setTopAnchor(topPane, 0.0);
 		AnchorPane.setRightAnchor(topPane, 0.0);
 		AnchorPane.setLeftAnchor(topPane, (double) size);
-		StageHandler.getHandler().bindMoveListener(topPane);
+		StageHandler.getHandler().setDragHandler(topPane);
 
 		// -----------主选项卡面板部分-----------
 		Tab localTab = new Tab("本地音乐", localModuleView);
