@@ -1,6 +1,7 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
+import com.scmq.player.app.StageHandler;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.io.IOUtil;
@@ -51,7 +52,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.MediaPlayer.Status;
-import javafx.stage.Stage;
 import myorg.jaudiotagger.audio.flac.FlacFileReader;
 import myorg.jaudiotagger.audio.mp3.MP3FileReader;
 import myorg.jaudiotagger.audio.ogg.OggFileReader;
@@ -281,6 +281,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 					view.getScreenOperNode().getOnMouseClicked().handle(null);
 				}
 				break;
+			case ESCAPE:
+				if (StageHandler.getHandler().isFullScreen()) {
+					view.getScreenOperNode().getOnMouseClicked().handle(null);
+				}
+				break;
 			default:
 				break;
 			}
@@ -357,12 +362,17 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		// 绑定用户控制模块
 		userController.bind(view.getHeadImageView(), view.getUserNameButton());
 
-		Stage stage = Main.getPrimaryStage();
-		// 窗口全屏改变事件
-		stage.fullScreenProperty().addListener((observable, oldValue, value) -> view.fullScreen(value));
-
 		// 改变窗口全屏状态
-		view.getScreenOperNode().setOnMouseClicked(e -> stage.setFullScreen(!stage.isFullScreen()));
+		view.getScreenOperNode().setOnMouseClicked(e -> {
+			// 若已全屏显示,则不全屏; 否则全屏显示
+			boolean value = !StageHandler.getHandler().isFullScreen();
+			// 设置专辑图片是否能被点击(true:透过自身到父布局面板)
+			view.getAlbumImageView().setMouseTransparent(value);
+			// 设置是否全屏
+			StageHandler.getHandler().setFullScreen(value);
+			// 播放详情页面全屏显示
+			view.fullScreen(value);
+		});
 
 		// 清除播放队列所有媒体
 		view.getClearPlayList().setOnMouseClicked(e -> {
@@ -491,6 +501,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				}
 				play(index);
 				view.setDetailView(player.getMediaView());
+				view.getAlbumImageView().getOnMouseClicked().handle(null);
 			}
 
 			@Override
@@ -587,9 +598,10 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		if (newValue == null) {
 			return;
 		}
-		// 准备播放MV
+
 		List<MV> mvList = newValue.getMvList();
 		if (mvList != null && !mvList.isEmpty()) {
+			// 显示MV播放详情页面
 			view.setDetailView(player.getMediaView());
 			mvQueue.setAll(mvList);
 			play(newValue.getIndex());
@@ -597,6 +609,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			view.getAlbumImageView().getOnMouseClicked().handle(null);
 			return;
 		}
+
 		// 清除MV播放队列,准备生成音乐播放队列
 		mvQueue.clear();
 		view.setDetailView(null);

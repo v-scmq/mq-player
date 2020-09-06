@@ -55,7 +55,8 @@ public class Main extends javafx.application.Application {
 	private static ClassPathXmlApplicationContext context;
 
 	static {
-		Task.async(StageHandler::loadWin32Library);
+		// 加载本地库然后设置本地窗口可最小化
+		Task.async(StageHandler::loadAndSetStyle);
 		// 重定向输出流,以打印日志.
 		// setLog();
 		// 销毁空格按键的相关事件
@@ -98,21 +99,21 @@ public class Main extends javafx.application.Application {
 	}
 
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage stage) {
 		app = this;
-		this.primaryStage = primaryStage;
+		primaryStage = stage;
 		netMusicView = new NetMusicView();
 		localMusicView = new LocalMusicView();
 
 		mainView = new MainView(localMusicView, netMusicView);
-		primaryStage.setScene(new Scene(ROOT, 1200, 800));
-		primaryStage.getScene().getStylesheets().add(FileUtil.getStyleSheet("style"));
-		// primaryStage.getScene().setCursor(new ImageCursor(new Image("cursor.png")));
-		primaryStage.getIcons().add(FileUtil.createImage("player"));
-		primaryStage.initStyle(StageStyle.UNDECORATED);
-		primaryStage.setResizable(false);
-		primaryStage.setTitle("MQ音乐");
-		primaryStage.show();
+		stage.setScene(new Scene(ROOT, 1200, 800));
+		stage.getScene().getStylesheets().add(FileUtil.getStyleSheet("style"));
+		// stage.getScene().setCursor(new ImageCursor(new Image("cursor.png")));
+		stage.getIcons().add(FileUtil.createImage("player"));
+		stage.initStyle(StageStyle.UNDECORATED);
+		stage.setResizable(false);
+		stage.setTitle("MQ音乐");
+		stage.show();
 		StageHandler.getHandler().bind();
 	}
 

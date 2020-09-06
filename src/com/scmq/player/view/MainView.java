@@ -226,7 +226,7 @@ public class MainView {
 		AnchorPane.setTopAnchor(topPane, 0.0);
 		AnchorPane.setRightAnchor(topPane, 0.0);
 		AnchorPane.setLeftAnchor(topPane, (double) size);
-		StageHandler.getHandler().setDragHandler(topPane);
+		StageHandler.getHandler().setDragHandler(topPane, maximize);
 
 		// -----------主选项卡面板部分-----------
 		Tab localTab = new Tab("本地音乐", localModuleView);
@@ -743,7 +743,8 @@ public class MainView {
 	}
 
 	/**
-	 * 设置播放详情视图. 当调用此方法将修改播放详情页面的视图显示,只有音乐播放详情和MV播放详情2中类型的视图. 与此同时,也会更新播放队列的类型.
+	 * 设置播放详情视图. <br>
+	 * 当调用此方法将修改播放详情页面的视图显示,只有音乐播放详情和MV播放详情2中类型的视图. 与此同时,也会更新播放队列的类型.
 	 * 
 	 * @param mediaView
 	 *            显示MV(视频)的视图组件.若为null,则显示歌词视图,否则显示MV(视频)视图
@@ -761,9 +762,9 @@ public class MainView {
 				}
 				nodes.setAll(lyricView, audioSpectrumView);
 			}
-		}
-		// 显示MV视图
-		else if (!nodes.contains(mediaView)) {
+
+		} else if (!nodes.contains(mediaView)) {
+			// 显示MV视图
 			nodes.setAll(mediaView);
 			if (AnchorPane.getTopAnchor(mediaView) == null) {
 				AnchorPane.setTopAnchor(mediaView, 0.0);
@@ -817,6 +818,7 @@ public class MainView {
 			AnchorPane.setBottomAnchor(detailBox, 86.0);
 			return;
 		}
+
 		// 处于全屏状态
 		nodes.remove(bottomPane);
 		detailBox.setOnMouseMoved(e -> {
