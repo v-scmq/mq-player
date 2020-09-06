@@ -11,6 +11,7 @@ import com.scmq.player.net.NetSource;
 import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
+import com.scmq.player.service.SingerService;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
 import com.scmq.player.util.StringUtil;
@@ -49,6 +50,9 @@ public class SingerController implements ChangeListener<Tab> {
 	/** MV业务 */
 	@Autowired
 	private MVService mvService;
+	/** 歌手业务 */
+	@Autowired
+	private SingerService singerService;
 
 	/** 专辑控制器 */
 	@Autowired
@@ -175,6 +179,7 @@ public class SingerController implements ChangeListener<Tab> {
 			Task.async(() -> {
 				netSource.handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
+				singerService.update(singer);
 			});
 		} else {
 			view.updateSinger(singer);
