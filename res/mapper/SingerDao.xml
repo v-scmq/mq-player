@@ -66,16 +66,15 @@
     <update id="update">
         UPDATE singer
         <set>
-            <if test="singer.name !=null">name=#{singer.name}</if>
-            <if test="singer.mid !=null">mid=#{singer.mid}</if>
-            <if test="singer.cover !=null">cover=#{singer.cover}</if>
-            <if test="singer.introduce !=null">introduce=#{singer.introduce}</if>
-            <if test="singer.songCount !=null">song_count=#{singer.songCount}</if>
-            <if test="singer.albumCount !=null">album_count=#{singer.albumCount}</if>
-            <if test="singer.mvCount !=null">mv_count=#{singer.mvCount}</if>
-            <if test="singer.fansCount !=null">fans_count=#{singer.fansCount}</if>
+            <if test="singer.name !=null">name=#{singer.name},</if>
+            <if test="singer.cover !=null">cover=#{singer.cover},</if>
+            <if test="singer.introduce !=null">introduce=#{singer.introduce},</if>
+            <if test="singer.songCount !=null">song_count=#{singer.songCount},</if>
+            <if test="singer.albumCount !=null">album_count=#{singer.albumCount},</if>
+            <if test="singer.mvCount !=null">mv_count=#{singer.mvCount},</if>
+            <if test="singer.fansCount !=null">fans_count=#{singer.fansCount},</if>
             <if test="singer.platform">platform=#{singer.platform}</if>
         </set>
-        WHERE id=#{singer.id}
+        WHERE id=#{singer.id} OR mid=#{singer.mid}
     </update>
 </mapper>
