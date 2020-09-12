@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
@@ -24,9 +25,9 @@ import javafx.stage.Stage;
  * @author SCMQ
  * @since 2020-08-23
  */
-public class StageHandler implements EventHandler<MouseEvent> {
-	/** JavaFX窗口 处理器 */
-	private static StageHandler handler = new StageHandler();
+public enum StageHandler implements EventHandler<MouseEvent> {
+	/** JavaFX窗口 处理器(改用枚举实现单例模式) */
+	STAGE_HANDLER;
 
 	/** 窗口最大化时显示的图标 */
 	private static final String MAXIMIZED_ICON = "M3 0 h9 v9 h-3 M3 0 v3 h-3 v9 h9 v-9 h-6";
@@ -38,25 +39,21 @@ public class StageHandler implements EventHandler<MouseEvent> {
 
 	/** 加载本地库,然后重设本地窗口在任务栏上能够最小化(此方法需要运行在子线程中) */
 	static void loadAndSetStyle() {
-		// 加载本地库(比较耗时,窗口显示后还未能加载)
+		// 加载本地库(比较耗时,很有可能窗口显示后还未能加载)
 		User32 user32 = User32.INSTANCE;
 
-		// 获得本地窗口指针
-		Pointer pointer = new Pointer(nativeWindow);
-		// 获得本地窗口句柄
-		WinDef.HWND window = new WinDef.HWND(pointer);
+		// 同步到JavaFX UI线程执行(确保本地窗口已创建,才能获得本地窗口指针)
+		Platform.runLater(() -> {
+			// 获得本地窗口指针
+			Pointer pointer = new Pointer(nativeWindow);
+			// 获得本地窗口句柄
+			WinDef.HWND window = new WinDef.HWND(pointer);
 
-		// 获得本地窗口原有样式
-		int style = user32.GetWindowLong(window, WinUser.GWL_STYLE);
-		// 设置本地窗口可最小化 (WS_MINIMIZEBOX = 0x00020000)
-		user32.SetWindowLong(window, WinUser.GWL_STYLE, (style | WinUser.WS_MINIMIZEBOX));
-	}
-
-	private StageHandler() {
-	}
-
-	public static StageHandler getHandler() {
-		return handler;
+			// 获得本地窗口原有样式
+			int style = user32.GetWindowLong(window, WinUser.GWL_STYLE);
+			// 设置本地窗口可最小化 (WS_MINIMIZEBOX = 0x00020000)
+			user32.SetWindowLong(window, WinUser.GWL_STYLE, (style | WinUser.WS_MINIMIZEBOX));
+		});
 	}
 
 	/** 绑定根节点鼠标事件,以支持窗口resize(需要运行在窗口显示后) */
@@ -184,7 +181,7 @@ public class StageHandler implements EventHandler<MouseEvent> {
 				double size = (size = event.getX()) < 180 ? 180 : size > max ? max : size;
 				stage.setWidth(size);
 
-				// 鼠标在窗口上垂直方向时,可以改变高度
+				// 鼠标在窗口下垂直方向时,可以改变高度
 			} else if (cursor == Cursor.S_RESIZE) {
 				double max = Screen.getPrimary().getVisualBounds().getHeight();
 				double size = (size = event.getY()) < 60 ? 60 : size > max ? max : size;
@@ -210,6 +207,8 @@ public class StageHandler implements EventHandler<MouseEvent> {
 	 * 
 	 * @param decorative
 	 *            装饰栏
+	 * @param maximizeNode
+	 *            最大化或还原节点
 	 */
 	public void setDragHandler(Node decorative, SVGPath maximizeNode) {
 		// 鼠标在装饰栏上按下时
