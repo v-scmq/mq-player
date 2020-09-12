@@ -41,9 +41,13 @@ public class Reflect {
 			Method method = clazz.getDeclaredMethod(name, params);
 			method.setAccessible(true);
 			return method;
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-			return null;
+		} catch (NoSuchMethodException | SecurityException ignore) {
+			try {
+				return clazz.getMethod(name, params);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 
