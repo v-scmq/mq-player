@@ -31,6 +31,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
+
 public class Main extends javafx.application.Application {
 	/** 媒体播放器 */
 	private MediaPlayer player;
@@ -114,7 +116,7 @@ public class Main extends javafx.application.Application {
 		stage.setResizable(false);
 		stage.setTitle("MQ音乐");
 		stage.show();
-		StageHandler.getHandler().bind();
+		STAGE_HANDLER.bind();
 	}
 
 	/** 主进程结束的回调方法 */
@@ -179,21 +181,12 @@ public class Main extends javafx.application.Application {
 		// 取消Button默认的键盘事件(在JDK8中只有空格键,所以直接清空)
 		Class<?> clazz = com.sun.javafx.scene.control.behavior.ButtonBehavior.class;
 		list = Reflect.getValue(clazz, "BUTTON_BINDINGS", null);
-		if (list != null) {
-			list.clear();
-		}
+		list.clear();
+
 		// 取消滚动面板的默认空格键盘事件
 		clazz = com.sun.javafx.scene.control.behavior.ScrollPaneBehavior.class;
 		list = Reflect.getValue(clazz, "SCROLL_PANE_BINDINGS", null);
-		if (list == null) {
-			return;
-		}
-		for (com.sun.javafx.scene.control.behavior.KeyBinding keyBind : list) {
-			if (keyBind.getCode() == KeyCode.SPACE) {
-				list.remove(keyBind);
-				break;
-			}
-		}
+		list.removeIf(keyBind -> keyBind.getCode() == KeyCode.SPACE);
 	}
 
 	/** 重定向以设置日志输出. */
