@@ -8,26 +8,26 @@ import java.util.Objects;
  * @author SCMQ
  */
 public class Singer {
-    /** 本地存储歌手id */
-    private Integer id;
-    /** 歌手名称 */
-    private String name;
-    /** 音乐平台歌手mid */
-    private String mid;
-    /** 歌手封面图片 URI */
-    private String cover;
-    /** 歌手介绍 */
-    private String introduce;
-    /** 歌手包含的歌曲数量 */
-    private Integer songCount;
-    /** 歌手包含的专辑数量 */
-    private Integer albumCount;
-    /** 歌手包含的MV数量 */
-    private Integer mvCount;
-    /** 歌手关注(粉丝)量 */
-    private String fansCount;
-    /** 歌手所属音乐平台(如“酷狗音乐”) */
-    private String platform;
+	/** 本地存储歌手id */
+	private Integer id;
+	/** 歌手名称 */
+	private String name;
+	/** 音乐平台歌手mid */
+	private String mid;
+	/** 歌手封面图片 URI */
+	private String cover;
+	/** 歌手介绍 */
+	private String introduce;
+	/** 歌手包含的歌曲数量 */
+	private Integer songCount;
+	/** 歌手包含的专辑数量 */
+	private Integer albumCount;
+	/** 歌手包含的MV数量 */
+	private Integer mvCount;
+	/** 歌手关注(粉丝)量 */
+	private String fansCount;
+	/** 歌手所属音乐平台(如“酷狗音乐”) */
+	private String platform;
 
     public Singer() {
     }
@@ -251,5 +251,15 @@ public class Singer {
 	public int hashCode() {
 		String key = getPlatform() == null ? getName() : getMid();
 		return key == null ? 0 : 31 + key.hashCode();
+	}
+	
+	/**
+	 * 检查歌手的歌曲、专辑、MV、粉丝数量和歌手简介等信息是否不存在
+	 * 
+	 * @return 若信息不存在则返回true
+	 */
+	public boolean isEmptyInfo() {
+		return getSongCount() == null || getAlbumCount() == null || getMvCount() == null//
+				|| getIntroduce() == null;
 	}
 }
