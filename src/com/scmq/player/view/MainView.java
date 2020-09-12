@@ -2,7 +2,6 @@
 package com.scmq.player.view;
 
 import com.scmq.player.app.Main;
-import com.scmq.player.app.StageHandler;
 import com.scmq.player.model.LyricLine;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Media;
@@ -57,6 +56,8 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.Set;
+
+import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
 
 public class MainView {
 	// 主界面顶部
@@ -209,7 +210,7 @@ public class MainView {
 		maximize.setStrokeWidth(0.65);
 		Button maximized = new Button(null, maximize);
 		maximized.getStyleClass().setAll("maximize-button");
-		maximized.setOnAction(e -> StageHandler.getHandler().setMaximized(maximize));
+		maximized.setOnAction(e -> STAGE_HANDLER.setMaximized(maximize));
 
 		SVGPath closeable = new SVGPath();
 		closeable.setContent("M0 0 L12 12 M12 0 L0 12");
@@ -228,7 +229,7 @@ public class MainView {
 		AnchorPane.setTopAnchor(topPane, 0.0);
 		AnchorPane.setRightAnchor(topPane, 0.0);
 		AnchorPane.setLeftAnchor(topPane, (double) size);
-		StageHandler.getHandler().setDragHandler(topPane, maximize);
+		STAGE_HANDLER.setDragHandler(topPane, maximize);
 
 		// -----------主选项卡面板部分-----------
 		Tab localTab = new Tab("本地音乐", localModuleView);

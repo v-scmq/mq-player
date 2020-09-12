@@ -1,7 +1,6 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
-import com.scmq.player.app.StageHandler;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.io.IOUtil;
@@ -64,6 +63,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
+
+import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
 
 /**
  * 主模块控制器
@@ -282,7 +283,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				}
 				break;
 			case ESCAPE:
-				if (StageHandler.getHandler().isFullScreen()) {
+				if (STAGE_HANDLER.isFullScreen()) {
 					view.getScreenOperNode().getOnMouseClicked().handle(null);
 				}
 				break;
@@ -365,11 +366,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		// 改变窗口全屏状态
 		view.getScreenOperNode().setOnMouseClicked(e -> {
 			// 若已全屏显示,则不全屏; 否则全屏显示
-			boolean value = !StageHandler.getHandler().isFullScreen();
+			boolean value = !STAGE_HANDLER.isFullScreen();
 			// 设置专辑图片是否能被点击(true:透过自身到父布局面板)
 			view.getAlbumImageView().setMouseTransparent(value);
 			// 设置是否全屏
-			StageHandler.getHandler().setFullScreen(value);
+			STAGE_HANDLER.setFullScreen(value);
 			// 播放详情页面全屏显示
 			view.fullScreen(value);
 		});
