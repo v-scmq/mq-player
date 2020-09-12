@@ -33,6 +33,13 @@ import java.util.List;
 
 import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
 
+/**
+ * 音乐播放器应用主进程入口
+ * 
+ * @author SCMQ
+ * @version 2.0
+ * @since 2019-09-23
+ */
 public class Main extends javafx.application.Application {
 	/** 媒体播放器 */
 	private MediaPlayer player;
