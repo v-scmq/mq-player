@@ -14,7 +14,6 @@ import com.scmq.player.service.MusicService;
 import com.scmq.player.service.SingerService;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
-import com.scmq.player.util.StringUtil;
 import com.scmq.player.util.Task;
 import com.scmq.player.util.ViewRestore;
 import com.scmq.player.view.SingerView;
@@ -80,10 +79,11 @@ public class SingerController implements ChangeListener<Tab> {
 
 		ViewRestore.setData(view, singer = (Singer) data);
 		// 更新歌手信息
-		if (isEmptyInfo(singer)) {
+		if (singer.isEmptyInfo()) {
 			Task.async(() -> {
 				netSource.handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
+				singerService.update(singer);
 			});
 		} else {
 			view.updateSinger(singer);
@@ -104,7 +104,7 @@ public class SingerController implements ChangeListener<Tab> {
 
 	/**
 	 * 显示歌手视图
-	 * 
+	 *
 	 * @param singer
 	 *            歌手信息对象
 	 * @param netSource
@@ -175,7 +175,7 @@ public class SingerController implements ChangeListener<Tab> {
 
 		ViewRestore.setData(view, this.singer = singer);
 		// 更新歌手信息
-		if (isEmptyInfo(singer)) {
+		if (singer.isEmptyInfo()) {
 			Task.async(() -> {
 				netSource.handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
@@ -284,16 +284,4 @@ public class SingerController implements ChangeListener<Tab> {
 			Main.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
-
-	/**
-	 * 检查歌手信息是否为空.
-	 * 
-	 * @param singer
-	 *            歌手信息对象
-	 * @return 若歌手信息为空,则返回true
-	 */
-	private boolean isEmptyInfo(Singer singer) {
-		return singer.getSongCount() == null || singer.getAlbumCount() == null || singer.getMvCount() == null
-				|| StringUtil.isEmpty(singer.getFansCount()) || StringUtil.isEmpty(singer.getIntroduce());
-	}
 }

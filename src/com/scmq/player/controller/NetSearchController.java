@@ -196,10 +196,21 @@ public class NetSearchController implements ChangeListener<Tab> {
 					List<Singer> singerList = netSource.singerSearch(keyword);
 					// 缓存歌手数据到数据库
 					singerService.save(singerList);
+
+					singer = singerList == null || singerList.isEmpty() ? null : singerList.get(0);
+					// 若歌手信息不存在并且通过网络平台获得歌手信息,则重新更新本地数据库
+					if (singer != null && singer.isEmptyInfo() && netSource.handleSingerInfo(singer)) {
+						singerService.update(singer);
+					}
+
 					// 缓存歌手图片到本地磁盘
 					singerService.handlePictures(singerList);
-					singer = singerList == null || singerList.isEmpty() ? null : singerList.get(0);
+
 				} else {
+					// 若歌手信息不存在并且通过网络平台获得歌手信息,则重新更新本地数据库
+					if (singer.isEmptyInfo() && netSource.handleSingerInfo(singer)) {
+						singerService.update(singer);
+					}
 					singerService.handlePicture(singer);
 				}
 
