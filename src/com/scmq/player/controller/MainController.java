@@ -81,7 +81,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	private NetSearchController searchController;
 	/** 用户控制器 */
 	@Autowired
-	UserController userController;
+	private UserController userController;
 
 	/** 媒体播放器 */
 	private MediaPlayer player;
