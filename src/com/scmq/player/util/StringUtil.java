@@ -63,7 +63,7 @@ public class StringUtil {
 	 *            需要计算的浮点数
 	 * @param scale
 	 *            保留有效数字个数(精度)
-	 * @return 指定有效数值为的数值
+	 * @return 指定有效数值为的数值字符串
 	 */
 	public static String retainDigits(double value, int scale) {
 		return retainDigits(value, scale, false);
@@ -78,7 +78,7 @@ public class StringUtil {
 	 *            保留有效数字个数(精度)
 	 * @param trim
 	 *            是否去除有效数字部分的0
-	 * @return 指定有效数值为的数值
+	 * @return 指定有效数值为的数值字符串
 	 */
 	public static String retainDigits(double value, int scale, boolean trim) {
 		StringBuilder builder = new StringBuilder().append(value);
