@@ -57,6 +57,80 @@ public class StringUtil {
 	}
 
 	/**
+	 * 保留一个浮点数的指定有效数字位.
+	 *
+	 * @param value
+	 *            需要计算的浮点数
+	 * @param scale
+	 *            保留有效数字个数(精度)
+	 * @return 指定有效数值为的数值
+	 */
+	public static String retainDigits(double value, int scale) {
+		return retainDigits(value, scale, false);
+	}
+
+	/**
+	 * 保留一个浮点数的指定有效数字位. 但是若指定去除有效数字内的0,那么精度不会是指定的.
+	 *
+	 * @param value
+	 *            需要计算的浮点数
+	 * @param scale
+	 *            保留有效数字个数(精度)
+	 * @param trim
+	 *            是否去除有效数字部分的0
+	 * @return 指定有效数值为的数值
+	 */
+	public static String retainDigits(double value, int scale, boolean trim) {
+		StringBuilder builder = new StringBuilder().append(value);
+		int point = builder.indexOf(".");
+
+		// 若精度小于1直接删除删除小数点开始的所有字符
+		if (scale <= 0) {
+			return builder.delete(point, builder.length()).toString();
+		}
+
+		// 精度值加1 , 同时point增加精度值
+		point += ++scale;
+
+		// 若精度大于已有的有效位数 且 不需要去除0, 那么补0.
+		if (!trim && point > builder.length()) {
+			for (int index = point - builder.length(); index > 0; --index) {
+				builder.append('0');
+			}
+		}
+
+		// 若进度小于已有有效位数那么删除进度之后的所有数
+		if (point < builder.length()) {
+			builder.delete(point, builder.length());
+		}
+
+		// 若不需要去除有效位数的0
+		if (!trim) {
+			return builder.toString();
+		}
+
+		point -= scale;
+
+		// 去除所有小数点后的0
+		for (int index = builder.length() - 1; index >= point; --index) {
+			char c = builder.charAt(index);
+			// 若不是 “0” 和 “.” , 则结束
+			if (c != '0' && c != '.') {
+				break;
+			}
+
+			// 删除当前索引字符
+			builder.delete(index, index + 1);
+			// 若已经达到小数点位置, 则结束
+			if (c == '.') {
+				break;
+			}
+		}
+
+		return builder.toString();
+	}
+
+	/**
 	 * 获取字符序列对应的MD5字符序列
 	 *
 	 * @param sequence
