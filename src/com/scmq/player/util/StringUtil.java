@@ -146,8 +146,7 @@ public class StringUtil {
 
 			try {
 				return md5 = MessageDigest.getInstance("MD5");
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
+			} catch (NoSuchAlgorithmException ignore) {
 				// 通常这里不会执行
 				throw new NullPointerException();
 			}
