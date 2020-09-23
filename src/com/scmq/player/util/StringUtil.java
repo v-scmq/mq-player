@@ -99,7 +99,7 @@ public class StringUtil {
 			}
 		}
 
-		// 若进度小于已有有效位数那么删除进度之后的所有数
+		// 若精度小于已有有效位数那么删除进度之后的所有数
 		if (point < builder.length()) {
 			builder.delete(point, builder.length());
 		}
@@ -130,6 +130,30 @@ public class StringUtil {
 		return builder.toString();
 	}
 
+	/** MD5算法实例对象 */
+	private static MessageDigest md5;
+
+	/** 获取MD5算法实例对象 */
+	private static MessageDigest getMd5() {
+		if (md5 != null) {
+			return md5;
+		}
+
+		synchronized (String.class) {
+			if (md5 != null) {
+				return md5;
+			}
+
+			try {
+				return md5 = MessageDigest.getInstance("MD5");
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+				// 通常这里不会执行
+				throw new NullPointerException();
+			}
+		}
+	}
+
 	/**
 	 * 获取字符序列对应的MD5字符序列
 	 *
@@ -138,19 +162,14 @@ public class StringUtil {
 	 * @return text对应的MD5字符序列
 	 */
 	public static String md5(String sequence) {
-		try {
-			MessageDigest md5 = MessageDigest.getInstance("MD5");
-			byte[] bytes = md5.digest(sequence.getBytes(UTF_8));
-			char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-			StringBuilder builder = new StringBuilder(bytes.length << 1);
-			for (byte aByte : bytes) {
-				builder.append(hexDigits[(aByte >> 4) & 0xF]);
-				builder.append(hexDigits[aByte & 0xF]);
-			}
-			return builder.toString();
-		} catch (NoSuchAlgorithmException e) {
-			return sequence;
+		byte[] bytes = getMd5().digest(sequence.getBytes(UTF_8));
+		char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		StringBuilder builder = new StringBuilder(bytes.length << 1);
+		for (byte aByte : bytes) {
+			builder.append(hexDigits[(aByte >> 4) & 0xF]);
+			builder.append(hexDigits[aByte & 0xF]);
 		}
+		return builder.toString();
 	}
 
 	/**
