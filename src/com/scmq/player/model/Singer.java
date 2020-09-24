@@ -259,7 +259,7 @@ public class Singer {
 	 * @return 若信息不存在则返回true
 	 */
 	public boolean isEmptyInfo() {
-		return getSongCount() == null || getAlbumCount() == null || getMvCount() == null//
-				|| getIntroduce() == null;
+		return getSongCount() == null || getAlbumCount() == null || //
+				getMvCount() == null || getFansCount() == null || getIntroduce() == null;
 	}
 }
