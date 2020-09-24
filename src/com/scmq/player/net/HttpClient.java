@@ -16,7 +16,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -271,7 +270,7 @@ public final class HttpClient {
 		byte[] data = null;
 		boolean handle = !StringUtil.isEmpty(json);
 		if (handle) {
-			data = json.getBytes(StandardCharsets.UTF_8);
+			data = json.getBytes(StringUtil.UTF_8);
 			// 额外设置请求头“内容类型”(发送JSON数据,必须有这个请求头)
 			headers.add(new Header("content-type", "application/json;charset=UTF-8"));
 			headers.add(new Header("content-length", Integer.toString(data.length)));

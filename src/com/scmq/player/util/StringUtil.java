@@ -2,14 +2,15 @@ package com.scmq.player.util;
 
 import java.lang.Character.UnicodeBlock;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class StringUtil {
 	/** GBK编码 */
 	public static final Charset GBK = Charset.forName("GBK");
-	/** UTF8编码 */
-	public static final Charset UTF_8 = Charset.forName("UTF8");
+	/** UTF8编码(StandardCharsets类已被其他地方主动加载) */
+	public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
 	/**
 	 * 清空StringBuilder内部字符序列
