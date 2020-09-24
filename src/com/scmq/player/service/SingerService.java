@@ -64,6 +64,29 @@ public class SingerService {
 		return StringUtil.isEmpty(name) ? null : dao.findSingerByName(name, platformId);
 	}
 
+	/**
+	 * 通过歌手mid精确查找指定音乐平台的歌手信息
+	 * @param mid 歌手mid
+	 * @param platformId 音乐平台id(若为null,则为本地音乐平台的歌手数据)
+	 * @return 歌手信息
+	 */
+	public Singer findSingerByMid(String mid, String platformId) {
+		return dao.findSingerByMid(mid, platformId);
+	}
+
+    /**
+     * 从一个歌手复制基本信息到另一个歌手对象.
+     * @param source 复制信息源对象
+     * @param target 复制信息目标对象
+     */
+	public void cloneOfBaseInfo(Singer source,Singer target){
+	    target.setId(source.getId());
+	    target.setSongCount(source.getSongCount());
+	    target.setAlbumCount(source.getAlbumCount());
+	    target.setMvCount(source.getMvCount());
+	    target.setFansCount(source.getFansCount());
+    }
+
     /**
      * 批量保存歌手信息
      *

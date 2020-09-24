@@ -81,6 +81,13 @@ public class SingerController implements ChangeListener<Tab> {
 		// 更新歌手信息
 		if (singer.isEmptyInfo()) {
 			Task.async(() -> {
+				// 先从数据数据库表查询
+				Singer info = singerService.findSingerByMid(singer.getMid(), singer.getPlatform());
+				if (info != null && !info.isEmptyInfo()) {
+					singerService.cloneOfBaseInfo(info, singer);
+					Platform.runLater(() -> view.updateSinger(singer));
+					return;
+				}
 				netSource.handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
 				singerService.update(singer);
@@ -177,6 +184,13 @@ public class SingerController implements ChangeListener<Tab> {
 		// 更新歌手信息
 		if (singer.isEmptyInfo()) {
 			Task.async(() -> {
+				// 先从数据数据库表查询
+				Singer data = singerService.findSingerByMid(singer.getMid(), singer.getPlatform());
+				if (data != null && !data.isEmptyInfo()) {
+					singerService.cloneOfBaseInfo(data, singer);
+					Platform.runLater(() -> view.updateSinger(singer));
+					return;
+				}
 				netSource.handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
 				singerService.update(singer);

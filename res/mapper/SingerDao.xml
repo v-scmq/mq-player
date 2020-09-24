@@ -46,6 +46,16 @@
         LIMIT 0,1
     </select>
 
+    <!-- 通过歌手mid精确查找指定音乐平台的歌手信息 -->
+    <select id="findSingerByMid" resultMap="singerMap">
+        SELECT id,introduce,song_count,album_count,mv_count,fans_count
+        FROM singer WHERE mid=#{mid} AND platform
+        <choose>
+            <when test="platformId==null">IS NULL</when>
+            <otherwise>=#{platformId}</otherwise>
+        </choose>
+    </select>
+
     <!-- 保存单个歌手信息 -->
     <insert id="saveOfSingle" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO singer(name, cover, introduce, song_count, album_count, mv_count, fans_count, mid, platform) VALUES

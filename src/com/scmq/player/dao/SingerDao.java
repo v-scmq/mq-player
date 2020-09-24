@@ -43,6 +43,14 @@ public interface SingerDao {
 	Singer findSingerByName(@Param("name") String name, @Param("platform") String platformId);
 
     /**
+     * 通过歌手mid精确查找指定音乐平台的歌手信息
+     * @param mid 歌手mid
+     * @param platformId 音乐平台id(若为null,则为本地音乐平台的歌手数据)
+     * @return 歌手信息
+     */
+    Singer findSingerByMid(@Param("mid") String mid, @Param("platformId") String platformId);
+
+    /**
      * 保存单个歌手信息
      *
      * @param singer 歌手信息
