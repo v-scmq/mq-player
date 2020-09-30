@@ -79,13 +79,14 @@ public class SingerService {
      * @param source 复制信息源对象
      * @param target 复制信息目标对象
      */
-	public void cloneOfBaseInfo(Singer source,Singer target){
-	    target.setId(source.getId());
-	    target.setSongCount(source.getSongCount());
-	    target.setAlbumCount(source.getAlbumCount());
-	    target.setMvCount(source.getMvCount());
-	    target.setFansCount(source.getFansCount());
-    }
+	public void cloneOfBaseInfo(Singer source, Singer target) {
+		target.setId(source.getId());
+		target.setSongCount(source.getSongCount());
+		target.setAlbumCount(source.getAlbumCount());
+		target.setMvCount(source.getMvCount());
+		target.setFansCount(source.getFansCount());
+		target.setIntroduce(source.getIntroduce());
+	}
 
     /**
      * 批量保存歌手信息
