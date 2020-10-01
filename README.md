@@ -1,15 +1,5 @@
-## MQPlayer
+### MQPlayer <a href="https://github.com/v-scmq/mq-player"><img src="https://img.shields.io/badge/GitHub-success.svg" alt></a> <a href="https://gitee.com/scmq/mq-player/"><img src="https://img.shields.io/badge/Gitee-blue.svg" alt></a>
 MQ音乐是一个构建在Java和JavaFX平台之上的跨平台音乐播放器
-
-### 开源地址
-<div>
-    <a href="https://github.com/v-scmq/mq-player">
-     <img src="https://img.shields.io/badge/GitHub-success.svg" alt>
-    </a>
-    <a href="https://gitee.com/scmq/mq-player/">
-        <img src="https://img.shields.io/badge/Gitee-blue.svg" alt>
-    </a>
-</div>
 
 ### 项目技术栈
 <div>
