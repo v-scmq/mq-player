@@ -15,7 +15,6 @@ import com.scmq.player.model.Special;
 import com.scmq.player.model.Tag;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 音乐平台网络资源库
@@ -124,11 +123,9 @@ public interface NetSource {
 	 *            搜索关键词(也可以是拼音),参数可以是null或是一个空串
 	 * @param page
 	 *            分页对象,不能为null
-	 * @param map
-	 *            Map集合,允许为null.(由于单个返回值不能收集更多信息,若要获取更多信息,可传入一个Map集合.比如获取直达歌手信息)
 	 * @return 音乐信息列表集合
 	 */
-	List<Music> songSearch(String key, Page page, Map<Object, Object> map);
+	List<Music> songSearch(String key, Page page);
 
 	/**
 	 * 处理音乐信息,以获得播放地址

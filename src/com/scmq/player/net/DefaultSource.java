@@ -13,8 +13,10 @@ import com.scmq.player.model.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * 提供一个默认获取网络资源空实现类
+ */
 public class DefaultSource implements NetSource {
 	private List<Tag> singerTags = new ArrayList<>(5);
 
@@ -100,7 +102,7 @@ public class DefaultSource implements NetSource {
 	}
 
 	@Override
-	public List<Music> songSearch(String key, Page page, Map<Object, Object> map) {
+	public List<Music> songSearch(String key, Page page) {
 		return new ArrayList<>();
 	}
 

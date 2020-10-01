@@ -215,7 +215,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 				}
 
 				final Singer entity = singer;
-				List<Music> list = netSource.songSearch(keyword, songPage, null);
+				List<Music> list = netSource.songSearch(keyword, songPage);
 				Platform.runLater(() -> {
 					view.updateSong(list, songPage, this.singer = entity);
 
