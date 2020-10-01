@@ -95,6 +95,9 @@ public class NetMusicController implements ChangeListener<Tab> {
 	/** 歌手分类、歌手拼音、歌单分类、MV分类选择 */
 	private SelectionModel<Tag> kindSection, enSelection, specialSelection, mvSelection;
 
+	/** 音乐榜单分类List集合 */
+	private List<Rank> rankList;
+
 	/**
 	 * Tag(标签)、榜单项(RankItem)改变事件. 这两种类型的改变都通过一个监听器来处理,对于榜单项必须重设为newValue,否则无法获取最新已选榜单项
 	 */
@@ -217,6 +220,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 				Platform.runLater(() -> updateSinger(list));
 			});
 		}
+
 		// 切换的“歌单”选项卡
 		else if ("歌单".equals(tabText)) {
 			if (!specialUpdatable) {
@@ -232,6 +236,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 				Platform.runLater(() -> updateSpecial(list));
 			});
 		}
+
 		// 切换的“MV”选项卡
 		else if ("MV".equals(tabText)) {
 			if (!mvUpdatable) {
@@ -247,6 +252,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 				Platform.runLater(() -> updateMV(list));
 			});
 		}
+
 		// 切换的“排行榜”选项卡
 		else if ("排行榜".equals(tabText)) {
 			if (!rankUpdatable) {
@@ -255,10 +261,36 @@ public class NetMusicController implements ChangeListener<Tab> {
 			}
 			rankUpdatable = false;
 			spinner.centerTo(view);
+
+			boolean empty = rankList == null || rankList.isEmpty();
 			Task.async(() -> {
-				List<Music> list = netSource.songList(rankItem, rankPage);
-				Platform.runLater(() -> updateRank(list));
-				musicService.save(list);
+				// 若没有榜单分类信息,重新获取
+				List<Rank> ranks = empty ? netSource.rankList() : rankList;
+				// 若仍未获得,则不执行后续操作
+				if (ranks == null || ranks.isEmpty()) {
+					return;
+				}
+				// 若之前没有分类信息,但是现在已获得分类信息,那么同步到UI线程并更新UI
+				if (empty) {
+					Platform.runLater(() -> updateRank(ranks));
+				}
+
+				// TODO 潜在问题：rankItem有可能不是rankList中的元素
+				List<RankItem> items;
+				RankItem item = rankItem != null ? rankItem : //
+				(items = ranks.get(0).getItems()) == null || items.isEmpty() ? null : items.get(0);
+				if (item != null) {
+					List<Music> list = netSource.songList(item, rankPage);
+
+					// 更新音乐数据表格
+					Platform.runLater(() -> {
+						view.getTableView().getItems().setAll(list);
+						view.updatePagination(rankPage);
+						spinner.close();
+					});
+
+					musicService.save(list);
+				}
 			});
 		}
 	}
@@ -343,46 +375,44 @@ public class NetMusicController implements ChangeListener<Tab> {
 		}
 	}
 
-	private void updateRank(List<Music> list) {
-		List<Rank> ranks = netSource.rankList();
+	private void updateRank(List<Rank> ranks) {
 		ObservableList<TitledPane> nodes = view.getRankAccordion().getPanes();
-		// 如果需要更新榜单分类标签信息
-		if (nodes.isEmpty() && ranks != null && !ranks.isEmpty()) {
-			@SuppressWarnings("unchecked")
-			ListView<RankItem>[] listViews = new ListView[ranks.size()];
-			int index = 0;
-			for (Rank rank : ranks) {
-				ListView<RankItem> rankListView = listViews[index++] = new ListView<>();
-				rankListView.getStyleClass().add("rank-list-view");
-				rankListView.getItems().addAll(rank.getItems());
-				if (rankItem == null) {
-					rankListView.getSelectionModel().select(0);
-					rankItem = rankListView.getSelectionModel().getSelectedItem();
-				}
-				TitledPane rankType = new TitledPane(rank.getName(), rankListView);
-				rankType.setAnimated(true);
-				nodes.add(rankType);
-				rankListView.setCellFactory(listView -> new ListCell<RankItem>() {
-					{
-						addEventFilter(MouseEvent.MOUSE_PRESSED, filter);
-					}
-
-					@Override
-					public void updateItem(RankItem item, boolean empty) {
-						super.updateItem(item, empty);
-						setText(empty ? null : item.getName());
-					}
-				});
-			}
-			if (!nodes.isEmpty()) {
-				view.getRankAccordion().setExpandedPane(nodes.get(0));
-			}
-			registerRankItemChangeListener(listViews);
+		if (!nodes.isEmpty() || ranks == null || ranks.isEmpty()) {
+			return;
 		}
-		// 更新音乐数据表格
-		view.getTableView().getItems().setAll(list);
-		view.updatePagination(rankPage);
-		spinner.close();
+
+		// 如果需要更新榜单分类标签信息
+		@SuppressWarnings("unchecked")
+		ListView<RankItem>[] listViews = new ListView[ranks.size()];
+		int index = 0;
+		for (Rank rank : ranks) {
+			ListView<RankItem> rankListView = listViews[index++] = new ListView<>();
+			rankListView.getStyleClass().add("rank-list-view");
+			rankListView.getItems().addAll(rank.getItems());
+			if (rankItem == null) {
+				rankListView.getSelectionModel().select(0);
+				rankItem = rankListView.getSelectionModel().getSelectedItem();
+			}
+
+			TitledPane rankType = new TitledPane(rank.getName(), rankListView);
+			rankType.setAnimated(true);
+			nodes.add(rankType);
+			rankListView.setCellFactory(listView -> new ListCell<RankItem>() {
+				{
+					addEventFilter(MouseEvent.MOUSE_PRESSED, filter);
+				}
+
+				@Override
+				public void updateItem(RankItem item, boolean empty) {
+					super.updateItem(item, empty);
+					setText(empty ? null : item.getName());
+				}
+			});
+		}
+		if (!nodes.isEmpty()) {
+			view.getRankAccordion().setExpandedPane(nodes.get(0));
+		}
+		registerRankItemChangeListener(listViews);
 	}
 
 	private void updateMV(List<MV> list) {
