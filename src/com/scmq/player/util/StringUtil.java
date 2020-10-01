@@ -58,6 +58,26 @@ public class StringUtil {
 	}
 
 	/**
+	 * 截取并获得字符序列.
+	 * 
+	 * @param sequence
+	 *            字符序列
+	 * @param offset
+	 *            起始位置
+	 * @param end
+	 *            结束位置
+	 * @return 从起始位置开始到结束位置区间的字符序列,区间为[offset,end)
+	 */
+	public static String subString(String sequence, int offset, int end) {
+		if (isEmpty(sequence)) {
+			return "";
+		}
+		end = end > sequence.length() ? sequence.length() : end;
+		offset = offset < 0 ? 0 : offset > end ? end : offset;
+		return offset == end ? "" : sequence.substring(offset, end);
+	}
+
+	/**
 	 * 保留一个浮点数的指定有效数字位.
 	 *
 	 * @param value
