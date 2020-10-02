@@ -1,12 +1,8 @@
 package com.scmq.player.service;
 
-import com.scmq.player.dao.AlbumDao;
 import com.scmq.player.dao.MusicDao;
-import com.scmq.player.dao.SingerDao;
-import com.scmq.player.model.Album;
 import com.scmq.player.model.Media;
 import com.scmq.player.model.Music;
-import com.scmq.player.model.Singer;
 import com.scmq.player.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +17,9 @@ public class MusicService {
 	@Autowired
 	private MusicDao musicDao;
 	@Autowired
-	private SingerDao singerDao;
+	private SingerService singerService;
 	@Autowired
-	private AlbumDao albumDao;
+	private AlbumService albumService;
 
 	/**
 	 * 查询所有音乐信息
@@ -54,66 +50,25 @@ public class MusicService {
 		HashMap<String, Integer> cache = new HashMap<>(list.size() < 10 ? list.size() : list.size() >> 1);
 		// 处理所有歌手id
 		for (Music music : list) {
-			Singer singer = music.getSinger();
-			String key = singer == null ? null : singer.getPlatform() == null ? singer.getName() : singer.getMid();
-			// 如果没有歌手信息,则忽略
-			if (StringUtil.isEmpty(key)) {
-				continue;
-			}
-			// 先从map中找是否有歌手id
-			Integer id = cache.get(key);
-			if (id == null) {
-				// 查询歌手id
-				id = singerDao.findIdByInfo(singer);
-				// 若没有歌手id,则保存歌手信息以获得id
-				if (id == null) {
-					singerDao.saveOfSingle(singer);
-				} else {
-					// 否则设置通过查询而得的id
-					singer.setId(id);
-				}
-				// 放入map,作为下一次使用
-				cache.put(key, singer.getId());
-			} else {
-				// 直接使用缓存的歌手id
-				singer.setId(id);
-			}
+			singerService.handleSingerId(music.getSinger(), cache);
 		}
+
 		// 清除缓存
 		cache.clear();
 		for (Music music : list) {
-			Album album = music.getAlbum();
-			// 若是本地歌曲专辑信息,则缓存专辑名称,否则缓存专辑mid.
-			// 因为本地歌曲没有mid,而网络歌曲专辑信息会存在没有专辑名称但能获取到专辑mid,例如酷狗音乐
-			String key = album == null ? null : album.getPlatform() == null ? album.getName() : album.getMid();
-			if (StringUtil.isEmpty(key)) {
-				continue;
-			}
-			// 先从map中找是否有专辑id
-			Integer id = cache.get(key);
-			if (id == null) {
-				// 通过专辑信息查询专辑id
-				id = albumDao.findIdByInfo(album);
-				// 若没有专辑id,则保存专辑信息以获得id
-				if (id == null) {
-					albumDao.saveOfSingle(album);
-				} else {
-					// 否则设置通过查询而得的id
-					album.setId(id);
-				}
-				// 放入缓存
-				cache.put(key, album.getId());
-			} else {
-				// 设置专辑id
-				album.setId(id);
-			}
+			albumService.handleAlbumId(music.getAlbum(), cache);
 		}
+
 		// 清除缓存
 		cache.clear();
 		ArrayList<Music> saveList = new ArrayList<>(list.size());
 		for (Music music : list) {
 			// 如果是本地音乐(没有平台id),缓存的是文件路径,因为只有路径是唯一的
 			String key = music.getPlatform() == null ? music.getPath() : music.getMid();
+			if (StringUtil.isEmpty(key)) {
+				continue;
+			}
+
 			// 先从缓存中获取音乐id
 			Integer id = cache.get(key);
 			if (id == null) {
