@@ -1,6 +1,7 @@
 package com.scmq.player.controller;
 
 import com.scmq.player.app.Main;
+import com.scmq.player.model.Album;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
@@ -8,6 +9,7 @@ import com.scmq.player.model.PlayList;
 import com.scmq.player.model.Singer;
 import com.scmq.player.model.Special;
 import com.scmq.player.net.NetSource;
+import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
 import com.scmq.player.service.SingerService;
@@ -47,6 +49,9 @@ public class NetSearchController implements ChangeListener<Tab> {
 	/** 音乐业务 */
 	@Autowired
 	private MusicService musicService;
+	/** 专辑业务 */
+	@Autowired
+	private AlbumService albumService;
 	/** 歌单业务 */
 	@Autowired
 	private SpecialService specialService;
@@ -57,16 +62,19 @@ public class NetSearchController implements ChangeListener<Tab> {
 	/** 歌手模块控制器 */
 	@Autowired
 	private SingerController singerController;
+	/** 专辑模块控制器 */
+	@Autowired
+	private AlbumController albumController;
 
 	/** 搜索模块视图 */
 	private NetSearchView view;
 	/** 进度旋转器 */
 	private Spinner spinner;
 
-	/** 歌曲、歌单、MV更新标记 */
-	private boolean songUpdatable, specialUpdatable, mvUpdatable;
-	/** 歌曲、歌单、MV分页对象 */
-	private Page songPage = new Page(), specialPage = new Page(), mvPage = new Page();
+	/** 歌曲、专辑、MV、歌单 更新标记 */
+	private boolean songUpdatable, albumUpdatable, mvUpdatable, specialUpdatable;
+	/** 歌曲、专辑、MV分页、歌单 对象 */
+	private Page songPage = new Page(), albumPage = new Page(), mvPage = new Page(), specialPage = new Page();
 	/** 网络音乐平台 */
 	public static NetSource netSource;
 
@@ -85,7 +93,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 		songPage.setCurrent(1);
 		specialPage.setCurrent(1);
 		ViewRestore.setData(view, text = (String) data);
-		songUpdatable = specialUpdatable = mvUpdatable = true;
+		songUpdatable = albumUpdatable = mvUpdatable = specialUpdatable = true;
 
 		if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
 			view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
@@ -112,6 +120,13 @@ public class NetSearchController implements ChangeListener<Tab> {
 				if ("单曲".equals(tabText) && songPage.getCurrent() != current) {
 					songPage.setCurrent(current);
 					songUpdatable = true;
+					changed(null, null, tab);
+					return;
+				}
+				// 若是“专辑”选项卡 且 专辑分页对象的当前页和分页组件当前页相同,则不触发更新
+				if ("专辑".equals(tabText) && albumPage.getCurrent() != current) {
+					albumPage.setCurrent(current);
+					albumUpdatable = true;
 					changed(null, null, tab);
 					return;
 				}
@@ -161,7 +176,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 			songPage.setCurrent(1);
 			specialPage.setCurrent(1);
 			ViewRestore.setData(view, this.text = text);
-			songUpdatable = specialUpdatable = mvUpdatable = true;
+			songUpdatable = albumUpdatable = mvUpdatable = specialUpdatable = true;
 
 			if (!"单曲".equals(view.getTabPane().tabProperty().get().getText())) {
 				view.getTabPane().tabProperty().set(view.getTabPane().getTabs().get(0));
@@ -230,19 +245,21 @@ public class NetSearchController implements ChangeListener<Tab> {
 				musicService.save(list);
 			});
 
-		} else if ("歌单".equals(tabText)) {
-			if (!specialUpdatable) {
-				view.updatePagination(specialPage);
+		} else if ("专辑".equals(tabText)) {
+			if (!albumUpdatable) {
+				view.updatePagination(albumPage);
 				return;
 			}
 			spinner.centerTo(view);
-			specialUpdatable = false;
+			albumUpdatable = false;
 			Task.async(() -> {
-				List<Special> list = netSource.specialSearch(keyword, specialPage);
-				specialService.save(list);
-				specialService.handlePictures(list);
+				List<Album> list = netSource.albumSearch(keyword, albumPage);
+				// 批量保存专辑信息
+				albumService.save(list);
+				// 保存专辑图片
+				albumService.handlePictures(list);
 				Platform.runLater(() -> {
-					view.updateSpecial(list, specialPage);
+					view.updateAlbum(list, albumPage, albumNodeHandler);
 					spinner.close();
 				});
 			});
@@ -265,6 +282,23 @@ public class NetSearchController implements ChangeListener<Tab> {
 					spinner.close();
 				});
 			});
+
+		} else if ("歌单".equals(tabText)) {
+			if (!specialUpdatable) {
+				view.updatePagination(specialPage);
+				return;
+			}
+			spinner.centerTo(view);
+			specialUpdatable = false;
+			Task.async(() -> {
+				List<Special> list = netSource.specialSearch(keyword, specialPage);
+				specialService.save(list);
+				specialService.handlePictures(list);
+				Platform.runLater(() -> {
+					view.updateSpecial(list, specialPage);
+					spinner.close();
+				});
+			});
 		}
 	}
 
@@ -282,6 +316,17 @@ public class NetSearchController implements ChangeListener<Tab> {
 			List<MV> mvList = (List<MV>) node.getParent().getUserData();
 			Integer index = (Integer) node.getUserData();
 			Main.playListProperty().set(new PlayList(index, mvList));
+		}
+	};
+
+	/** 专辑数据节点鼠标点击事件处理器 */
+	private EventHandler<MouseEvent> albumNodeHandler = e -> {
+		if (e.getButton() == MouseButton.PRIMARY) {
+			Node node = (Node) e.getSource();
+			Album album = (Album) node.getUserData();
+
+			// 显示歌手内容页面
+			albumController.show(album, netSource);
 		}
 	};
 }

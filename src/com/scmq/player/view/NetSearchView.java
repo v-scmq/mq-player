@@ -1,5 +1,6 @@
 package com.scmq.player.view;
 
+import com.scmq.player.model.Album;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
@@ -60,8 +61,9 @@ public class NetSearchView extends AnchorPane {
 	private Pagination pagination;
 	private TableView<Music> tableView;
 
-	private ObservableList<Node> specialNodes;
 	private ObservableList<Node> mvNodes;
+	private ObservableList<Node> albumNodes;
+	private ObservableList<Node> specialNodes;
 
 	public NetSearchView() {
 		tableView = new TableView<>();
@@ -78,6 +80,7 @@ public class NetSearchView extends AnchorPane {
 
 		// 设置行单元格工厂
 		tableView.setRowFactory(TableViewCell.TABLE_ROW_CELL);
+		tableView.setSortPolicy(null);
 
 		TableColumn<Music, Music> numColumn = new TableColumn<>("0");
 		numColumn.setCellFactory(TableViewCell.NUMBER_CELL);
@@ -106,12 +109,11 @@ public class NetSearchView extends AnchorPane {
 		tableView.getItems().addListener((Change<? extends Music> c) -> //
 		numColumn.setText(new StringBuilder().append(tableView.getItems().size()).toString()));
 
-		// 歌单模块
-		FlowPane flowPane = new FlowPane(20, 20);
-		specialNodes = flowPane.getChildren();
-		ScrollPane specialPane = new ScrollPane(flowPane);
-		specialPane.setFitToWidth(true);
-		specialPane.setFitToHeight(true);
+		FlowPane flowPane = new FlowPane(30, 50);
+		albumNodes = flowPane.getChildren();
+		ScrollPane albumPane = new ScrollPane(flowPane);
+		albumPane.setFitToWidth(true);
+		albumPane.setFitToHeight(true);
 
 		flowPane = new FlowPane(30, 50);
 		mvNodes = flowPane.getChildren();
@@ -119,13 +121,23 @@ public class NetSearchView extends AnchorPane {
 		mvPane.setFitToWidth(true);
 		mvPane.setFitToHeight(true);
 
+		// 歌单模块
+		flowPane = new FlowPane(20, 20);
+		specialNodes = flowPane.getChildren();
+		ScrollPane specialPane = new ScrollPane(flowPane);
+		specialPane.setFitToWidth(true);
+		specialPane.setFitToHeight(true);
+
 		pagination = new Pagination();
 		pagination.setManaged(false);
 		pagination.setVisible(false);
 
+		Tab songTab = new Tab("单曲", tableView), albumTab = new Tab("专辑", albumPane);
+		Tab mvTab = new Tab("MV", mvPane), specialTab = new Tab("歌单", specialPane);
+
 		tabPane = new TabPane();
 		tabPane.setBottom(pagination);
-		tabPane.getTabs().addAll(new Tab("单曲", tableView), new Tab("歌单", specialPane), new Tab("MV", mvPane));
+		tabPane.getTabs().addAll(songTab, albumTab, mvTab, specialTab);
 		tabPane.tabLineProperty().set(true);
 		AnchorPane.setTopAnchor(tabPane, 0.0);
 		AnchorPane.setRightAnchor(tabPane, 0.0);
@@ -232,28 +244,38 @@ public class NetSearchView extends AnchorPane {
 	}
 
 	/**
-	 * 更新歌单部分的UI
-	 * 
-	 * @param specials
-	 *            歌单列表集合
+	 * 更新专辑视图
+	 *
+	 * @param list
+	 *            专辑信息List集合
+	 * @param page
+	 *            分页对象
+	 * @param handler
+	 *            事件处理器,用于打开专辑详情页面
 	 */
-	public void updateSpecial(List<Special> specials, Page page) {
-		if (!specialNodes.isEmpty()) {
-			specialNodes.clear();
+	public void updateAlbum(List<Album> list, Page page, EventHandler<MouseEvent> handler) {
+		if (!albumNodes.isEmpty()) {
+			albumNodes.clear();
 		}
 		int size = 200, circle = size >> 1;
-		for (Special special : specials) {
-			ImageView imageView = new ImageView(new Image(special.getCover(), true));
+		for (Album album : list) {
+			// 让Image异步加载，否则将阻塞UI线程
+			ImageView imageView = new ImageView(new Image(album.getCover(), true));
 			imageView.setFitWidth(size);
 			imageView.setFitHeight(size);
 			imageView.setPickOnBounds(true);
+			imageView.setOnMouseClicked(handler);
 			imageView.getStyleClass().add("image-icon");
 			imageView.setClip(new Circle(circle, circle, circle));
-			Label label = new Label(special.getName());
-			VBox box = new VBox(imageView, label);
-			box.setPrefSize(300, size + 20);
+
+			Label nameLabel = new Label(album.getName());
+			Label publishLabel = new Label(album.getYear());
+			VBox box = new VBox(imageView, nameLabel, publishLabel);
+			box.setPrefSize(size, size + 40);
 			box.setAlignment(Pos.TOP_CENTER);
-			specialNodes.add(box);
+			albumNodes.add(box);
+
+			imageView.setUserData(album);
 		}
 		updatePagination(page);
 	}
@@ -294,6 +316,33 @@ public class NetSearchView extends AnchorPane {
 			mvNodes.add(box);
 			imageView.setUserData(index++);
 			box.setUserData(list);
+		}
+		updatePagination(page);
+	}
+
+	/**
+	 * 更新歌单部分的UI
+	 *
+	 * @param specials
+	 *            歌单列表集合
+	 */
+	public void updateSpecial(List<Special> specials, Page page) {
+		if (!specialNodes.isEmpty()) {
+			specialNodes.clear();
+		}
+		int size = 200, circle = size >> 1;
+		for (Special special : specials) {
+			ImageView imageView = new ImageView(new Image(special.getCover(), true));
+			imageView.setFitWidth(size);
+			imageView.setFitHeight(size);
+			imageView.setPickOnBounds(true);
+			imageView.getStyleClass().add("image-icon");
+			imageView.setClip(new Circle(circle, circle, circle));
+			Label label = new Label(special.getName());
+			VBox box = new VBox(imageView, label);
+			box.setPrefSize(300, size + 20);
+			box.setAlignment(Pos.TOP_CENTER);
+			specialNodes.add(box);
 		}
 		updatePagination(page);
 	}
