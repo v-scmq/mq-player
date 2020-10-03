@@ -310,6 +310,13 @@ public abstract class Media {
 	public abstract boolean viewable();
 
 	/**
+	 * 获取媒体资源的封面图像
+	 * 
+	 * @return 封面图像
+	 */
+	public abstract javafx.scene.image.Image getImageCover();
+
+	/**
 	 * 列举了常见的一些音频类型
 	 *
 	 * @author SCMQ

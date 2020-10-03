@@ -3,18 +3,14 @@ package com.scmq.player.controller;
 import com.scmq.player.app.Main;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.core.MediaPlayerListener;
-import com.scmq.player.io.IOUtil;
 import com.scmq.player.io.LyricReader;
 import com.scmq.player.io.LyricWriter;
-import com.scmq.player.model.Album;
 import com.scmq.player.model.LyricLine;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Media;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
 import com.scmq.player.model.PlayModel;
-import com.scmq.player.model.Singer;
-import com.scmq.player.net.HttpClient;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.service.PlayListService;
 import com.scmq.player.util.FileUtil;
@@ -51,15 +47,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.MediaPlayer.Status;
-import myorg.jaudiotagger.audio.flac.FlacFileReader;
-import myorg.jaudiotagger.audio.mp3.MP3FileReader;
-import myorg.jaudiotagger.audio.ogg.OggFileReader;
-import myorg.jaudiotagger.audio.wav.WavFileReader;
-import myorg.jaudiotagger.tag.images.Artwork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
@@ -161,7 +151,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 
 		// 异步处理图片、歌词
 		Task.async(() -> {
-			Image image = media.viewable() ? getCover((MV) media) : getCover((Music) media);
+			Image image = media.getImageCover();
 			Platform.runLater(() -> view.setAlbumImage(image));
 			if (media.viewable()) {
 				return;
@@ -803,128 +793,6 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		default:
 			return -1;
 		}
-	}
-
-	/**
-	 * 获取音乐的专辑封面. <br>
-	 * 本地音乐专辑封面图片,用专辑名称保存;网络平台音乐专辑封面图,用专辑mid保存
-	 *
-	 * @param music
-	 *            音乐信息对象
-	 * @return 专辑封面图片
-	 */
-	public Image getCover(Music music) {
-		Album album = music.getAlbum();
-		if (album == null) {
-			// 若无专辑信息且来自本地音乐,则获取音乐文件内部的封面图
-			return music.getPlatform() != null ? null : getAudioFileCover(music.getPath(), music.getFormat(), null);
-		}
-		String platform = album.getPlatform();
-		// 1.若是来自本地音乐专辑
-		if (platform == null) {
-			// 若没有专辑名称
-			if (StringUtil.isEmpty(album.getName())) {
-				return null;
-			}
-			// 若专辑封面图片文件存在,则加载
-			File file = FileUtil.toFile(FileUtil.resolve(album.getName()), "jpg", "picture\\album\\0");
-			if (file.isFile()) {
-				Image image = new Image(file.toURI().toString());
-				if (!image.isError()) {
-					return image;
-				}
-			}
-			// 尝试从音乐文件内部获取封面图
-			return getAudioFileCover(music.getPath(), music.getFormat(), file);
-		}
-		// 若专辑mid不存在
-		if (StringUtil.isEmpty(album.getMid())) {
-			return null;
-		}
-
-		// 2.若是来自网络的音乐专辑
-		File file = FileUtil.toFile(album.getMid(), "jpg", "picture\\album", platform);
-		// 若有图片地址,并且本地图片文件不存在
-		if (!StringUtil.isEmpty(album.getCover()) && !file.isFile()) {
-			HttpClient client = HttpClient.createClient(null).removeAcceptHeader();
-			// 若未保存成功,则删除文件
-			if (!IOUtil.write(client.get(album.getCover()).openStream(), file)) {
-				file.delete();
-			}
-			client.close();
-		}
-		// 若是本地图片文件
-		if (file.isFile()) {
-			Image image = new Image(file.toURI().toString());
-			return image.isError() ? null : image;
-		}
-		return null;
-	}
-
-	/**
-	 * 获取播放MV时需要显示的歌手图片
-	 *
-	 * @param mv
-	 *            MV信息
-	 * @return 歌手图片
-	 */
-	public Image getCover(MV mv) {
-		Singer singer = mv.getSinger();
-		// 若存在歌手信息,使用歌手作为封面显示
-		if (singer != null) {
-			// 获取歌手信息来源平台
-			String platform = singer.getPlatform() == null ? "0" : singer.getPlatform();
-			// 歌手图片在本地文件系统的文件名称(本地歌手信息使用歌手名称,否则使用歌手mid)
-			String name = singer.getPlatform() == null ? singer.getName() : singer.getMid();
-			File file = FileUtil.toFile(name, "jpg", "picture\\singer", platform);
-			if (file.isFile()) {
-				return new Image(file.toURI().toString());
-			} else if (!StringUtil.isEmpty(singer.getCover())) {
-				return new Image(singer.getCover());
-			}
-		}
-		// 若有MV封面图片,则使用MV封面图显示
-		return StringUtil.isEmpty(mv.getCover()) ? null : new Image(mv.getCover());
-	}
-
-	/**
-	 * 从音乐文件内部获取歌曲封面图片
-	 *
-	 * @param path
-	 *            歌曲文件路径
-	 * @param format
-	 *            歌曲格式
-	 * @param out
-	 *            将封面图片保存的文件
-	 * @return 歌曲封面图片
-	 */
-	private Image getAudioFileCover(String path, String format, File out) {
-		File file = new File(path);
-		try {
-			myorg.jaudiotagger.tag.Tag tag;
-			if ("mp3".equalsIgnoreCase(format)) {
-				tag = new MP3FileReader().read(file).getTag();
-			} else if ("flac".equalsIgnoreCase(format)) {
-				tag = new FlacFileReader().read(file).getTag();
-			} else if ("wav".equalsIgnoreCase(format)) {
-				tag = new WavFileReader().read(file).getTag();
-			} else if ("ogg".equalsIgnoreCase(format)) {
-				tag = new OggFileReader().read(file).getTag();
-			} else {
-				return null;
-			}
-			Artwork artWork = tag.getFirstArtwork();
-			byte[] data = artWork == null ? null : artWork.getBinaryData();
-			if (data != null && data.length > 0) {
-				if (out != null) {
-					IOUtil.write(data, out);
-				}
-				Image image = new Image(new ByteArrayInputStream(data));
-				return image.isError() ? null : image;
-			}
-		} catch (Exception ignore) {
-		}
-		return null;
 	}
 
 	/**

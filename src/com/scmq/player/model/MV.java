@@ -1,5 +1,9 @@
 package com.scmq.player.model;
 
+import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.StringUtil;
+import javafx.scene.image.Image;
+
 import java.io.File;
 import java.util.Objects;
 
@@ -117,6 +121,31 @@ public class MV extends Media {
 	 */
 	public void setCover(String cover) {
 		this.cover = cover;
+	}
+
+	/**
+	 * 获取播放MV时需要显示的歌手图片
+	 *
+	 * @return 歌手图片
+	 */
+	@Override
+	public Image getImageCover() {
+		Singer singer = getSinger();
+		// 若存在歌手信息,使用歌手作为封面显示
+		if (singer != null) {
+			// 获取歌手信息来源平台
+			String platform = singer.getPlatform() == null ? "0" : singer.getPlatform();
+			// 歌手图片在本地文件系统的文件名称(本地歌手信息使用歌手名称,否则使用歌手mid)
+			String name = singer.getPlatform() == null ? singer.getName() : singer.getMid();
+			File file = FileUtil.toFile(name, "jpg", "picture\\singer", platform);
+			if (file.isFile()) {
+				return new Image(file.toURI().toString());
+			} else if (!StringUtil.isEmpty(singer.getCover())) {
+				return new Image(singer.getCover());
+			}
+		}
+		// 若有MV封面图片,则使用MV封面图显示
+		return StringUtil.isEmpty(getCover()) ? null : new Image(getCover());
 	}
 
 	/**
