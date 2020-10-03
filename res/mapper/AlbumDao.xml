@@ -77,4 +77,21 @@
         </set>
         WHERE id=#{album.id}
     </update>
+
+    <!-- 创建专辑信息数据表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS "album"
+        (
+            "id"         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "mid"        TEXT,
+            "singer_id"  INTEGER,
+            "name"       TEXT,
+            "cover"      TEXT,
+            "year"       TEXT,
+            "introduce"  TEXT,
+            "song_count" INTEGER,
+            "platform"   TEXT,
+            CONSTRAINT "album_singer_id" FOREIGN KEY ("singer_id") REFERENCES "singer" ("id")
+        );
+    </update>
 </mapper>

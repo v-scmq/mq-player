@@ -74,4 +74,32 @@
             #{music.id}
         </foreach>
     </update>
+
+    <!-- 创建媒体信息数据表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS "media"
+        (
+            "id"             INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "title"          TEXT,
+            "singer_id"      INTEGER,
+            "album_id"       INTEGER,
+            "year"           TEXT,
+            "size"           TEXT,
+            "duration"       TEXT,
+            "file_name"      TEXT,
+            "path"           TEXT,
+            "cover"          TEXT,
+            "format"         TEXT,
+            "channels"       TEXT,
+            "quality"        INTEGER,
+            "sample_rate"    TEXT,
+            "audio_bit_rate" TEXT,
+            "genre"          TEXT,
+            "mid"            TEXT,
+            "vid"            TEXT,
+            "platform"       TEXT,
+            CONSTRAINT "singer_id" FOREIGN KEY ("singer_id") REFERENCES "singer" ("id"),
+            CONSTRAINT "album_id" FOREIGN KEY ("album_id") REFERENCES "album" ("id")
+        );
+    </update>
 </mapper>

@@ -42,4 +42,26 @@
             WHERE media_id IN <foreach collection="mediaIds" item="mediaId" open="(" separator="," close=")">#{mediaId}</foreach>
         </if>
     </delete>
+
+    <!-- 创建播放列表数据表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS "play_list"
+        (
+            "id"          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "sort"        INTEGER,
+            "create_time" TEXT
+        );
+    </update>
+
+    <!-- 创建播放媒体项数据信息中间表 -->
+    <update id="createItemTable">
+        CREATE TABLE IF NOT EXISTS "play_media_item"
+        (
+            "media_id"     INTEGER NOT NULL,
+            "play_list_id" INTEGER NOT NULL,
+            PRIMARY KEY ("play_list_id", "media_id"),
+            CONSTRAINT "play_media_item" FOREIGN KEY ("media_id") REFERENCES "media" ("id"),
+            CONSTRAINT "play_list_id" FOREIGN KEY ("play_list_id") REFERENCES "play_list" ("id")
+        );
+    </update>
 </mapper>

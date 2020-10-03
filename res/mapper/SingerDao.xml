@@ -92,4 +92,21 @@
             <otherwise>mid=#{singer.mid} AND platform=#{singer.platform}</otherwise>
         </choose>
     </update>
+
+    <!-- 创建歌手信息数据表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS "singer"
+        (
+            "id"          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "mid"         TEXT,
+            "name"        TEXT,
+            "cover"       TEXT,
+            "introduce"   TEXT,
+            "song_count"  INTEGER,
+            "album_count" INTEGER,
+            "mv_count"    INTEGER,
+            "fans_count"  INTEGER,
+            "platform"    TEXT
+        );
+    </update>
 </mapper>

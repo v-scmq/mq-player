@@ -57,4 +57,27 @@
             WHERE media_id IN <foreach collection="mediaIds" item="mediaId" open="(" separator="," close=")">#{mediaId}</foreach>
         </if>
     </delete>
+
+    <!-- 创建本地音乐列表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS "local_list"
+        (
+            "id"          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "sort"        INTEGER,
+            "create_time" TEXT
+        );
+    </update>
+
+    <!-- 创建本地音乐列表项数据信息中间表 -->
+    <update id="createItemTable">
+        CREATE TABLE IF NOT EXISTS "local_media_item"
+        (
+            "media_id"      INTEGER NOT NULL,
+            "local_list_id" INTEGER NOT NULL,
+            PRIMARY KEY ("media_id", "local_list_id"),
+            CONSTRAINT "local_list_id" FOREIGN KEY ("local_list_id") REFERENCES "local_list" ("id"),
+            CONSTRAINT "local_media_id" FOREIGN KEY ("media_id") REFERENCES "media" ("id")
+        );
+    </update>
+
 </mapper>

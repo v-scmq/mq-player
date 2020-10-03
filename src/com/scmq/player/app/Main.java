@@ -7,6 +7,7 @@ import com.scmq.player.core.FXMediaPlayer;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
+import com.scmq.player.service.DataBaseService;
 import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.Reflect;
@@ -80,6 +81,9 @@ public class Main extends javafx.application.Application {
 		Task.async(() -> {
 			// 加载Spring容器
 			context = new ClassPathXmlApplicationContext("spring-config.xml");
+			// 检查数据库表,若不存在,则创建它们
+			context.getBean(DataBaseService.class).create();
+
 			// 创建媒体播放器
 			MediaPlayer player = new FXMediaPlayer(context.getBean(MainController.class));
 			// 同步到UI线程

@@ -75,4 +75,10 @@ public interface LocalListDao {
 	 * @return 删除成功的数量
 	 */
 	Integer deleteLocalMediaItem(@Param("mediaIds") Integer[] mediaIds);
+
+	/** 创建本地音乐列表数据库表 */
+	void createTable();
+
+	/** 创建本地音乐列表项数据信息中间表 */
+	void createItemTable();
 }
