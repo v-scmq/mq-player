@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author SCMQ
  */
-@Service("localListService")
+@Service
 public class LocalListService {
 	@Autowired
 	private LocalListDao dao;

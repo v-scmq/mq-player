@@ -1,18 +1,17 @@
 package com.scmq.player.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.scmq.player.dao.PlayListDao;
 import com.scmq.player.model.Media.AudioType;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
 import com.scmq.player.util.TimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service("playListService")
+import java.util.List;
+
+@Service
 public class PlayListService {
     @Autowired private PlayListDao playListDao;
 

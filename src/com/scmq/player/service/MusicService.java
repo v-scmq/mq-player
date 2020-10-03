@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Service("musicService")
+@Service
 public class MusicService {
 	@Autowired
 	private MusicDao musicDao;

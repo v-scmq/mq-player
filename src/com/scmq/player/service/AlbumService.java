@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Service("albumService")
+@Service
 public class AlbumService {
 	@Autowired
 	private AlbumDao albumDao;

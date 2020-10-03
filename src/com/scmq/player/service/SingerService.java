@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author SCMQ
  */
-@Service("singerService")
+@Service
 public class SingerService {
 	/** 歌手数据访问、操作对象 */
 	@Autowired

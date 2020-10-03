@@ -1,17 +1,16 @@
 package com.scmq.player.service;
 
-import java.io.File;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.MV;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.StringUtil;
+import org.springframework.stereotype.Service;
 
-@Service("mvService")
+import java.io.File;
+import java.util.List;
+
+@Service
 public class MVService {
     public void save(List<MV> mvList) {
     }
