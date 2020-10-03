@@ -242,24 +242,6 @@ public class FileUtil {
 	}
 
 	/**
-	 * 指定精度以格式化小数为指定的精度的百分比字符串
-	 *
-	 * @param scale
-	 *            精度(保留scale位有效数字)
-	 * @param percent
-	 *            比例(0<code>&lt;</code>percent<code>&gt;</code>100)
-	 * @return 百分比的字符串表示
-	 */
-	public static String formatPercent(int scale, double percent) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(percent);
-		stringHandle(builder, scale);
-		builder.append('%');
-		return builder.toString();
-
-	}
-
-	/**
 	 * 处理字符串
 	 *
 	 * @param builder
