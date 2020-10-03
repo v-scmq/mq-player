@@ -25,7 +25,7 @@ public class Singer {
 	/** 歌手包含的MV数量 */
 	private Integer mvCount;
 	/** 歌手关注(粉丝)量 */
-	private String fansCount;
+	private Integer fansCount;
 	/** 歌手所属音乐平台(如“酷狗音乐”) */
 	private String platform;
 
@@ -191,7 +191,7 @@ public class Singer {
      *
      * @return 关注量/粉丝数量
      */
-    public String getFansCount() {
+    public Integer getFansCount() {
         return fansCount;
     }
 
@@ -200,7 +200,7 @@ public class Singer {
      *
      * @param fansCount 关注(粉丝 )量
      */
-    public void setFansCount(String fansCount) {
+    public void setFansCount(Integer fansCount) {
         this.fansCount = fansCount;
     }
 
@@ -259,7 +259,7 @@ public class Singer {
 	 * @return 若信息不存在则返回true
 	 */
 	public boolean isEmptyInfo() {
-		return getSongCount() == null || getAlbumCount() == null || //
-				getMvCount() == null || getFansCount() == null || getIntroduce() == null;
+		return getSongCount() == null || getAlbumCount() == null || getMvCount() == null || //
+				getFansCount() == null || getIntroduce() == null || getCover() == null;
 	}
 }

@@ -316,7 +316,7 @@ public class SingerView extends AnchorPane {
 		// 设置MV数量
 		mvNumLabel.setText(singer.getMvCount() == null ? "-" : singer.getMvCount().toString());
 		// 设置粉丝数量
-		followNumLabel.setText(StringUtil.isEmpty(singer.getFansCount()) ? "-" : singer.getFansCount());
+		followNumLabel.setText(singer.getFansCount() == null ? "-" : singer.getFansCount().toString());
 	}
 
 	public TableView<Music> getTableView() {
