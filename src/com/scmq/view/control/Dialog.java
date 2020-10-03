@@ -1,5 +1,7 @@
 package com.scmq.view.control;
 
+import com.scmq.player.util.Icon;
+
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -67,14 +69,11 @@ public class Dialog extends Pane {
 		titleLabel = new Label(title);
 		titleLabel.getStyleClass().add("dialog-title");
 
-		// 大写是绝对路径,小写是相对路径
-		// M=moveTo ; L=lineTo ; H=hLineTo ; V=vLineTo ; C=curveTo ; FS=smooth
-		// Q=quadratic Belzier CurveTo ; A=elliptical Arc ; Z=closePath
 		SVGPath path = new SVGPath();
 		path.setStrokeWidth(2);
 		path.setMouseTransparent(true);
 		path.setStrokeLineCap(StrokeLineCap.BUTT);
-		path.setContent("M0 0 L16 16 M16 0 L0 16");
+		path.setContent(Icon.DIALOG_CLOSEABLE_ICON);
 		closeIcon = new Label(null, path);
 		closeIcon.getStyleClass().add("close-icon");
 

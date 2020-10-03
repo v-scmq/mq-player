@@ -1,5 +1,6 @@
 package com.scmq.player.app;
 
+import com.scmq.player.util.Icon;
 import com.scmq.view.control.Toast;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
@@ -28,11 +29,6 @@ import javafx.stage.Stage;
 public enum StageHandler implements EventHandler<MouseEvent> {
 	/** JavaFX窗口 处理器(改用枚举实现单例模式) */
 	STAGE_HANDLER;
-
-	/** 窗口最大化时显示的图标 */
-	private static final String MAXIMIZED_ICON = "M3 0 h9 v9 h-3 M3 0 v3 h-3 v9 h9 v-9 h-6";
-	/** 窗口为最大化时显示的图标 */
-	private static final String MAXIMIZE_ICON = "M0 0 h12 v12 h-12 v-12";
 
 	/** 本地窗口指针标记 */
 	private static long nativeWindow;
@@ -82,7 +78,7 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	 */
 	public void setMaximized(SVGPath node) {
 		Stage stage = Main.getPrimaryStage();
-		node.setContent((maximized = !maximized) ? MAXIMIZED_ICON : MAXIMIZE_ICON);
+		node.setContent((maximized = !maximized) ? Icon.MAXIMIZED_ICON : Icon.MAXIMIZE_ICON);
 
 		// 需要最大化
 		if (maximized) {
@@ -238,7 +234,7 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			// 当前窗口已经最大化 并且 鼠标向下拖动. 那么先还原窗口,然后继续拖动
 			if (maximized && e.getScreenY() > 1) {
 				maximized = false;
-				maximizeNode.setContent(MAXIMIZE_ICON);
+				maximizeNode.setContent(Icon.MAXIMIZE_ICON);
 
 				// 获取屏幕可见最大宽度
 				double max = Screen.getPrimary().getVisualBounds().getWidth();
