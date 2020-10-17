@@ -67,9 +67,6 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	/** 窗口是否最大化 */
 	boolean maximized;
 
-	/** 最大化和还原SVG图标节点 */
-	private SVGPath maximizeNode;
-
 	/**
 	 * 最大化窗口或还原窗口
 	 *
