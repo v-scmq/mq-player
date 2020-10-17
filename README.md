@@ -46,44 +46,44 @@ MQ音乐是一个构建在Java和JavaFX平台之上的跨平台音乐播放器
 ### 效果预览
 + 本地音乐
 
-![本地音乐](https://gitee.com/scmq/mq-player/raw/main/preview/1.png "本地音乐")
+![本地音乐](https://gitee.com/scmq/mq-player/blob/main/preview/1.png "本地音乐")
 
 + 播放详情
 
-![播放详情](https://gitee.com/scmq/mq-player/raw/main/preview/2.png "背景虚化")
+![播放详情](https://gitee.com/scmq/mq-player/blob/main/preview/2.png "背景虚化")
 
 + 歌手分类
 
-![歌手分类](https://gitee.com/scmq/mq-player/raw/main/preview/3.png "歌手分类")
+![歌手分类](https://gitee.com/scmq/mq-player/blob/main/preview/3.png "歌手分类")
 
 + 歌手详情
 
-![歌手详情](https://gitee.com/scmq/mq-player/raw/main/preview/4.png "歌手详情")
+![歌手详情](https://gitee.com/scmq/mq-player/blob/main/preview/4.png "歌手详情")
 
 + 歌手专辑
 
-![歌手专辑](https://gitee.com/scmq/mq-player/raw/main/preview/5.png "歌手专辑")
+![歌手专辑](https://gitee.com/scmq/mq-player/blob/main/preview/5.png "歌手专辑")
 
 + 专辑详情
 
-![专辑详情](https://gitee.com/scmq/mq-player/raw/main/preview/6.png "专辑详情")
+![专辑详情](https://gitee.com/scmq/mq-player/blob/main/preview/6.png "专辑详情")
 
 + 歌手MV
 
-![歌手MV](https://gitee.com/scmq/mq-player/raw/main/preview/7.png "歌手MV列表")
+![歌手MV](https://gitee.com/scmq/mq-player/blob/main/preview/7.png "歌手MV列表")
 
 + 资源搜索
 
-![歌曲搜索](https://gitee.com/scmq/mq-player/raw/main/preview/8.png "资源搜索")
+![歌曲搜索](https://gitee.com/scmq/mq-player/rblobaw/main/preview/8.png "资源搜索")
 
 + 歌单分类
 
-![歌单列表](https://gitee.com/scmq/mq-player/raw/main/preview/9.png "歌单列表")
+![歌单列表](https://gitee.com/scmq/mq-player/blob/main/preview/9.png "歌单列表")
 
 + MV分类
 
-![MV列表](https://gitee.com/scmq/mq-player/raw/main/preview/10.png "MV列表")
+![MV列表](https://gitee.com/scmq/mq-player/blob/main/preview/10.png "MV列表")
 
 + 排行榜分类
 
-![排行榜分类](https://gitee.com/scmq/mq-player/raw/main/preview/11.png "排行榜分类")
+![排行榜分类](https://gitee.com/scmq/mq-player/blob/main/preview/11.png "排行榜分类")
