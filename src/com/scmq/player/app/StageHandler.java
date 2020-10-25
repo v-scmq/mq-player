@@ -6,6 +6,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
+import com.sun.media.jfxmediaimpl.HostUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -35,6 +36,10 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 
 	/** 加载本地库,然后重设本地窗口在任务栏上能够最小化(此方法需要运行在子线程中) */
 	static void loadAndSetStyle() {
+		// 若不是window系统,则不执行后续操作
+		if (!HostUtils.isWindows()) {
+			return;
+		}
 		// 加载本地库(比较耗时,很有可能窗口显示后还未能加载)
 		User32 user32 = User32.INSTANCE;
 
