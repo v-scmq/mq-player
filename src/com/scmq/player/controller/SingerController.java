@@ -7,7 +7,6 @@ import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
 import com.scmq.player.model.PlayList;
 import com.scmq.player.model.Singer;
-import com.scmq.player.net.NetSource;
 import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
@@ -52,17 +51,16 @@ public class SingerController implements ChangeListener<Tab> {
 	/** 歌手业务 */
 	@Autowired
 	private SingerService singerService;
-
 	/** 专辑控制器 */
 	@Autowired
 	private AlbumController albumController;
+	@Autowired
+	private ConfigureController configureController;
 
 	/** 歌手视图 */
 	private SingerView view;
 	/** 进度旋转器(网络请求时使用) */
 	private Spinner spinner;
-	/** 网络音乐平台 */
-	private NetSource netSource;
 	/** 当前歌手视图的歌手信息 */
 	private Singer singer;
 	/** 歌曲、专辑、MV的可更新标记 */
@@ -88,7 +86,7 @@ public class SingerController implements ChangeListener<Tab> {
 					Platform.runLater(() -> view.updateSinger(singer));
 					return;
 				}
-				netSource.handleSingerInfo(singer);
+				configureController.getNetSourceImpl().handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
 				singerService.update(singer);
 			});
@@ -111,18 +109,16 @@ public class SingerController implements ChangeListener<Tab> {
 
 	/**
 	 * 显示歌手视图
-	 *
+	 * 
 	 * @param singer
 	 *            歌手信息对象
-	 * @param netSource
-	 *            网络音乐平台
+	 *
 	 */
-	void show(Singer singer, NetSource netSource) {
+	void show(Singer singer) {
 		if (view == null) {
 			// (进度)旋转器
 			spinner = new Spinner();
 			view = new SingerView();
-			this.netSource = netSource;
 			// 绑定视图数据恢复
 			ViewRestore.bind(view, this::restore);
 			// 添加选项卡切换监听器
@@ -191,7 +187,7 @@ public class SingerController implements ChangeListener<Tab> {
 					Platform.runLater(() -> view.updateSinger(singer));
 					return;
 				}
-				netSource.handleSingerInfo(singer);
+				configureController.getNetSourceImpl().handleSingerInfo(singer);
 				Platform.runLater(() -> view.updateSinger(singer));
 				singerService.update(singer);
 			});
@@ -229,7 +225,7 @@ public class SingerController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			songUpdatable = false;
 			Task.async(() -> {
-				List<Music> list = netSource.songList(singer, songPage);
+				List<Music> list = configureController.getNetSourceImpl().songList(singer, songPage);
 				Platform.runLater(() -> {
 					view.updateSong(list, songPage);
 					spinner.close();
@@ -244,7 +240,7 @@ public class SingerController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			albumUpdatable = false;
 			Task.async(() -> {
-				List<Album> list = netSource.albumList(singer, albumPage);
+				List<Album> list = configureController.getNetSourceImpl().albumList(singer, albumPage);
 				// 批量保存专辑信息
 				albumService.save(list);
 				// 保存专辑图片
@@ -262,7 +258,7 @@ public class SingerController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			mvUpdatable = false;
 			Task.async(() -> {
-				List<MV> list = netSource.mvList(singer, mvPage);
+				List<MV> list = configureController.getNetSourceImpl().mvList(singer, mvPage);
 				// 批量保存MV信息
 				mvService.save(list);
 				// 批量保存MV图片
@@ -284,7 +280,7 @@ public class SingerController implements ChangeListener<Tab> {
 			Album album = (Album) node.getUserData();
 
 			// 显示歌手内容页面
-			albumController.show(album, netSource);
+			albumController.show(album);
 		}
 	};
 

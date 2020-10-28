@@ -58,13 +58,14 @@ public class NetSearchController implements ChangeListener<Tab> {
 	/** 歌手业务 */
 	@Autowired
 	private SingerService singerService;
-
 	/** 歌手模块控制器 */
 	@Autowired
 	private SingerController singerController;
 	/** 专辑模块控制器 */
 	@Autowired
 	private AlbumController albumController;
+	@Autowired
+	private ConfigureController configureController;
 
 	/** 搜索模块视图 */
 	private NetSearchView view;
@@ -75,8 +76,6 @@ public class NetSearchController implements ChangeListener<Tab> {
 	private boolean songUpdatable, albumUpdatable, mvUpdatable, specialUpdatable;
 	/** 歌曲、专辑、MV分页、歌单 对象 */
 	private Page songPage = new Page(), albumPage = new Page(), mvPage = new Page(), specialPage = new Page();
-	/** 网络音乐平台 */
-	public static NetSource netSource;
 
 	/** 搜索关键词 */
 	private String text;
@@ -195,6 +194,8 @@ public class NetSearchController implements ChangeListener<Tab> {
 		}
 
 		String keyword = this.text, tabText = newValue.getText();
+		NetSource netSource = configureController.getNetSourceImpl();
+
 		if ("单曲".equals(tabText)) {
 			if (!songUpdatable) {
 				view.updatePagination(songPage);
@@ -239,7 +240,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 					// 歌手图片点击事件,跳转到歌手详情视图
 					ImageView view = this.view.getSingerImageView();
 					if (view != null && view.getOnMouseClicked() == null) {
-						view.setOnMouseClicked(e -> singerController.show(this.singer, netSource));
+						view.setOnMouseClicked(e -> singerController.show(this.singer));
 					}
 				});
 				musicService.save(list);
@@ -323,10 +324,8 @@ public class NetSearchController implements ChangeListener<Tab> {
 	private EventHandler<MouseEvent> albumNodeHandler = e -> {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			Node node = (Node) e.getSource();
-			Album album = (Album) node.getUserData();
-
 			// 显示歌手内容页面
-			albumController.show(album, netSource);
+			albumController.show((Album) node.getUserData());
 		}
 	};
 }

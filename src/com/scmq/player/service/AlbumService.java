@@ -184,7 +184,7 @@ public class AlbumService {
 		String uri = null;
 		for (Album album : list) {
 			String platform = album.getPlatform(), cover = album.getCover();
-			File file = FileUtil.toFile(album.getMid(), "jpg", "picture\\album", platform);
+			File file = FileUtil.toFile(album.getMid(), "jpg", "picture/album", platform);
 			// 若专辑图片文件存在
 			if (file.isFile()) {
 				// 设置专辑图片地址

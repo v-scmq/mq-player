@@ -222,7 +222,7 @@ public class SingerService {
 		String uri = null;
 		for (Singer singer : list) {
 			String platform = singer.getPlatform(), cover = singer.getCover();
-			File file = FileUtil.toFile(singer.getMid(), "jpg", "picture\\singer", platform);
+			File file = FileUtil.toFile(singer.getMid(), "jpg", "picture/singer", platform);
 			// 若歌手图片文件存在
 			if (file.isFile()) {
 				// 设置歌手图片地址
@@ -257,7 +257,7 @@ public class SingerService {
 	 */
 	public void handlePicture(Singer singer) {
 		String platform = singer.getPlatform(), cover = singer.getCover();
-		File file = FileUtil.toFile(singer.getMid(), "jpg", "picture\\singer", platform);
+		File file = FileUtil.toFile(singer.getMid(), "jpg", "picture/singer", platform);
 		// 若歌手图片文件存在
 		if (file.isFile()) {
 			// 设置歌手图片地址

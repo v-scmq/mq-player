@@ -72,6 +72,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	/** 用户控制器 */
 	@Autowired
 	private UserController userController;
+	/** 系统设定模块控制器 */
+	@Autowired
+	private SettingController settingController;
+	@Autowired
+	private ConfigureController configureController;
 
 	/** 媒体播放器 */
 	private MediaPlayer player;
@@ -83,8 +88,6 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	 * 在进度条被点击时,seek为true表示正在移动,否则当鼠标从进度条上释放时,seek为false
 	 */
 	private boolean seeking;
-
-	public static NetSource netSource;
 
 	private Image pauseImage, playImage;
 
@@ -145,7 +148,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	@Override
 	public void mediaChanged(Media media) {
 		view.getTitleLabel().setText(media.getTitle());
-		view.getSingerLabel().setText(media.getSinger() == null ? null : media.getSinger().getName());
+		view.getSingerLabel().setText(media.getSinger() == null ? "未知歌手" : media.getSinger().getName());
 		ObservableList<LyricLine> lines = view.getLyricView().getItems();
 		lines.clear();
 
@@ -168,8 +171,10 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 					return;
 				}
 			}
+
+			NetSource netSource = configureController.getNetSourceImpl(platform);
 			// 网络音乐平台
-			if (platform != null) {
+			if (netSource != null) {
 				List<LyricLine> list = netSource.handleLyric((Music) media);
 				if (list != null && !list.isEmpty()) {
 					Platform.runLater(() -> lines.addAll(list));
@@ -352,6 +357,9 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 
 		// 绑定用户控制模块
 		userController.bind(view.getHeadImageView(), view.getUserNameButton());
+
+		// 绑定系统设定模块
+		view.getSettingNode().setOnAction(e -> settingController.show());
 
 		// 改变窗口全屏状态
 		view.getScreenOperNode().setOnMouseClicked(e -> {
@@ -716,6 +724,10 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	private boolean prepare(Media media) {
 		// 若是网络音乐平台资源 且 没有播放地址,先处理播放地址
 		if (media.getPlatform() != null && StringUtil.isEmpty(media.getPath())) {
+			NetSource netSource = configureController.getNetSourceImpl(media.getPlatform());
+			if (netSource == null) {
+				return false;
+			}
 			if (media.viewable()) {
 				netSource.handleMVInfo((MV) media);
 			} else {

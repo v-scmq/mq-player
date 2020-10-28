@@ -10,7 +10,6 @@ import com.scmq.player.model.RankItem;
 import com.scmq.player.model.Singer;
 import com.scmq.player.model.Special;
 import com.scmq.player.model.Tag;
-import com.scmq.player.net.NetSource;
 import com.scmq.player.service.AlbumService;
 import com.scmq.player.service.MVService;
 import com.scmq.player.service.MusicService;
@@ -43,6 +42,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
@@ -51,6 +51,7 @@ import java.util.List;
  *
  * @author SCMQ
  */
+@Controller
 public class NetMusicController implements ChangeListener<Tab> {
 	@Autowired
 	private MVService mvService;
@@ -64,6 +65,8 @@ public class NetMusicController implements ChangeListener<Tab> {
 	private MusicService musicService;
 	@Autowired
 	private SingerController singerController;
+	@Autowired
+	private ConfigureController configureController;
 
 	/** 网络音乐模块视图 */
 	private NetMusicView view;
@@ -71,8 +74,6 @@ public class NetMusicController implements ChangeListener<Tab> {
 	private Spinner spinner;
 	/** 当前已选榜单项 */
 	private RankItem rankItem;
-	/** 网络音乐平台 */
-	private NetSource netSource;
 
 	/** MV数据分页 */
 	private Page mvPage = new Page();
@@ -168,7 +169,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			// 获取主选项卡面板
 			TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
 			// 显示歌手内容页面
-			singerController.show(singer, netSource);
+			singerController.show(singer);
 		}
 	};
 
@@ -182,18 +183,6 @@ public class NetMusicController implements ChangeListener<Tab> {
 			Main.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
-
-	/**
-	 * 构造一个网络音乐控制器
-	 * 
-	 * @param netSourceList
-	 *            网络音乐平台实现类
-	 */
-	public NetMusicController(List<NetSource> netSourceList) {
-		this.netSource = netSourceList.get(0);
-		MainController.netSource = this.netSource;
-		NetSearchController.netSource = this.netSource;
-	}
 
 	@Override
 	public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
@@ -214,7 +203,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			spinner.centerTo(view);
 			Tag kind = kindSection.getSelectedItem(), en = enSelection.getSelectedItem();
 			Task.async(() -> {
-				List<Singer> list = netSource.singerList(singerPage, kind, en);
+				List<Singer> list = configureController.getNetSourceImpl().singerList(singerPage, kind, en);
 				singerService.save(list);
 				singerService.handlePictures(list);
 				Platform.runLater(() -> updateSinger(list));
@@ -230,7 +219,8 @@ public class NetMusicController implements ChangeListener<Tab> {
 			specialUpdatable = false;
 			spinner.centerTo(view);
 			Task.async(() -> {
-				List<Special> list = netSource.specialList(specialSelection.getSelectedItem(), specialPage);
+				List<Special> list = configureController.getNetSourceImpl().specialList(
+						specialSelection.getSelectedItem(), specialPage);
 				specialService.save(list);
 				specialService.handlePictures(list);
 				Platform.runLater(() -> updateSpecial(list));
@@ -246,7 +236,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			mvUpdatable = false;
 			spinner.centerTo(view);
 			Task.async(() -> {
-				List<MV> list = netSource.mvList(mvSelection.getSelectedItem(), mvPage);
+				List<MV> list = configureController.getNetSourceImpl().mvList(mvSelection.getSelectedItem(), mvPage);
 				mvService.save(list);
 				mvService.handlePictures(list);
 				Platform.runLater(() -> updateMV(list));
@@ -265,7 +255,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			boolean empty = rankList == null || rankList.isEmpty();
 			Task.async(() -> {
 				// 若没有榜单分类信息,重新获取
-				List<Rank> ranks = empty ? netSource.rankList() : rankList;
+				List<Rank> ranks = empty ? configureController.getNetSourceImpl().rankList() : rankList;
 				// 若仍未获得,则不执行后续操作
 				if (ranks == null || ranks.isEmpty()) {
 					return;
@@ -280,7 +270,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 				RankItem item = rankItem != null ? rankItem : //
 				(items = ranks.get(0).getItems()) == null || items.isEmpty() ? null : items.get(0);
 				if (item != null) {
-					List<Music> list = netSource.songList(item, rankPage);
+					List<Music> list = configureController.getNetSourceImpl().songList(item, rankPage);
 
 					// 更新音乐数据表格
 					Platform.runLater(() -> {
@@ -417,7 +407,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 
 	private void updateMV(List<MV> list) {
 		if (view.getMvTagListView().getItems().isEmpty()) {
-			List<Tag> tags = netSource.mvTags();
+			List<Tag> tags = configureController.getNetSourceImpl().mvTags();
 			if (!tags.isEmpty()) {
 				view.getMvTagListView().getItems().setAll(tags);
 				mvSelection.select(0);
@@ -430,7 +420,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 
 	private void updateSpecial(List<Special> list) {
 		if (view.getSpecialTagListView().getItems().isEmpty()) {
-			List<Tag> tags = netSource.specialTags();
+			List<Tag> tags = configureController.getNetSourceImpl().specialTags();
 			if (!tags.isEmpty()) {
 				view.getSpecialTagListView().getItems().setAll(tags);
 				specialSelection.select(0);
@@ -443,7 +433,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 
 	private void updateSinger(List<Singer> list) {
 		if (view.getSingerKindListView().getItems().isEmpty()) {
-			List<Tag> tags = netSource.singerKindTags();
+			List<Tag> tags = configureController.getNetSourceImpl().singerKindTags();
 			if (tags != null && !tags.isEmpty()) {
 				view.getSingerKindListView().getItems().setAll(tags);
 				kindSection.select(0);
@@ -451,7 +441,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			}
 		}
 		if (view.getSingerEnListView().getItems().isEmpty()) {
-			List<Tag> tags = netSource.singerEnTags();
+			List<Tag> tags = configureController.getNetSourceImpl().singerEnTags();
 			if (tags != null && !tags.isEmpty()) {
 				view.getSingerEnListView().getItems().setAll(tags);
 				enSelection.select(0);

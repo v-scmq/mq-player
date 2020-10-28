@@ -4,7 +4,6 @@ import com.scmq.player.app.Main;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
-import com.scmq.player.net.NetSource;
 import com.scmq.player.service.MusicService;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
@@ -34,14 +33,15 @@ public class AlbumController implements ChangeListener<Number> {
 	/** 音乐业务对象 */
 	@Autowired
 	private MusicService musicService;
+	@Autowired
+	private ConfigureController configureController;
+
 	/** 专辑视图 */
 	private AlbumView view;
 	/** 进度旋转器 */
 	private Spinner spinner;
 	/** 专辑歌曲列表分页对象 */
 	private Page page = new Page();
-	/** 网络音乐平台 */
-	private NetSource netSource;
 	/** 当前专辑视图的专辑信息 */
 	private Album album;
 
@@ -58,7 +58,7 @@ public class AlbumController implements ChangeListener<Number> {
 		spinner.centerTo(view);
 		view.updateAlbum(album);
 		Task.async(() -> {
-			List<Music> list = netSource.songList(album, page);
+			List<Music> list = configureController.getNetSourceImpl().songList(album, page);
 			Platform.runLater(() -> updateSongList(list, album));
 		});
 	}
@@ -68,14 +68,11 @@ public class AlbumController implements ChangeListener<Number> {
 	 *
 	 * @param album
 	 *            专辑信息
-	 * @param netSource
-	 *            网络音乐平台
 	 */
-	void show(Album album, NetSource netSource) {
+	void show(Album album) {
 		if (view == null) {
 			view = new AlbumView();
 			spinner = new Spinner();
-			this.netSource = netSource;
 			view.getPagination().addListener(this);
 			// 绑定视图数据恢复
 			ViewRestore.bind(view, this::restore);
@@ -106,7 +103,7 @@ public class AlbumController implements ChangeListener<Number> {
 		view.updateAlbum(album);
 
 		Task.async(() -> {
-			List<Music> list = netSource.songList(album, page);
+			List<Music> list = configureController.getNetSourceImpl().songList(album, page);
 			Platform.runLater(() -> updateSongList(list, album));
 		});
 	}
@@ -126,7 +123,7 @@ public class AlbumController implements ChangeListener<Number> {
 		page.setCurrent(newValue.intValue());
 		spinner.centerTo(view);
 		Task.async(() -> {
-			List<Music> list = netSource.songList(album, page);
+			List<Music> list = configureController.getNetSourceImpl().songList(album, page);
 			Platform.runLater(() -> updateSongList(list, null));
 			musicService.save(list);
 		});

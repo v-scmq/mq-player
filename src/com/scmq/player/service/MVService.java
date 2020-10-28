@@ -26,7 +26,7 @@ public class MVService {
         String uri = null;
         for (MV mv : list) {
             String platform = mv.getPlatform(), cover = mv.getCover();
-            File file = FileUtil.toFile(mv.getVid(), "jpg", "picture\\mv", platform);
+            File file = FileUtil.toFile(mv.getVid(), "jpg", "picture/mv", platform);
             // 若MV图片文件存在
             if (file.isFile()) {
                 // 设置MV图片地址
