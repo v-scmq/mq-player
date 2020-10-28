@@ -9,16 +9,16 @@
        https://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <!--引入db.properties -->
-    <context:property-placeholder location="classpath:db.properties"/>
+    <!--引入db.properties <context:property-placeholder location="classpath:db.properties"/> -->
 
     <!--配置dataSource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${db.driver}"/>
-        <property name="url" value="${db.url}"/>
-        <property name="username" value="${db.user}"/>
-        <property name="password" value="${db.password}"/>
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="jdbc:sqlite:player.db"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
     </bean>
+
     <!--配置Spring的事务管理器 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
@@ -35,21 +35,15 @@
         <!--扫描mapper映射文件 -->
         <property name="mapperLocations" value="/mapper/*"/>
     </bean>
+
     <!--配置MyBatis的Mapper扫描器 -->
     <bean id="mapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!--指定扫描包 -->
         <property name="basePackage" value="com.scmq.player.dao"/>
     </bean>
+
     <!--扫描service包 -->
     <context:component-scan base-package="com.scmq.player.service"/>
     <!-- 扫描controller包 -->
     <context:component-scan base-package="com.scmq.player.controller"/>
-
-    <bean class="com.scmq.player.controller.NetMusicController">
-        <constructor-arg type="java.util.List">
-            <list>
-                <bean class="com.scmq.player.net.DefaultSource"/>
-            </list>
-        </constructor-arg>
-    </bean>
 </beans>
