@@ -78,7 +78,7 @@ public class ConfigureController {
 	 * 加载配置文件
 	 */
 	private void loadConfigure() {
-		File file = FileUtil.toFile("package.json", null, "configure");
+		File file = FileUtil.toFile("config.json", null, "configure");
 		if (!file.isFile()) {
 			return;
 		}
