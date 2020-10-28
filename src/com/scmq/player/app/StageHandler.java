@@ -34,6 +34,17 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	/** 本地窗口指针标记 */
 	private static long nativeWindow;
 
+	/** 记录窗口在最大化之前的x和y坐标 */
+	private double x, y;
+	/** 窗口是否最大化 */
+	private boolean maximized;
+	/** 窗口是否全屏 */
+	private boolean fullScreen;
+	/** 记录窗口在最大化之前的宽度和高度,以及鼠标按下装饰栏时的误差x和y坐标 */
+	private double width, height, offsetX, offsetY;
+	/** 非全屏状态下,窗口的x和y坐标已经窗口宽度和高度 */
+	private double normalX, normalY, normalWidth, normalHeight;
+
 	/** 加载本地库,然后重设本地窗口在任务栏上能够最小化(此方法需要运行在子线程中) */
 	static void loadAndSetStyle() {
 		// 若不是window系统,则不执行后续操作
@@ -65,13 +76,6 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 		Main.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
 	}
 
-	/** 记录窗口在最大化之前的x和y坐标 */
-	double x, y;
-	/** 记录窗口在最大化之前的宽度和高度,以及鼠标按下装饰栏时的误差x和y坐标 */
-	double width, height, offsetX, offsetY;
-	/** 窗口是否最大化 */
-	boolean maximized;
-
 	/**
 	 * 最大化窗口或还原窗口
 	 *
@@ -100,11 +104,6 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 		setBounds(stage, x, y, width, height);
 		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
 	}
-
-	/** 窗口是否全屏 */
-	private boolean fullScreen;
-	/** 非全屏状态下,窗口的x和y坐标已经窗口宽度和高度 */
-	double normalX, normalY, normalWidth, normalHeight;
 
 	/**
 	 * 设置窗口是否全屏
