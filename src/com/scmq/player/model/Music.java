@@ -335,7 +335,7 @@ public final class Music extends Media {
 				return null;
 			}
 			// 若专辑封面图片文件存在,则加载
-			File file = FileUtil.toFile(FileUtil.resolve(album.getName()), "jpg", "picture\\album\\0");
+			File file = FileUtil.toFile(FileUtil.resolve(album.getName()), "jpg", "picture/album/0");
 			if (file.isFile()) {
 				Image image = new Image(file.toURI().toString());
 				if (!image.isError()) {
@@ -351,7 +351,7 @@ public final class Music extends Media {
 		}
 
 		// 2.若是来自网络的音乐专辑
-		File file = FileUtil.toFile(album.getMid(), "jpg", "picture\\album", platform);
+		File file = FileUtil.toFile(album.getMid(), "jpg", "picture/album", platform);
 		// 若有图片地址,并且本地图片文件不存在
 		if (!StringUtil.isEmpty(album.getCover()) && !file.isFile()) {
 			HttpClient client = HttpClient.createClient(null).removeAcceptHeader();

@@ -94,26 +94,28 @@ public class FileUtil {
 	 * @param name
 	 *            文件名
 	 * @param format
-	 *            文件格式,允许为null;若为null,则完全依赖于name决定文件格式(若name中有包含文件格式名)
+	 *            文件格式,允许为null.若为null,则完全依赖于name决定文件格式(若name中有包含文件格式名)
 	 * @param parents
 	 *            这个文件所在父目录,它可以是多层级的,可变参数(数组)的每一个参数表示一层目录
-	 * @return 这个由字符序列构成的文件路径 的File对象表示
+	 * @return 这个由字符序列构成的文件路径的File对象表示
 	 */
 	public static File toFile(String name, String format, String... parents) {
-		StringBuilder builder = new StringBuilder();
-		File path;
-		if (parents.length == 1) {
-			path = new File(ROOT_PATH, parents[0]);
-		} else {
-			for (String dir : parents) {
-				builder.append(dir).append(File.separatorChar);
-			}
-			builder.delete(builder.length() - 1, builder.length());
-			path = new File(ROOT_PATH, builder.toString());
-			builder.delete(0, builder.length());
+		// 若没有指定父目录,则直接指定为相对程序运行的根路径
+		if (parents == null || parents.length == 0) {
+			name = format == null ? name : name + '.' + format;
+			return new File(ROOT_PATH, name);
 		}
+
+		StringBuilder builder = new StringBuilder();
+		for (String dir : parents) {
+			builder.append(dir).append(File.separatorChar);
+		}
+
+		builder.delete(builder.length() - 1, builder.length());
+		File path = new File(ROOT_PATH, builder.toString());
+
 		if (format != null) {
-			name = builder.append(name).append('.').append(format).toString();
+			name = StringUtil.clear(builder).append(name).append('.').append(format).toString();
 		}
 		return new File(mkdirs(path), name);
 	}

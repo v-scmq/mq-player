@@ -137,7 +137,7 @@ public class MV extends Media {
 			String platform = singer.getPlatform() == null ? "0" : singer.getPlatform();
 			// 歌手图片在本地文件系统的文件名称(本地歌手信息使用歌手名称,否则使用歌手mid)
 			String name = singer.getPlatform() == null ? singer.getName() : singer.getMid();
-			File file = FileUtil.toFile(name, "jpg", "picture\\singer", platform);
+			File file = FileUtil.toFile(name, "jpg", "picture/singer", platform);
 			if (file.isFile()) {
 				return new Image(file.toURI().toString());
 			} else if (!StringUtil.isEmpty(singer.getCover())) {
