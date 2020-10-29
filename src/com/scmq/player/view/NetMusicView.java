@@ -1,5 +1,6 @@
 package com.scmq.player.view;
 
+import com.scmq.player.app.Main;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
@@ -195,6 +196,8 @@ public class NetMusicView extends TabPane {
 		AnchorPane.setRightAnchor(pagination, 0.0);
 		AnchorPane.setBottomAnchor(pagination, 0.0);
 		AnchorPane.setLeftAnchor(pagination, 0.0);
+
+		Main.put(NetMusicView.class, this);
 	}
 
 	/**

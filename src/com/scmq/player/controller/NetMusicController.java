@@ -285,9 +285,9 @@ public class NetMusicController implements ChangeListener<Tab> {
 		}
 	}
 
-	void bind(NetMusicView view) {
-		this.view = view;
+	void bind() {
 		spinner = new Spinner();
+		view = Main.remove(NetMusicView.class);
 		mvSelection = view.getMvTagListView().getSelectionModel();
 		enSelection = view.getSingerEnListView().getSelectionModel();
 		kindSection = view.getSingerKindListView().getSelectionModel();

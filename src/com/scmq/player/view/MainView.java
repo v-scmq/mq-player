@@ -686,6 +686,8 @@ public class MainView {
 				e.consume();
 			}
 		});
+		// 放入到根节点属性缓存
+		Main.put(MainView.class, this);
 	}
 
 	/**

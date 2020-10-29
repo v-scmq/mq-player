@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.scmq.player.app.Main;
+import com.scmq.player.core.FXMediaPlayer;
+import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.dao.AlbumDao;
 import com.scmq.player.dao.LocalListDao;
 import com.scmq.player.dao.MusicDao;
@@ -11,6 +14,7 @@ import com.scmq.player.dao.PlayListDao;
 import com.scmq.player.dao.SingerDao;
 import com.scmq.player.net.NetSource;
 import com.scmq.player.util.FileUtil;
+import javafx.application.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +50,13 @@ public class ConfigureController {
 	@Autowired
 	private PlayListDao playListDao;
 
+	@Autowired
+	private MainController mainController;
+	@Autowired
+	private LocalMusicController localMusicController;
+	@Autowired
+	private NetMusicController netMusicController;
+
 	/** 第三方网络音乐资源平台 */
 	private NetSource netSource;
 	/** 存储所有可用的第三方网络音乐资源平台List集合 */
@@ -56,6 +67,15 @@ public class ConfigureController {
 	private void initialize() {
 		createTable();
 		loadConfigure();
+
+		MediaPlayer player = new FXMediaPlayer(mainController);
+		// 将播放器对象放入容器中
+		Main.put(MediaPlayer.class, player);
+		Platform.runLater(() -> {
+			localMusicController.bind();
+			mainController.bind();
+			netMusicController.bind();
+		});
 	}
 
 	/**

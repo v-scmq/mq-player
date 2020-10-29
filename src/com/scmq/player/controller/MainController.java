@@ -199,13 +199,17 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	/*-------------------- MediaPlayer事件监听器 回调方法 end -----------------*/
 
 	/* 播放器和所有配置加载完成,绑定事件.(包括异步加载播放列表) */
-	void bind(MediaPlayer mediaPlayer, MainView mainView) {
-		this.view = mainView;
-		this.player = mediaPlayer;
+	void bind() {
+		// 从容器中获取并移除视图对象
+		this.view = Main.remove(MainView.class);
+		// 从容器中获取播放器对象
+		this.player = Main.get(MediaPlayer.class);
+
 		playImage = view.getPlay().getImage();
 		mvQueue = view.getMvQueueView().getItems();
 		musicQueue = view.getMusicQueueView().getItems();
 		pauseImage = FileUtil.createImage("player/pause");
+
 		// 在子线程中,加载播放列表
 		Task.async(() -> {
 			PlayList playList = playListService.findPlayListLast();
@@ -242,6 +246,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			// 注册音乐频谱回调
 			property.addListener(((observable, oldValue, newValue) -> player.bindAudioSpectrum(newValue)));
 		}
+
+		// 关闭加载提示
+		view.closeSpinner();
+		// 初始化并关联后退和前进图标的事件
+		NavigationManager.initialize(view.getBackNode(), view.getForwardNode());
 
 		// 监听主选项卡面板的选项卡切换事件
 		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");

@@ -1,13 +1,12 @@
 package com.scmq.player.app;
 
-import com.scmq.player.controller.LocalMusicController;
-import com.scmq.player.controller.MainController;
-import com.scmq.player.controller.NetMusicController;
-import com.scmq.player.core.FXMediaPlayer;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
-import com.scmq.player.util.*;
+import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Reflect;
+import com.scmq.player.util.Task;
+import com.scmq.player.util.TimeUtil;
 import com.scmq.player.view.LocalMusicView;
 import com.scmq.player.view.MainView;
 import com.scmq.player.view.NetMusicView;
@@ -24,7 +23,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
@@ -37,27 +35,15 @@ import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
  * @since 2019-09-23
  */
 public class Main extends javafx.application.Application {
-	/** 媒体播放器 */
-	private MediaPlayer player;
 	/** 主进程窗口 */
-	private Stage primaryStage;
-	/** 本地音乐模块视图 */
-	private LocalMusicView localMusicView;
-	/** 网络音乐模块视图 */
-	private NetMusicView netMusicView;
-	/** 主界面视图 */
-	private MainView mainView;
+	private static Stage primaryStage;
 
-	/** 主进程入口实例 */
-	private static Main app;
 	/** 场景图根布局面板 */
 	private static final AnchorPane ROOT;
 	/** “正在播放的媒体”属性 */
 	private static final ObjectProperty<Music> MEDIA_PROPERTY;
 	/** “播放列表”属性 */
 	private static final ObjectProperty<PlayList> PLAY_LIST_PROPERTY;
-	/** Spring上下文 */
-	private static ClassPathXmlApplicationContext context;
 
 	static {
 		// 加载本地库然后设置本地窗口可最小化
@@ -72,46 +58,16 @@ public class Main extends javafx.application.Application {
 		MEDIA_PROPERTY = new SimpleObjectProperty<>();
 		// 播放数据源属性(用于监听数据源改变时,切换播放源)
 		PLAY_LIST_PROPERTY = new SimpleObjectProperty<>();
-		// 在子线程中加载配置文件和创建播放器(因为比较耗时)
-		Task.async(() -> {
-			// 加载Spring容器
-			context = new ClassPathXmlApplicationContext("spring-config.xml");
 
-			// 创建媒体播放器
-			MediaPlayer player = new FXMediaPlayer(context.getBean(MainController.class));
-			// 同步到UI线程
-			Platform.runLater(() -> {
-				app.player = player;
-				// 关闭加载提示
-				app.mainView.closeSpinner();
-
-				// 通过反射调用bind方法关联视图并绑定事件
-				Class<?> clazz = LocalMusicController.class;
-				Method method = Reflect.getMethod(clazz, "bind", LocalMusicView.class);
-				Reflect.invoke(context.getBean(clazz), method, app.localMusicView);
-
-				clazz = MainController.class;
-				method = Reflect.getMethod(clazz, "bind", MediaPlayer.class, MainView.class);
-				Reflect.invoke(context.getBean(clazz), method, app.player, app.mainView);
-
-				clazz = NetMusicController.class;
-				method = Reflect.getMethod(clazz, "bind", NetMusicView.class);
-				Reflect.invoke(context.getBean(clazz), method, app.netMusicView);
-
-				// 初始化并关联后退和前进图标的事件
-				NavigationManager.initialize(app.mainView.getBackNode(), app.mainView.getForwardNode());
-			});
-		});
+		// 在子线程中加载Spring配置文件,并将spring上下文对象放入容器中
+		Task.async(() -> put(new ClassPathXmlApplicationContext("spring-config.xml")));
 	}
 
 	@Override
 	public void start(Stage stage) {
-		app = this;
 		primaryStage = stage;
-		netMusicView = new NetMusicView();
-		localMusicView = new LocalMusicView();
 
-		mainView = new MainView(localMusicView, netMusicView);
+		new MainView(new LocalMusicView(), new NetMusicView());
 		stage.setScene(new Scene(ROOT, 1200, 800));
 		stage.getScene().getStylesheets().add(FileUtil.getStyleSheet("style"));
 		// stage.getScene().setCursor(new ImageCursor(new Image("cursor.png")));
@@ -126,10 +82,13 @@ public class Main extends javafx.application.Application {
 	/** 主进程结束的回调方法 */
 	@Override
 	public void stop() {
+		ClassPathXmlApplicationContext context = remove(ClassPathXmlApplicationContext.class);
 		// 关闭Spring上下文
 		if (context != null) {
 			context.close();
 		}
+
+		MediaPlayer player = remove(MediaPlayer.class);
 		// 释放播放器资源
 		if (player != null) {
 			player.release();
@@ -175,7 +134,61 @@ public class Main extends javafx.application.Application {
 	 * @return 主窗口
 	 */
 	public static Stage getPrimaryStage() {
-		return app.primaryStage;
+		return primaryStage;
+	}
+
+	/**
+	 * 从根节点属性缓存容器中获取指定Class对象对应的类的对象
+	 * 
+	 * @param clazz
+	 *            Class对象
+	 * @param <T>
+	 *            Class对象对应的类
+	 * @return Class对象对应的类的对象
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T get(Class<T> clazz) {
+		return (T) ROOT.getProperties().get(clazz);
+	}
+
+	/**
+	 * 从根节点属性缓存容器中获取并移除指定Class对象对应的类的对象
+	 *
+	 * @param clazz
+	 *            Class对象
+	 * @param <T>
+	 *            Class对象对应的类
+	 * @return Class对象对应的类的对象
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T remove(Class<T> clazz) {
+		return (T) ROOT.getProperties().remove(clazz);
+	}
+
+	/**
+	 * 将指定Class对象对应的类的对象放入根节点属性缓存容器中
+	 *
+	 * @param clazz
+	 *            Class对象
+	 * @param value
+	 *            Class对象对应的类的对象
+	 * @param <T>
+	 *            Class对象对应的类
+	 */
+	public static <T> void put(Class<T> clazz, Object value) {
+		ROOT.getProperties().put(clazz, value);
+	}
+
+	/**
+	 * 将指定Class对象对应的类的对象放入根节点属性缓存容器中
+	 *
+	 * @param value
+	 *            Class对象对应的类的对象
+	 * @param <T>
+	 *            Class对象对应的类
+	 */
+	public static <T> void put(Object value) {
+		ROOT.getProperties().put(value.getClass(), value);
 	}
 
 	/** 销毁滚动面板和按钮的默认空格事件 */

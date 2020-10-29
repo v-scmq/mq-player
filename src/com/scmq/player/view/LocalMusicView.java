@@ -232,6 +232,7 @@ public class LocalMusicView extends AnchorPane {
 
 		getChildren().addAll(playAllButton, batchOperButton, inputLocalSearchKey, sortMethod, tableView, leadingButton);
 		getStyleClass().add("button-music-pane");
+		Main.put(LocalMusicView.class, this);
 
 		/* **************** 注册事件 ***********/
 

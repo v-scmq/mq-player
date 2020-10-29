@@ -44,10 +44,8 @@ public class LocalMusicController {
 
 	private Spinner spinner;
 
-	public LocalMusicController() {
-	}
-
-	void bind(LocalMusicView view) {
+	void bind() {
+		LocalMusicView view = Main.remove(LocalMusicView.class);
 		// 在子线程中查询所有本地音乐
 		Task.async(() -> {
 			LocalList localList = service.findLocalListOfFirst();
