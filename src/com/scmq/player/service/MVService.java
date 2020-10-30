@@ -4,6 +4,7 @@ import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.MV;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class MVService {
             }
             // 若没有MV图片地址
             if (StringUtil.isEmpty(cover)) {
-                mv.setCover(uri = uri == null ? FileUtil.getImageURI("_mv") : uri);
+                mv.setCover(uri = uri == null ? Resource.getImageURI("_mv") : uri);
                 continue;
             }
             // 是否写入到本地文件
@@ -46,7 +47,7 @@ public class MVService {
             if (write) {
                 mv.setCover(file.toURI().toString());
             } else {
-                mv.setCover(uri = uri == null ? FileUtil.getImageURI("_mv") : uri);
+                mv.setCover(uri = uri == null ? Resource.getImageURI("_mv") : uri);
                 file.delete();
             }
         }

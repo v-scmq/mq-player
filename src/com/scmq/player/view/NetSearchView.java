@@ -6,7 +6,7 @@ import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
 import com.scmq.player.model.Singer;
 import com.scmq.player.model.Special;
-import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import com.scmq.view.control.Pagination;
 import com.scmq.view.control.Tab;
@@ -74,7 +74,7 @@ public class NetSearchView extends AnchorPane {
 
 		// TableView序号列上的复选框显示属性.用于批量操作TableView数据行时,列表题和列单元格上的复选框是可见状态还是隐藏状态
 		BooleanProperty checkBoxProperty = new SimpleBooleanProperty();
-		ImageView graphic = FileUtil.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
+		ImageView graphic = Resource.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
 		tableView.getProperties().put(TableViewCell.PLAY_GRAPHIC, graphic);
 		tableView.getProperties().put(TableViewCell.CHECK_BOX, checkBoxProperty);
 

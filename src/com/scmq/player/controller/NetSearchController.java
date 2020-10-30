@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
@@ -110,7 +110,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 
 			view.getTabPane().setTabChangeListener(this);
 
-			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+			mainTabPane = (TabPane) App.getRoot().lookup(".tab-pane:vertical");
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
 				String tabText = tab.getText();
@@ -316,7 +316,7 @@ public class NetSearchController implements ChangeListener<Tab> {
 			@SuppressWarnings("unchecked")
 			List<MV> mvList = (List<MV>) node.getParent().getUserData();
 			Integer index = (Integer) node.getUserData();
-			Main.playListProperty().set(new PlayList(index, mvList));
+			App.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
 

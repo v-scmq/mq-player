@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.core.FXMediaPlayer;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.dao.AlbumDao;
@@ -70,7 +70,7 @@ public class ConfigureController {
 
 		MediaPlayer player = new FXMediaPlayer(mainController);
 		// 将播放器对象放入容器中
-		Main.put(MediaPlayer.class, player);
+		App.put(MediaPlayer.class, player);
 		Platform.runLater(() -> {
 			localMusicController.bind();
 			mainController.bind();

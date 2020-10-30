@@ -1,6 +1,6 @@
 package com.scmq.view.control;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -256,7 +256,7 @@ public class PopupPane extends PopupWindow {
 				// 获取此时“弹出式内容面板”在屏幕上的坐标点
 				Point2D point = pane.localToScreen(0, 0);// 可以使用Bounds代替
 				// 从“主场景视图的根节点” 中移除“弹出式内容面板”
-				Main.getRoot().getChildren().remove(pane);
+				App.getRoot().getChildren().remove(pane);
 				// 显示弹出式面板
 				show(owner, point.getX() - 1, point.getY());
 				// 重新关联到“弹出式面板根节点(***必须在显示后关联,否则导致CSS解析器计算时出现错误***)
@@ -267,7 +267,7 @@ public class PopupPane extends PopupWindow {
 			timeLine.stop();
 		}
 		// “内容面板” 起始x坐标值
-		double x1 = Main.getRoot().getWidth();
+		double x1 = App.getRoot().getWidth();
 		double x2 = x1 - pane.getPrefWidth();
 		// 弹出式面板内容面板 x坐标属性
 		DoubleProperty property = pane.layoutXProperty();
@@ -290,11 +290,11 @@ public class PopupPane extends PopupWindow {
 		// “弹出式内容面板” 脱离“根节点”的约束
 		rootNode.setGraphic(null);
 		// “弹出式内容面板”关联到主场景视图 根布局面板中
-		if (Main.getRoot().getChildren().lastIndexOf(pane) == -1) {
-			Main.getRoot().getChildren().add(pane);
+		if (App.getRoot().getChildren().lastIndexOf(pane) == -1) {
+			App.getRoot().getChildren().add(pane);
 		}
 		// 重设内容面板y坐标
-		pane.setLayoutY(Main.getRoot().getHeight() - pane.getPrefHeight() - 86);
+		pane.setLayoutY(App.getRoot().getHeight() - pane.getPrefHeight() - 86);
 		// 开始播放
 		timeLine.play();
 	}

@@ -4,6 +4,7 @@ import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.Special;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class SpecialService {
 			}
 			// 若没有歌单图片地址
 			if (StringUtil.isEmpty(cover)) {
-				special.setCover(uri = uri == null ? FileUtil.getImageURI("_special") : uri);
+				special.setCover(uri = uri == null ? Resource.getImageURI("_special") : uri);
 				continue;
 			}
 			// 是否写入到本地文件
@@ -50,7 +51,7 @@ public class SpecialService {
 			if (write) {
 				special.setCover(file.toURI().toString());
 			} else {
-				special.setCover(uri = uri == null ? FileUtil.getImageURI("_special") : uri);
+				special.setCover(uri = uri == null ? Resource.getImageURI("_special") : uri);
 				file.delete();
 			}
 		}

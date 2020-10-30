@@ -1,6 +1,6 @@
 package com.scmq.player.app;
 
-import com.scmq.player.util.Icon;
+import com.scmq.player.util.Resource;
 import com.scmq.view.control.Toast;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
@@ -71,9 +71,9 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	/** 绑定根节点鼠标事件,以支持窗口resize(需要运行在窗口显示后) */
 	void bind() {
 		nativeWindow = com.sun.glass.ui.Window.getWindows().get(0).getNativeWindow();
-		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
-		Main.getRoot().addEventFilter(MouseEvent.MOUSE_PRESSED, this);
-		Main.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
+		App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+		App.getRoot().addEventFilter(MouseEvent.MOUSE_PRESSED, this);
+		App.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
 	}
 
 	/**
@@ -83,8 +83,8 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	 *            最大化图标
 	 */
 	public void setMaximized(SVGPath node) {
-		Stage stage = Main.getPrimaryStage();
-		node.setContent((maximized = !maximized) ? Icon.MAXIMIZED_ICON : Icon.MAXIMIZE_ICON);
+		Stage stage = App.getPrimaryStage();
+		node.setContent((maximized = !maximized) ? Resource.MAXIMIZED_ICON : Resource.MAXIMIZE_ICON);
 
 		// 需要最大化
 		if (maximized) {
@@ -96,13 +96,13 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			Screen screen = Screen.getPrimary();
 			Rectangle2D bounds = screen.getVisualBounds();
 			setBounds(stage, 0, 0, bounds.getWidth(), bounds.getHeight());
-			Main.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
+			App.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
 			return;
 		}
 
 		// 还原窗口
 		setBounds(stage, x, y, width, height);
-		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+		App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 
 		fullScreen = value;
 
-		Stage stage = Main.getPrimaryStage();
+		Stage stage = App.getPrimaryStage();
 
 		// 窗口全屏
 		if (fullScreen) {
@@ -128,14 +128,14 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			normalHeight = stage.getHeight();
 			Rectangle2D rect = Screen.getPrimary().getBounds();
 			setBounds(stage, 0, 0, rect.getWidth(), rect.getHeight());
-			Main.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
-			Toast.makeText(Main.getRoot(), "按ESC或F键以退出全屏").show();
+			App.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
+			Toast.makeText(App.getRoot(), "按ESC或F键以退出全屏").show();
 			return;
 		}
 
 		// 还原窗口
 		setBounds(stage, normalX, normalY, normalWidth, normalHeight);
-		Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+		App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
 	}
 
 	/** 检查窗口是否已全屏显示 */
@@ -149,7 +149,7 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 
 		// 鼠标按下
 		if (type == MouseEvent.MOUSE_PRESSED) {
-			if (Main.getRoot().getCursor() != Cursor.DEFAULT) {
+			if (App.getRoot().getCursor() != Cursor.DEFAULT) {
 				event.consume();
 			}
 			return;
@@ -161,8 +161,8 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 				return;
 			}
 
-			Stage stage = Main.getPrimaryStage();
-			Cursor cursor = Main.getRoot().getCursor();
+			Stage stage = App.getPrimaryStage();
+			Cursor cursor = App.getRoot().getCursor();
 
 			// 鼠标窗口右下角边界上,可以改变宽度和高度
 			if (cursor == Cursor.SE_RESIZE) {
@@ -190,13 +190,13 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 
 		// 鼠标移动(该方法回调只有这3中类型,因为只注册了这3个类型)
 		if (maximized) {
-			Main.getRoot().setCursor(Cursor.DEFAULT);
+			App.getRoot().setCursor(Cursor.DEFAULT);
 			return;
 		}
 
-		boolean x = event.getX() + 5 > Main.getRoot().getWidth(), y = event.getY() + 5 > Main.getRoot().getHeight();
+		boolean x = event.getX() + 5 > App.getRoot().getWidth(), y = event.getY() + 5 > App.getRoot().getHeight();
 		Cursor cursor = x && y ? Cursor.SE_RESIZE : x ? Cursor.E_RESIZE : y ? Cursor.S_RESIZE : Cursor.DEFAULT;
-		Main.getRoot().setCursor(cursor);
+		App.getRoot().setCursor(cursor);
 	}
 
 	/**
@@ -211,8 +211,8 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 		// 鼠标在装饰栏上按下时
 		decorative.setOnMousePressed(e -> {
 			if (e.getTarget() instanceof Pane) {
-				offsetX = e.getScreenX() - Main.getPrimaryStage().getX();
-				offsetY = e.getScreenY() - Main.getPrimaryStage().getY();
+				offsetX = e.getScreenX() - App.getPrimaryStage().getX();
+				offsetY = e.getScreenY() - App.getPrimaryStage().getY();
 			}
 		});
 
@@ -230,12 +230,12 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 				return;
 			}
 
-			Stage stage = Main.getPrimaryStage();
+			Stage stage = App.getPrimaryStage();
 
 			// 当前窗口已经最大化 并且 鼠标向下拖动. 那么先还原窗口,然后继续拖动
 			if (maximized && e.getScreenY() > 1) {
 				maximized = false;
-				maximizeNode.setContent(Icon.MAXIMIZE_ICON);
+				maximizeNode.setContent(Resource.MAXIMIZE_ICON);
 
 				// 获取屏幕可见最大宽度
 				double max = Screen.getPrimary().getVisualBounds().getWidth();
@@ -249,8 +249,8 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 				// 必须重新计算offsetX(这个时候认为是鼠标的重新按下,所以误差x重算)
 				offsetX = screenX - x;
 
-				Main.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
-				Main.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+				App.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
+				App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
 				return;
 			}
 

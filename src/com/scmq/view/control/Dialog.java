@@ -1,6 +1,6 @@
 package com.scmq.view.control;
 
-import com.scmq.player.util.Icon;
+import com.scmq.player.util.Resource;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -73,7 +73,7 @@ public class Dialog extends Pane {
 		path.setStrokeWidth(2);
 		path.setMouseTransparent(true);
 		path.setStrokeLineCap(StrokeLineCap.BUTT);
-		path.setContent(Icon.DIALOG_CLOSEABLE_ICON);
+		path.setContent(Resource.DIALOG_CLOSEABLE_ICON);
 		closeIcon = new Label(null, path);
 		closeIcon.getStyleClass().add("close-icon");
 

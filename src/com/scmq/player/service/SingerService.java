@@ -5,6 +5,7 @@ import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.Singer;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -231,7 +232,7 @@ public class SingerService {
 			}
 			// 若没有歌手图片地址
 			if (StringUtil.isEmpty(cover)) {
-				singer.setCover(uri = uri == null ? FileUtil.getImageURI("_singer") : uri);
+				singer.setCover(uri = uri == null ? Resource.getImageURI("_singer") : uri);
 				continue;
 			}
 			// 是否写入到本地文件
@@ -242,7 +243,7 @@ public class SingerService {
 			if (write) {
 				singer.setCover(file.toURI().toString());
 			} else {
-				singer.setCover(uri = uri == null ? FileUtil.getImageURI("_singer") : uri);
+				singer.setCover(uri = uri == null ? Resource.getImageURI("_singer") : uri);
 				file.delete();
 			}
 		}
@@ -266,7 +267,7 @@ public class SingerService {
 		}
 		// 若没有歌手图片地址
 		if (StringUtil.isEmpty(cover)) {
-			singer.setCover(FileUtil.getImageURI("_singer"));
+			singer.setCover(Resource.getImageURI("_singer"));
 			return;
 		}
 		HttpClient client = HttpClient.createClient(null).removeAcceptHeader();
@@ -278,7 +279,7 @@ public class SingerService {
 		if (write) {
 			singer.setCover(file.toURI().toString());
 		} else {
-			singer.setCover(FileUtil.getImageURI("_singer"));
+			singer.setCover(Resource.getImageURI("_singer"));
 			file.delete();
 		}
 	}

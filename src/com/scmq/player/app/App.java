@@ -3,8 +3,8 @@ package com.scmq.player.app;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
-import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.Reflect;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.Task;
 import com.scmq.player.util.TimeUtil;
 import com.scmq.player.view.LocalMusicView;
@@ -34,7 +34,7 @@ import static com.scmq.player.app.StageHandler.STAGE_HANDLER;
  * @version 2.0
  * @since 2019-09-23
  */
-public class Main extends javafx.application.Application {
+public class App extends javafx.application.Application {
 	/** 主进程窗口 */
 	private static Stage primaryStage;
 
@@ -69,9 +69,9 @@ public class Main extends javafx.application.Application {
 
 		new MainView(new LocalMusicView(), new NetMusicView());
 		stage.setScene(new Scene(ROOT, 1200, 800));
-		stage.getScene().getStylesheets().add(FileUtil.getStyleSheet("style"));
+		stage.getScene().getStylesheets().add(Resource.getStyleSheet("style"));
 		// stage.getScene().setCursor(new ImageCursor(new Image("cursor.png")));
-		stage.getIcons().add(FileUtil.createImage("player"));
+		stage.getIcons().add(Resource.createImage("player"));
 		stage.initStyle(StageStyle.UNDECORATED);
 		stage.setResizable(false);
 		stage.setTitle("MQ音乐");

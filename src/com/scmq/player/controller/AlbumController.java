@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
@@ -76,7 +76,7 @@ public class AlbumController implements ChangeListener<Number> {
 			view.getPagination().addListener(this);
 			// 绑定视图数据恢复
 			ViewRestore.bind(view, this::restore);
-			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+			mainTabPane = (TabPane) App.getRoot().lookup(".tab-pane:vertical");
 		}
 
 		Tab tab = mainTabPane.tabProperty().get();

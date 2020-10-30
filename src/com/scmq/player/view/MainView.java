@@ -1,14 +1,13 @@
 
 package com.scmq.player.view;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.LyricLine;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Media;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayModel;
-import com.scmq.player.util.FileUtil;
-import com.scmq.player.util.Icon;
+import com.scmq.player.util.Resource;
 import com.scmq.view.control.EditText;
 import com.scmq.view.control.PopupPane;
 import com.scmq.view.control.Spinner;
@@ -119,7 +118,7 @@ public class MainView {
 	public MainView(LocalMusicView localModuleView, NetMusicView netView) {
 		// ---------用户登录部分-----------
 		int size = 50;
-		headImageView = FileUtil.createView("user_head", size, size);
+		headImageView = Resource.createView("user_head", size, size);
 		headImageView.getStyleClass().add("head-view");
 		Circle circle = new Circle(size >>= 1, size, size);
 		headImageView.setClip(circle);
@@ -134,14 +133,14 @@ public class MainView {
 
 		// ---------------顶部面板部分----------
 		SVGPath backPath = new SVGPath();
-		backPath.setContent(Icon.BACK_ICON);
+		backPath.setContent(Resource.BACK_ICON);
 		backPath.setStrokeWidth(1.5);
 		backButton = new Button(null, backPath);
 		backButton.getStyleClass().setAll("svg-button");
 		backButton.setDisable(true);
 
 		SVGPath forwardPath = new SVGPath();
-		forwardPath.setContent(Icon.FORWARD_ICON);
+		forwardPath.setContent(Resource.FORWARD_ICON);
 		forwardPath.setStroke(Color.rgb(34, 34, 34));
 		forwardPath.setStrokeWidth(1.5);
 		forwardButton = new Button(null, forwardPath);
@@ -149,7 +148,7 @@ public class MainView {
 		forwardButton.setDisable(true);
 
 		SVGPath refreshPath = new SVGPath();
-		refreshPath.setContent(Icon.REFRESH_ICON);
+		refreshPath.setContent(Resource.REFRESH_ICON);
 		refreshPath.setStrokeWidth(0.65);
 		refreshPath.setRotate(20);
 		refreshPath.setScaleX(1.2);
@@ -157,7 +156,7 @@ public class MainView {
 		refreshButton = new Button(null, refreshPath);
 		refreshButton.getStyleClass().setAll("svg-button");
 
-		searchInput = new EditText(null, FileUtil.createView("search", 20, 20), true);
+		searchInput = new EditText(null, Resource.createView("search", 20, 20), true);
 		searchInput.setPromptText("九张机");
 		searchInput.setPrefWidth(300);
 		searchInput.setMaxHeight(30);
@@ -167,7 +166,7 @@ public class MainView {
 		hBox.setAlignment(Pos.CENTER_LEFT);
 
 		SVGPath headsetPath = new SVGPath();
-		headsetPath.setContent(Icon.HEADSET_ICON);
+		headsetPath.setContent(Resource.HEADSET_ICON);
 		headsetPath.setScaleX(1.2);
 		headsetPath.setScaleY(1.2);
 		headsetPath.setFillRule(FillRule.EVEN_ODD);
@@ -176,7 +175,7 @@ public class MainView {
 
 		SVGPath skinPath = new SVGPath();
 		skinPath.setManaged(false);
-		skinPath.setContent(Icon.SKIN_ICON);
+		skinPath.setContent(Resource.SKIN_ICON);
 		skinPath.setLayoutX(-500);
 		skinPath.setLayoutY(-490);
 		HBox skin = new HBox(skinPath);
@@ -186,29 +185,29 @@ public class MainView {
 		skinButton.getStyleClass().setAll("svg-button", "skin-button");
 
 		SVGPath settingPath = new SVGPath();
-		settingPath.setContent(Icon.SETTING_ICON);
+		settingPath.setContent(Resource.SETTING_ICON);
 		settingButton = new Button(null, settingPath);
 		settingButton.getStyleClass().setAll("svg-button");
 
 		SVGPath minimize = new SVGPath();
-		minimize.setContent(Icon.MINIMIZE_ICON);
+		minimize.setContent(Resource.MINIMIZE_ICON);
 		minimize.setStrokeWidth(0.65);
 		Button minimized = new Button(null, minimize);
 		minimized.getStyleClass().setAll("minimize-button");
-		minimized.setOnAction(e -> Main.getPrimaryStage().setIconified(true));
+		minimized.setOnAction(e -> App.getPrimaryStage().setIconified(true));
 
 		SVGPath maximize = new SVGPath();
-		maximize.setContent(Icon.MAXIMIZE_ICON);
+		maximize.setContent(Resource.MAXIMIZE_ICON);
 		maximize.setStrokeWidth(0.65);
 		Button maximized = new Button(null, maximize);
 		maximized.getStyleClass().setAll("maximize-button");
 		maximized.setOnAction(e -> STAGE_HANDLER.setMaximized(maximize));
 
 		SVGPath closeable = new SVGPath();
-		closeable.setContent(Icon.CLOSEABLE_ICON);
+		closeable.setContent(Resource.CLOSEABLE_ICON);
 		Button closed = new Button(null, closeable);
 		closed.getStyleClass().setAll("close-button");
-		closed.setOnAction(e -> Main.getPrimaryStage().close());
+		closed.setOnAction(e -> App.getPrimaryStage().close());
 		HBox.setMargin(closed, new Insets(0, 16, 0, 0));
 
 		HBox hBox1Top = new HBox(20, headsetButton, skinButton, settingButton, minimized, maximized, closed);
@@ -225,21 +224,21 @@ public class MainView {
 
 		// -----------主选项卡面板部分-----------
 		Tab localTab = new Tab("本地音乐", localModuleView);
-		localTab.setGraphic(FileUtil.createView("computer", 20, 20));
+		localTab.setGraphic(Resource.createView("computer", 20, 20));
 
 		Tab netTab = new Tab("网络乐库", netView);
-		netTab.setGraphic(FileUtil.createView("music-hall", 20, 20));
+		netTab.setGraphic(Resource.createView("music-hall", 20, 20));
 
 		AnchorPane paneRoot = new AnchorPane();
 		Tab likeTab = new Tab("我的收藏", paneRoot);
-		likeTab.setGraphic(FileUtil.createView("my-like", 20, 20));
+		likeTab.setGraphic(Resource.createView("my-like", 20, 20));
 
 		Tab specialTab = new Tab("我的歌单", paneRoot);
-		specialTab.setGraphic(FileUtil.createView("special", 20, 20));
+		specialTab.setGraphic(Resource.createView("special", 20, 20));
 
 		paneRoot = new AnchorPane();
 		Tab downloadTab = new Tab("下载管理", paneRoot);
-		downloadTab.setGraphic(FileUtil.createView("down-manage", 20, 20));
+		downloadTab.setGraphic(Resource.createView("down-manage", 20, 20));
 
 		TabPane mainTabPane = new TabPane(Side.LEFT, localTab, netTab, likeTab, specialTab, downloadTab);
 		mainTabPane.setPlaceHolderTab(new Tab());
@@ -260,7 +259,7 @@ public class MainView {
 		BorderPane.setMargin(progressSlider, new Insets(-4, 0, 10, 0));
 
 		// 专辑图片
-		albumImageView = FileUtil.createView("default", 64, 64);
+		albumImageView = Resource.createView("default", 64, 64);
 		Rectangle clip = new Rectangle(64, 64);
 		clip.setArcHeight(12);
 		clip.setArcWidth(12);
@@ -285,7 +284,7 @@ public class MainView {
 		leftBox.setAlignment(Pos.CENTER_LEFT);
 
 		// 播放模式
-		ImageView playModelView = FileUtil.createView(PlayModel.LIST_LOOP.getIcon());
+		ImageView playModelView = Resource.createView(PlayModel.LIST_LOOP.getIcon());
 		Label listLoop = new Label("列表循环", new ImageView(PlayModel.LIST_LOOP.getIcon()));
 		Label orderPlay = new Label("顺序播放", new ImageView(PlayModel.ORDER_PLAY.getIcon()));
 		Label singleLoop = new Label("单曲循环", new ImageView(PlayModel.SINGLE_LOOP.getIcon()));
@@ -297,16 +296,16 @@ public class MainView {
 		playModelPane.setId("play-model-pane");
 
 		// 上一首
-		prev = FileUtil.createView("player/prev", 40, true);
+		prev = Resource.createView("player/prev", 40, true);
 
 		// 播放或暂停
-		play = FileUtil.createView("player/play", 54, true);
+		play = Resource.createView("player/play", 54, true);
 
 		// 下一首
-		next = FileUtil.createView("player/next", 40, true);
+		next = Resource.createView("player/next", 40, true);
 
 		// 音量
-		ImageView volume = FileUtil.createView("player/volume");
+		ImageView volume = Resource.createView("player/volume");
 		// 音量滑动条
 		volumeSlider = new Slider(0, 1, 0.5);
 		volumeSlider.setPrefHeight(160);
@@ -322,8 +321,8 @@ public class MainView {
 		centerBox.setAlignment(Pos.CENTER);
 
 		// 收藏
-		like = FileUtil.createView("like");
-		Image likeImage = FileUtil.createImage("like-red");
+		like = Resource.createView("like");
+		Image likeImage = Resource.createImage("like-red");
 		Image unlikeImage = like.getImage();
 		like.setOnMouseClicked(e -> like.setImage(like.getImage() == unlikeImage ? likeImage : unlikeImage));
 
@@ -344,11 +343,11 @@ public class MainView {
 		speedPane.setPrefSize(90, 280);
 		speedSlider.prefHeightProperty().bind(speedPane.heightProperty().subtract(50));
 
-		download = FileUtil.createView("download");
+		download = Resource.createView("download");
 
 		// -----------播放队列部分-----------
 		// 底部面板用于 打开播放队列视图的组件
-		ImageView playQueue = FileUtil.createView("play-queue");
+		ImageView playQueue = Resource.createView("play-queue");
 
 		Label title = new Label("播放队列（音乐）");
 		playQueueTitleProperty = title.textProperty();
@@ -359,24 +358,24 @@ public class MainView {
 		AnchorPane.setTopAnchor(playNum, 45.0);
 		AnchorPane.setLeftAnchor(playNum, 10.0);
 
-		ImageView prevQueue = FileUtil.createView("m-prev", 24, 24);
+		ImageView prevQueue = Resource.createView("m-prev", 24, 24);
 		AnchorPane.setTopAnchor(prevQueue, 56.0);
 		AnchorPane.setRightAnchor(prevQueue, 130.0);
 		prevQueue.setStyle("-fx-cursor:hand;");
 
-		ImageView nextQueue = FileUtil.createView("m-prev", 24, 24);
+		ImageView nextQueue = Resource.createView("m-prev", 24, 24);
 		nextQueue.setRotate(180);
 		AnchorPane.setTopAnchor(nextQueue, 56.0);
 		AnchorPane.setRightAnchor(nextQueue, 90.0);
 		nextQueue.setStyle("-fx-cursor:hand;");
 
 		// “清除播放队列”标签
-		clearPlayList = FileUtil.createView("delete-white", 24, 24);
+		clearPlayList = Resource.createView("delete-white", 24, 24);
 		clearPlayList.setId("clear-play-list");
 		AnchorPane.setTopAnchor(clearPlayList, 56.0);
 		AnchorPane.setRightAnchor(clearPlayList, 50.0);
 
-		ImageView closeQueue = FileUtil.createView("close", 24, 24);
+		ImageView closeQueue = Resource.createView("close", 24, 24);
 		closeQueue.setId("close-play-queue");
 		AnchorPane.setTopAnchor(closeQueue, 56.0);
 		AnchorPane.setRightAnchor(closeQueue, 10.0);
@@ -402,12 +401,12 @@ public class MainView {
 		playQueuePane.setId("play-queue-pane");
 		playQueuePane.setPrefWidth(500);
 		// “播放队列面板” 的高度绑定到“主场景视图根布局面板”的高度-86
-		playQueuePane.prefHeightProperty().bind(Main.getRoot().heightProperty().subtract(126));
+		playQueuePane.prefHeightProperty().bind(App.getRoot().heightProperty().subtract(126));
 		// “播放队列 列表视图” 的高度绑定到 “播放队列面板” 的高度
 		musicQueueView.prefHeightProperty().bind(playQueuePane.prefHeightProperty());
 
 		fullScreenNode = new SVGPath();
-		fullScreenNode.setContent(Icon.FULL_SCREEN_ICON);
+		fullScreenNode.setContent(Resource.FULL_SCREEN_ICON);
 		fullScreenNode.setId("full-node");
 		fullScreenNode.setPickOnBounds(true);
 		setVisibility(fullScreenNode, false);
@@ -477,12 +476,12 @@ public class MainView {
 		AnchorPane.setLeftAnchor(bottomPane, 0.0);
 
 		// 添加子组件到在根布局面板(节点)中
-		Main.getRoot().getChildren().addAll(box, topPane, mainTabPane, spinner, bottomPane);
+		App.getRoot().getChildren().addAll(box, topPane, mainTabPane, spinner, bottomPane);
 
 		/* *************播放详情*********** */
 		effectView = new ImageView();
-		effectView.fitWidthProperty().bind(Main.getRoot().widthProperty());
-		effectView.fitHeightProperty().bind(Main.getRoot().heightProperty());
+		effectView.fitWidthProperty().bind(App.getRoot().widthProperty());
+		effectView.fitHeightProperty().bind(App.getRoot().heightProperty());
 		effectView.setEffect(new BoxBlur(255, 255, 3));
 		effectView.imageProperty().bind(albumImageView.imageProperty());
 
@@ -518,13 +517,13 @@ public class MainView {
 		/* ********* 注册默认的处理事件 *******/
 		albumImageView.setOnMouseClicked(e -> {
 			// 是否需要显示播放详情页面
-			boolean need = Main.getRoot().getId() == null;
+			boolean need = App.getRoot().getId() == null;
 			// 若事件对象为null(手动调用的情况),并且已显示播放详情页,则不作任何操作
 			if (e == null && !need) {
 				return;
 			}
-			Main.getRoot().setId(need ? "root" : null);
-			ObservableList<Node> nodes = Main.getRoot().getChildren();
+			App.getRoot().setId(need ? "root" : null);
+			ObservableList<Node> nodes = App.getRoot().getChildren();
 			if (need) {
 				// 若歌词列表视图在播放详情页,则显示歌词视图
 				need = detailBox.getChildren().contains(lyricView);
@@ -549,7 +548,7 @@ public class MainView {
 		});
 
 		Image volumeImage = volume.getImage();
-		Image muteImage = FileUtil.createImage("player/mute");
+		Image muteImage = Resource.createImage("player/mute");
 		// 音量滑动条值改变时,修改音量提示标签的值
 		volumeSlider.valueProperty().addListener((observable, oldValue, value) -> {
 			int volumeSize = (int) (value.floatValue() * 100);
@@ -559,7 +558,7 @@ public class MainView {
 		});
 
 		// 绑定弹出式面板显示到音量图标之上
-		volumePane.showUpTo(volume, Main.getPrimaryStage());
+		volumePane.showUpTo(volume, App.getPrimaryStage());
 
 		// 音量面板的鼠标滚动事件处理
 		volumePane.setOnScroll(e -> {
@@ -580,7 +579,7 @@ public class MainView {
 		});
 
 		// 绑定弹出式面板显示到倍速组件之上
-		speedPane.showUpTo(speed, Main.getPrimaryStage());
+		speedPane.showUpTo(speed, App.getPrimaryStage());
 
 		// 倍速播放控制面板鼠标滚动事件处理
 		speedPane.setOnScroll(e -> {
@@ -614,7 +613,7 @@ public class MainView {
 		});
 
 		// 绑定“播放模式弹出式控制面板” 显示到播放模式组件的上方
-		playModelPane.showUpTo(playModelView, Main.getPrimaryStage());
+		playModelPane.showUpTo(playModelView, App.getPrimaryStage());
 		// 播放模式属性
 		playModelProperty = new SimpleObjectProperty<>(PlayModel.LIST_LOOP);
 		// “列表循环 标签” 鼠标事件
@@ -676,7 +675,7 @@ public class MainView {
 		});
 
 		// 点击底部的“播放队列” 图标 以显示 “播放队列面板”
-		playQueue.setOnMouseClicked(e -> playQueuePane.animate(Main.getPrimaryStage()));
+		playQueue.setOnMouseClicked(e -> playQueuePane.animate(App.getPrimaryStage()));
 		// 点击“关闭播放队列” 标签时 ,关闭“播放队列面板”
 		closeQueue.setOnMouseClicked(e -> playQueuePane.hide());
 
@@ -687,7 +686,7 @@ public class MainView {
 			}
 		});
 		// 放入到根节点属性缓存
-		Main.put(MainView.class, this);
+		App.put(MainView.class, this);
 	}
 
 	/**
@@ -710,7 +709,7 @@ public class MainView {
 	public void closeSpinner() {
 		if (spinner != null) {
 			spinner.stopAnimation();
-			Main.getRoot().getChildren().remove(spinner);
+			App.getRoot().getChildren().remove(spinner);
 			spinner = null;
 		}
 	}
@@ -748,7 +747,7 @@ public class MainView {
 	 */
 	public void setDetailView(Node mediaView) {
 		ObservableList<Node> nodes = detailBox.getChildren();
-		ObservableList<Node> rootNodes = Main.getRoot().getChildren();
+		ObservableList<Node> rootNodes = App.getRoot().getChildren();
 		boolean value = mediaView == null;
 		// 显示歌词视图
 		if (value) {
@@ -791,14 +790,14 @@ public class MainView {
 	 * @return 若可以进行窗口全屏或退出全屏,则返回true
 	 */
 	public boolean isFullAble() {
-		return Main.getRoot().getChildren().contains(detailBox) && !detailBox.getChildren().contains(lyricView);
+		return App.getRoot().getChildren().contains(detailBox) && !detailBox.getChildren().contains(lyricView);
 	}
 
 	private Timeline timeLine;
 
 	public void fullScreen(boolean value) {
-		ObservableList<Node> nodes = Main.getRoot().getChildren();
-		fullScreenNode.setContent(value ? Icon.FULL_SCREENED_ICON : Icon.FULL_SCREEN_ICON);
+		ObservableList<Node> nodes = App.getRoot().getChildren();
+		fullScreenNode.setContent(value ? Resource.FULL_SCREENED_ICON : Resource.FULL_SCREEN_ICON);
 		// 不是全屏
 		if (!value) {
 			if (timeLine != null) {
@@ -893,7 +892,7 @@ public class MainView {
 	}
 
 	public void setAlbumImage(Image image) {
-		albumImageView.setImage(image != null ? image : FileUtil.createImage("default"));
+		albumImageView.setImage(image != null ? image : Resource.createImage("default"));
 	}
 
 	public ImageView getPrev() {

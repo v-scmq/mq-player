@@ -1,17 +1,13 @@
 package com.scmq.player.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.User;
 import com.scmq.player.service.UserService;
-import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.Task;
 import com.scmq.view.control.Dialog;
 import com.scmq.view.control.EditText;
 import com.scmq.view.control.Toast;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,6 +18,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  * 用户模块控制器
@@ -54,7 +52,7 @@ public class UserController {
 	/** 创建对话框 */
 	private void createDialog() {
 		if (dialog == null) {
-			qqInput = new EditText(FileUtil.createView("user"), true);
+			qqInput = new EditText(Resource.createView("user"), true);
 			qqInput.setPromptText("请输入QQ号");
 
 			login = new Button("登录");
@@ -97,7 +95,7 @@ public class UserController {
 			login.setText(online ? "注销" : "登录");
 			// 设置QQ好输入框的文本.若已登录过,则设置为之前的用户QQ号
 			qqInput.setText(user == null ? null : user.getQq());
-			dialog.show(Main.getRoot());
+			dialog.show(App.getRoot());
 		}
 	};
 
@@ -108,8 +106,8 @@ public class UserController {
 			online = false;
 			dialog.close();
 			userNameButton.setText("点击登录");
-			headImageView.setImage(FileUtil.createImage("user_head"));
-			Toast.makeText(Main.getRoot(), "退出成功！").show();
+			headImageView.setImage(Resource.createImage("user_head"));
+			Toast.makeText(App.getRoot(), "退出成功！").show();
 			return;
 		}
 		// 获取新输入的QQ号
@@ -117,7 +115,7 @@ public class UserController {
 		// 检查QQ号是否合法,若不合法,则message消息表示了QQ号错误原因
 		String message = userService.check(qq);
 		if (message != null) {
-			Toast.makeText(Main.getRoot(), message).show();
+			Toast.makeText(App.getRoot(), message).show();
 			return;
 		}
 		// 未登录,开始做登录准备.
@@ -136,14 +134,14 @@ public class UserController {
 				if (success) {
 					userNameButton.setText(user.getName());
 					headImageView.setImage(new Image(user.getHeadURI(), true));
-					Toast.makeText(Main.getRoot(), "登录成功！").show();
+					Toast.makeText(App.getRoot(), "登录成功！").show();
 					online = true;
 					return;
 				}
 				// 登录失败
 				userNameButton.setText("点击登录");
-				dialog.show(Main.getRoot());
-				Toast.makeText(Main.getRoot(), "登录失败！").show();
+				dialog.show(App.getRoot());
+				Toast.makeText(App.getRoot(), "登录失败！").show();
 			});
 		});
 	};

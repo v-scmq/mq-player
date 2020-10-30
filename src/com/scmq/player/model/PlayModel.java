@@ -1,6 +1,7 @@
 package com.scmq.player.model;
 
-import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
+
 import javafx.scene.image.Image;
 
 /**
@@ -28,7 +29,7 @@ public enum PlayModel {
 	 *            图标URI
 	 */
 	PlayModel(String name) {
-		this.icon = FileUtil.createImage(name);
+		this.icon = Resource.createImage(name);
 	}
 
 	/**

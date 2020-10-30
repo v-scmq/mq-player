@@ -1,6 +1,6 @@
 package com.scmq.player.view;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.PlayList;
@@ -250,7 +250,7 @@ public class TableViewCell {
 				// 所有表格视图中序号列的单元格中复选框显示属性监听
 				checkBoxProperty.addListener(this);
 				// 正在播放的媒体 改变事件
-				Main.mediaProperty().addListener(this);
+				App.mediaProperty().addListener(this);
 			}
 
 			// 如果需要显示复选框(进入批量操作时)
@@ -268,7 +268,7 @@ public class TableViewCell {
 			}
 
 			// 若当前单元格对应数据是本地音乐,则比较path; 否则比较mid
-			if (item.equals(Main.mediaProperty().get())) {
+			if (item.equals(App.mediaProperty().get())) {
 				setGraphic(playGraph);
 				return;
 			}
@@ -346,10 +346,10 @@ public class TableViewCell {
 				return;
 			}
 			// 获取当前播放列表对象
-			PlayList oldValue = Main.playListProperty().get();
+			PlayList oldValue = App.playListProperty().get();
 			Integer id = oldValue == null ? null : oldValue.getId();
 			// 发送播放列表到主控制器
-			Main.playListProperty().set(new PlayList(id, getIndex(), tableView.getItems()));
+			App.playListProperty().set(new PlayList(id, getIndex(), tableView.getItems()));
 		}
 
 		@Override

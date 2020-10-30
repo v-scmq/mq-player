@@ -5,6 +5,7 @@ import com.scmq.player.io.IOUtil;
 import com.scmq.player.model.Album;
 import com.scmq.player.net.HttpClient;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -193,7 +194,7 @@ public class AlbumService {
 			}
 			// 若没有专辑图片地址
 			if (StringUtil.isEmpty(cover)) {
-				album.setCover(uri = uri == null ? FileUtil.getImageURI("_album") : uri);
+				album.setCover(uri = uri == null ? Resource.getImageURI("_album") : uri);
 				continue;
 			}
 			// 是否写入到本地文件
@@ -204,7 +205,7 @@ public class AlbumService {
 			if (write) {
 				album.setCover(file.toURI().toString());
 			} else {
-				album.setCover(uri = uri == null ? FileUtil.getImageURI("_album") : uri);
+				album.setCover(uri = uri == null ? Resource.getImageURI("_album") : uri);
 				file.delete();
 			}
 		}

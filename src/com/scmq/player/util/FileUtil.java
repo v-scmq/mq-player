@@ -1,8 +1,5 @@
 package com.scmq.player.util;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -78,14 +75,7 @@ public class FileUtil {
 	 * @return path所表示的目录
 	 */
 	public static File mkdirs(File path) {
-		if (path.isFile()) {
-			if (path.delete()) {
-				path.mkdirs();
-			}
-		} else if (!path.exists()) {
-			path.mkdirs();
-		}
-		return path;
+		return (path.isFile() && path.delete() && path.mkdirs()) || (!path.exists() && path.mkdirs()) ? path : path;
 	}
 
 	/**
@@ -275,171 +265,6 @@ public class FileUtil {
 				builder.delete(index + scale + 1, builder.length());
 			}
 		}
-	}
-
-	// FileUtil.class.getResource("") 类所在目录
-	// FileUtil.class.getResource("/") bin目录下
-	// FileUtil.class.getResource("..") 类的所在目录的父目录
-
-	/**
-	 * 获取程序内部资源URL地址
-	 *
-	 * @param names
-	 *            名称(可变参数)
-	 * @return URL字符串
-	 */
-	private static String getResource(String... names) {
-		StringBuilder builder = new StringBuilder();
-		for (String name : names) {
-			builder.append(name);
-		}
-		try {
-			return FileUtil.class.getResource(builder.toString()).toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * 获取程序内部CSS样式资源文件地址
-	 *
-	 * @param name
-	 *            CSS样式资源文件名称(不包含文件格式名)
-	 * @return 返回一个CSS样式资源文件的URL地址的字符串表示
-	 */
-	public static String getStyleSheet(String name) {
-		return getResource("/style/", name, ".css");
-	}
-
-	/**
-	 * 获取程序内部的PNG格式图片URI
-	 *
-	 * @param name
-	 *            图片名称
-	 * @return 图片URI
-	 */
-	public static String getImageURI(String name) {
-		return getImageURI(name, ".png");
-	}
-
-	/**
-	 * 获取程序内部的图片URI
-	 *
-	 * @param name
-	 *            图片名称
-	 * @param format
-	 *            图片格式(例如'.png').
-	 * @return 图片URI
-	 */
-	public static String getImageURI(String name, String format) {
-		return getResource("/icon/", name, format);
-	}
-
-	/**
-	 * 获取Image对象表示的图像
-	 *
-	 * @param name
-	 *            图片文件名称(不包含文件格式)
-	 * @return Image对象
-	 */
-	public static Image createImage(String name) {
-		return new Image(getImageURI(name));
-	}
-
-	/**
-	 * 获取Image对象表示的图像
-	 *
-	 * @param name
-	 *            图片文件名称(不包含文件格式)
-	 * @param format
-	 *            图片格式(如'.png')
-	 * @return Image对象
-	 */
-	public static Image createImage(String name, String format) {
-		return new Image(getImageURI(name, format));
-	}
-
-	/**
-	 * 通过资源名来创建一个ImageView组件,默认具有空白域可点击性
-	 *
-	 * @param resource
-	 *            资源名(程序内部)
-	 * @return 图片视图组件
-	 */
-	public static ImageView createView(String resource) {
-		ImageView view = new ImageView(createImage(resource));
-		view.setPickOnBounds(true);
-		return view;
-	}
-
-	/**
-	 * 通过Image对象来创建一个ImageView组件,默认具有空白域可点击性
-	 *
-	 * @param image
-	 *            Image对象(图像)
-	 * @return 图片视图组件
-	 */
-	public static ImageView createView(Image image) {
-		ImageView view = new ImageView(image);
-		view.setPickOnBounds(true);
-		return view;
-	}
-
-	/**
-	 * 通过资源名、宽度、高度和空白域可点击性来创建一个ImageView组件
-	 *
-	 * @param resource
-	 *            资源名(程序内部)
-	 * @param width
-	 *            宽度
-	 * @param height
-	 *            高度
-	 * @return 图片视图组件
-	 */
-	public static ImageView createView(String resource, double width, double height) {
-		ImageView view = new ImageView(createImage(resource));
-		view.setPickOnBounds(true);
-		view.setFitHeight(height);
-		view.setFitWidth(width);
-		return view;
-	}
-
-	/**
-	 * 通过资源名、宽度、空白域可点击性来创建一个ImageView组件
-	 *
-	 * @param resource
-	 *            资源名(程序内部)
-	 * @param width
-	 *            宽度
-	 * @param ratio
-	 *            是否保持图片比例
-	 * @return 图片视图组件
-	 */
-	public static ImageView createView(String resource, double width, boolean ratio) {
-		ImageView view = new ImageView(createImage(resource));
-		view.setPreserveRatio(ratio);
-		view.setPickOnBounds(true);
-		view.setFitWidth(width);
-		return view;
-	}
-
-	/**
-	 * 通过资源名、宽度、是否保持宽高比例来创建一个ImageView组件
-	 *
-	 * @param resource
-	 *            资源名(程序内部GIF图片)
-	 * @param width
-	 *            宽度
-	 * @param ratio
-	 *            是否保持图片比例
-	 * @return 图片视图组件
-	 */
-	public static ImageView createGifView(String resource, double width, boolean ratio) {
-		ImageView view = new ImageView(createImage(resource, ".gif"));
-		view.setPreserveRatio(ratio);
-		view.setFitWidth(width);
-		return view;
 	}
 
 	/**

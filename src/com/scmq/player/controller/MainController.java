@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.core.MediaPlayer;
 import com.scmq.player.core.MediaPlayerListener;
 import com.scmq.player.io.LyricReader;
@@ -16,6 +16,7 @@ import com.scmq.player.service.PlayListService;
 import com.scmq.player.util.FileUtil;
 import com.scmq.player.util.NavigationManager;
 import com.scmq.player.util.NavigationManager.Navigation;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import com.scmq.player.util.Task;
 import com.scmq.player.util.TimeUtil;
@@ -115,7 +116,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	@Override
 	public void statusChanged(Status status) {
 		System.out.println("status=" + status);
-		Toast.makeText(Main.getRoot(), "status=>" + status).show();
+		Toast.makeText(App.getRoot(), "status=>" + status).show();
 		// 播放器是否正在播放
 		boolean playing = status == Status.PLAYING;
 		// 重置音乐频谱
@@ -125,7 +126,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		// 是否正在播放音乐,而不是MV
 		playing = playing && mvQueue.isEmpty() && check(musicQueue, index);
 		// 更新播放动图
-		Main.mediaProperty().set(playing ? musicQueue.get(index) : null);
+		App.mediaProperty().set(playing ? musicQueue.get(index) : null);
 		// 若播放器已停止且当前是单曲循环模式,则重新播放当前媒体
 		if (status == Status.STOPPED && singleLoop) {
 			singleLoop = false;
@@ -188,7 +189,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	@Override
 	public void error(String exception) {
 		singleLoop = false;
-		Toast.makeText(Main.getRoot(), exception).show();
+		Toast.makeText(App.getRoot(), exception).show();
 		play(index(true));// 播放当前音乐发生错误,播放下一首
 	}
 
@@ -201,14 +202,14 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 	/* 播放器和所有配置加载完成,绑定事件.(包括异步加载播放列表) */
 	void bind() {
 		// 从容器中获取并移除视图对象
-		this.view = Main.remove(MainView.class);
+		this.view = App.remove(MainView.class);
 		// 从容器中获取播放器对象
-		this.player = Main.get(MediaPlayer.class);
+		this.player = App.get(MediaPlayer.class);
 
 		playImage = view.getPlay().getImage();
 		mvQueue = view.getMvQueueView().getItems();
 		musicQueue = view.getMusicQueueView().getItems();
-		pauseImage = FileUtil.createImage("player/pause");
+		pauseImage = Resource.createImage("player/pause");
 
 		// 在子线程中,加载播放列表
 		Task.async(() -> {
@@ -219,11 +220,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				Platform.runLater(() -> {
 					musicQueue.setAll(items);
 					// 移除监听器,不触发播放列表改变事件,否则会自动播放
-					Main.playListProperty().removeListener(this);
+					App.playListProperty().removeListener(this);
 					// 设置新的播放列表
-					Main.playListProperty().set(playList);
+					App.playListProperty().set(playList);
 					// 重新添加监听器
-					Main.playListProperty().addListener(this);
+					App.playListProperty().addListener(this);
 				});
 			}
 			// 获取热搜关键词
@@ -238,7 +239,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		player.setVolume(0.5f);
 
 		// 注册播放数据源改变事件
-		Main.playListProperty().addListener(this);
+		App.playListProperty().addListener(this);
 
 		// 如果播放器支持音乐频谱图
 		if (player.supportAudioSpectrum()) {
@@ -253,12 +254,12 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		NavigationManager.initialize(view.getBackNode(), view.getForwardNode());
 
 		// 监听主选项卡面板的选项卡切换事件
-		TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+		TabPane tabPane = (TabPane) App.getRoot().lookup(".tab-pane:vertical");
 		tabPane.setTabChangeListener((observable, oldTab, newTab) -> //
 		NavigationManager.addToBack(new Navigation(oldTab, oldTab.getContent(), tabPane)));
 
 		/* 为 窗口 注册 键盘 (按下 后 释放)事件 */
-		Main.getPrimaryStage().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
+		App.getPrimaryStage().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
 			switch (e.getCode()) {
 			// 若是空格键 且 事件目标不是文本输入框
 			case SPACE:
@@ -354,7 +355,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			String text = editText.getText();
 			if (StringUtil.isEmpty(text)) {
 				if (StringUtil.isEmpty(text = editText.promptTextProperty().get())) {
-					Toast.makeText(Main.getRoot(), "搜索内容不能为空！").show();
+					Toast.makeText(App.getRoot(), "搜索内容不能为空！").show();
 					return;
 				}
 				editText.textProperty().set(text);
@@ -401,16 +402,16 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 
 		/* -----“播放队列 列表视图”的单元格 鼠标悬浮时呈现的4个ImageView----- */
 		// 播放图标
-		ImageView play = FileUtil.createView("play-all", 24, 24);
+		ImageView play = Resource.createView("play-all", 24, 24);
 		play.setId("play-current");
 		// 收藏图标
-		ImageView like = FileUtil.createView("like-red", 24, 24);
+		ImageView like = Resource.createView("like-red", 24, 24);
 		like.setId("like-current");
 		// 删除图标
-		ImageView delete = FileUtil.createView("delete-white", 24, 24);
+		ImageView delete = Resource.createView("delete-white", 24, 24);
 		delete.setId("delete-current");
 		// 更多操作图标
-		ImageView more = FileUtil.createView("more", 24, 24);
+		ImageView more = Resource.createView("more", 24, 24);
 		more.setId("more-oper");
 
 		HBox rightBox = new HBox(6, play, like, delete, more);
@@ -443,11 +444,11 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		});
 
 		// 播放动图
-		ImageView graphic = FileUtil.createGifView("player/wave", 20, true);
+		ImageView graphic = Resource.createGifView("player/wave", 20, true);
 		// 默认4个字符容量的字符串构建器(减少内存占用)
 		StringBuilder builder = new StringBuilder(4);
 		// MV图片
-		Image mvImage = FileUtil.createImage("mv");
+		Image mvImage = Resource.createImage("mv");
 
 		// 播放列表视图单元格
 		class Cell extends ListCell<Music> implements EventHandler<MouseEvent>, ChangeListener<Object> {
@@ -464,7 +465,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				// 鼠标悬浮改变事件
 				hoverProperty().addListener(this);
 				// 正在播放的媒体 改变(事件)
-				Main.mediaProperty().addListener(this);
+				App.mediaProperty().addListener(this);
 			}
 
 			@Override
@@ -545,7 +546,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 				Music item = getItem();
 				mvIcon.setMouseTransparent(false);
 				fileName.setGraphic(StringUtil.isEmpty(item.getVid()) ? null : mvIcon);
-				if (item == Main.mediaProperty().get()) {
+				if (item == App.mediaProperty().get()) {
 					num.setGraphic(graphic);
 					num.setText(null);
 				} else {
@@ -674,7 +675,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		System.out.println("will be stopped...");
 		player.stop();
 		if (index == -1) {
-			Toast.makeText(Main.getRoot(), "没有播放数据源，请选择一个播放源！").show();
+			Toast.makeText(App.getRoot(), "没有播放数据源，请选择一个播放源！").show();
 			return;
 		}
 		// 若index==-2,则是列表播放模式,且列表播放已完成,不播放下一首,
@@ -714,7 +715,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 		List<? extends Media> playQueue = mvQueue.isEmpty() ? musicQueue : mvQueue;
 		// 若播放器不可播放,则准备新的媒体
 		if (playQueue.isEmpty()) {
-			Toast.makeText(Main.getRoot(), "没有播放数据源，请选择一个播放源！").show();
+			Toast.makeText(App.getRoot(), "没有播放数据源，请选择一个播放源！").show();
 			return;
 		}
 		// 若播放索引合法,则开始准备播放
@@ -744,7 +745,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			}
 		}
 		if (StringUtil.isEmpty(media.getPath())) {
-			Toast.makeText(Main.getRoot(), "这个媒体没有播放地址").show();
+			Toast.makeText(App.getRoot(), "这个媒体没有播放地址").show();
 			return false;
 		}
 		System.out.println("prepared - media ->");

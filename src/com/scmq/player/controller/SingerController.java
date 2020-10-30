@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.Album;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
@@ -123,7 +123,7 @@ public class SingerController implements ChangeListener<Tab> {
 			ViewRestore.bind(view, this::restore);
 			// 添加选项卡切换监听器
 			view.getTabPane().setTabChangeListener(this);
-			mainTabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+			mainTabPane = (TabPane) App.getRoot().lookup(".tab-pane:vertical");
 
 			view.getPagination().addListener((observable, oldPage, newPage) -> {
 				Tab tab = view.getTabPane().tabProperty().get();
@@ -291,7 +291,7 @@ public class SingerController implements ChangeListener<Tab> {
 			@SuppressWarnings("unchecked")
 			List<MV> mvList = (List<MV>) node.getParent().getUserData();
 			Integer index = (Integer) node.getUserData();
-			Main.playListProperty().set(new PlayList(index, mvList));
+			App.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
 }

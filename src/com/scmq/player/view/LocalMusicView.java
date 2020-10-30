@@ -1,8 +1,9 @@
 package com.scmq.player.view;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.Music;
 import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.view.control.EditText;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -52,35 +53,35 @@ public class LocalMusicView extends AnchorPane {
 	private TableView<Music> tableView;
 
 	public LocalMusicView() {
-		playAllButton = new Button("播放全部", FileUtil.createView("play-all", 20, 20));// width=104|74
+		playAllButton = new Button("播放全部", Resource.createView("play-all", 20, 20));// width=104|74
 		playAllButton.setDisable(true);
 		setTopAnchor(playAllButton, 28.0);
 		setLeftAnchor(playAllButton, 0.0);
 
-		addButton = new Button("添加到", FileUtil.createView("add-white", 20, 20));// width=89
+		addButton = new Button("添加到", Resource.createView("add-white", 20, 20));// width=89
 		setTopAnchor(addButton, 28.0);
 		setLeftAnchor(addButton, 94.0);// 74+20+0
 
-		deleteButton = new Button("删除", FileUtil.createView("delete-white", 20, 20));// width=74
+		deleteButton = new Button("删除", Resource.createView("delete-white", 20, 20));// width=74
 		setTopAnchor(deleteButton, 28.0);
 		setLeftAnchor(deleteButton, 203.0);// 94+89+20
 
-		exitMultiOper = new Button("退出批量操作", FileUtil.createView("exit-white", 20, 20));// width=134
+		exitMultiOper = new Button("退出批量操作", Resource.createView("exit-white", 20, 20));// width=134
 		setTopAnchor(exitMultiOper, 28.0);
 		setLeftAnchor(exitMultiOper, 297.0);// 203+74+20
 
-		batchOperButton = new Button("批量操作", FileUtil.createView("multi-oper-white", 20, 20));// width=104
+		batchOperButton = new Button("批量操作", Resource.createView("multi-oper-white", 20, 20));// width=104
 		batchOperButton.setDisable(true);
 		setTopAnchor(batchOperButton, 28.0);
 		setLeftAnchor(batchOperButton, 124.0);// 104+20+20
 
-		inputLocalSearchKey = new EditText(null, FileUtil.createView("search", 20, 20), true);// width=200
+		inputLocalSearchKey = new EditText(null, Resource.createView("search", 20, 20), true);// width=200
 		inputLocalSearchKey.setPromptText("搜索本地歌曲");
 		inputLocalSearchKey.setPrefWidth(200);
 		setTopAnchor(inputLocalSearchKey, 28.0);
 		setRightAnchor(inputLocalSearchKey, 268.0);// 104+144+20
 
-		Button leadingButton = new Button("导入歌曲", FileUtil.createView("leading-in", 20, 20));// width=104
+		Button leadingButton = new Button("导入歌曲", Resource.createView("leading-in", 20, 20));// width=104
 		setTopAnchor(leadingButton, 28.0);
 		setRightAnchor(leadingButton, 144.0);// 104+20+20
 
@@ -90,7 +91,7 @@ public class LocalMusicView extends AnchorPane {
 		contextMenu.setAnchorX(144);
 		contextMenu.setAnchorY(28);
 
-		sortMethod = new Button("排序方式", FileUtil.createView("sort-method", 20, 20));// width=104
+		sortMethod = new Button("排序方式", Resource.createView("sort-method", 20, 20));// width=104
 		setTopAnchor(sortMethod, 28.0);
 		setRightAnchor(sortMethod, 20.0);
 
@@ -110,7 +111,7 @@ public class LocalMusicView extends AnchorPane {
 
 		// TableView序号列上的复选框显示属性.用于批量操作TableView数据行时,列表题和列单元格上的复选框是可见状态还是隐藏状态
 		BooleanProperty checkBoxProperty = new SimpleBooleanProperty();
-		ImageView graphic = FileUtil.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
+		ImageView graphic = Resource.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
 		tableView.getProperties().put(TableViewCell.PLAY_GRAPHIC, graphic);
 		tableView.getProperties().put(TableViewCell.CHECK_BOX, checkBoxProperty);
 
@@ -232,7 +233,7 @@ public class LocalMusicView extends AnchorPane {
 
 		getChildren().addAll(playAllButton, batchOperButton, inputLocalSearchKey, sortMethod, tableView, leadingButton);
 		getStyleClass().add("button-music-pane");
-		Main.put(LocalMusicView.class, this);
+		App.put(LocalMusicView.class, this);
 
 		/* **************** 注册事件 ***********/
 
@@ -244,7 +245,7 @@ public class LocalMusicView extends AnchorPane {
 				contextMenu.setAnchorX(e.getScreenX() - e.getX() - 6);
 				contextMenu.setAnchorY(e.getScreenY() - e.getY() + leadingButton.getHeight());
 				// 显示上下文菜单项
-				contextMenu.show(Main.getPrimaryStage());
+				contextMenu.show(App.getPrimaryStage());
 			}
 		});
 
@@ -252,7 +253,7 @@ public class LocalMusicView extends AnchorPane {
 			if (e.getButton() == MouseButton.PRIMARY && !menu.isShowing()) {
 				menu.setAnchorX(e.getScreenX() - e.getX());
 				menu.setAnchorY(e.getScreenY() - e.getY() + sortMethod.getHeight());
-				menu.show(Main.getPrimaryStage());
+				menu.show(App.getPrimaryStage());
 			}
 		});
 

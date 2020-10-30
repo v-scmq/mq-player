@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.LocalList;
 import com.scmq.player.model.Media;
 import com.scmq.player.model.Music;
@@ -45,7 +45,7 @@ public class LocalMusicController {
 	private Spinner spinner;
 
 	void bind() {
-		LocalMusicView view = Main.remove(LocalMusicView.class);
+		LocalMusicView view = App.remove(LocalMusicView.class);
 		// 在子线程中查询所有本地音乐
 		Task.async(() -> {
 			LocalList localList = service.findLocalListOfFirst();
@@ -66,27 +66,27 @@ public class LocalMusicController {
 			if ("播放".equals(text)) {
 				items = view.getTableView().getSelectionModel().getSelectedItems();
 				if (items.isEmpty()) {
-					Toast.makeText(Main.getRoot(), "至少选择一首音乐，才能播放！").show();
+					Toast.makeText(App.getRoot(), "至少选择一首音乐，才能播放！").show();
 					return;
 				}
 			} else {
 				items = view.getTableView().getItems();
 				if (items.isEmpty()) {
-					Toast.makeText(Main.getRoot(), "本地音乐列表没有任何歌曲！").show();
+					Toast.makeText(App.getRoot(), "本地音乐列表没有任何歌曲！").show();
 					return;
 				}
 			}
 			// 获取当前播放列表对象
-			PlayList oldValue = Main.playListProperty().get();
+			PlayList oldValue = App.playListProperty().get();
 			Integer id = oldValue == null ? null : oldValue.getId();
 			// 发送播放列表到主控制器
-			Main.playListProperty().set(new PlayList(id, 0, items));
+			App.playListProperty().set(new PlayList(id, 0, items));
 		});
 
 		// 添加本地音乐事件
 		view.getLeadForFile().setOnAction(e -> {
 			if (!StringUtil.isEmpty(view.getInputLocalSearchKey().getText())) {
-				Toast.makeText(Main.getRoot(), "请先清除搜索记录！").show();
+				Toast.makeText(App.getRoot(), "请先清除搜索记录！").show();
 				return;
 			}
 			FileChooser fileChooser = new FileChooser();
@@ -98,7 +98,7 @@ public class LocalMusicController {
 			filters.add(new ExtensionFilter("APE无损音乐文件", "*.ape"));
 			filters.add(new ExtensionFilter("Wave音乐文件", "*.wav"));
 			// 打开文件选择器(多选), 在关闭时获得所选文件List集合
-			List<File> files = fileChooser.showOpenMultipleDialog(Main.getPrimaryStage());
+			List<File> files = fileChooser.showOpenMultipleDialog(App.getPrimaryStage());
 			// 如果未选择任何文件
 			if (files == null || files.isEmpty()) {
 				return;
@@ -129,11 +129,11 @@ public class LocalMusicController {
 		// 从本地目录添加动作事件
 		view.getLeadForDir().setOnAction(e -> {
 			if (!StringUtil.isEmpty(view.getInputLocalSearchKey().getText())) {
-				Toast.makeText(Main.getRoot(), "请先清除搜索记录！").show();
+				Toast.makeText(App.getRoot(), "请先清除搜索记录！").show();
 				return;
 			}
 			// 打开目录选择器
-			File path = new DirectoryChooser().showDialog(Main.getPrimaryStage());
+			File path = new DirectoryChooser().showDialog(App.getPrimaryStage());
 			// 若未选择目录,则终止执行
 			File[] files = path == null ? null : path.listFiles(Media.getAudioFileFilter());
 			// 若没有任何歌曲,则终止执行
@@ -189,7 +189,7 @@ public class LocalMusicController {
 			// 本地音乐视图中的音乐信息列表
 			ObservableList<Music> list = selection.getSelectedItems();
 			if (list == null || list.isEmpty()) {
-				Toast.makeText(Main.getRoot(), "至少选择一项，才能操作！").show();
+				Toast.makeText(App.getRoot(), "至少选择一项，才能操作！").show();
 				return;
 			}
 			Integer[] musicIds = new Integer[list.size()];
@@ -226,7 +226,7 @@ public class LocalMusicController {
 					view.getTableView().getItems().clear();
 					// 若没有搜索到任何记录
 					if (list == null || list.isEmpty()) {
-						Toast.makeText(Main.getRoot(), "没有找到任何匹配的音乐").show();
+						Toast.makeText(App.getRoot(), "没有找到任何匹配的音乐").show();
 					} else {
 						// 否则添加记录到表格视图中
 						view.getTableView().getItems().addAll(list);

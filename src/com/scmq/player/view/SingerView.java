@@ -5,7 +5,7 @@ import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
 import com.scmq.player.model.Singer;
-import com.scmq.player.util.FileUtil;
+import com.scmq.player.util.Resource;
 import com.scmq.player.util.StringUtil;
 import com.scmq.view.control.Pagination;
 import com.scmq.view.control.Tab;
@@ -91,10 +91,10 @@ public class SingerView extends AnchorPane {
 		AnchorPane.setRightAnchor(hBox, 0.0);
 		AnchorPane.setLeftAnchor(hBox, size + 40.0);
 
-		Button playButton = new Button("播放全部", FileUtil.createView("play-all", 20, 20));
-		Button addButton = new Button("添加到", FileUtil.createView("add-white", 20, 20));
-		Button downloadButton = new Button("下载", FileUtil.createView("download-white", 20, 20));
-		Button multiOperButton = new Button("批量操作", FileUtil.createView("multi-oper-white", 20, 20));
+		Button playButton = new Button("播放全部", Resource.createView("play-all", 20, 20));
+		Button addButton = new Button("添加到", Resource.createView("add-white", 20, 20));
+		Button downloadButton = new Button("下载", Resource.createView("download-white", 20, 20));
+		Button multiOperButton = new Button("批量操作", Resource.createView("multi-oper-white", 20, 20));
 		HBox box = new HBox(15, playButton, addButton, downloadButton, multiOperButton);
 		box.getStyleClass().add("button-music-pane");
 		AnchorPane.setTopAnchor(box, 120.0);
@@ -108,7 +108,7 @@ public class SingerView extends AnchorPane {
 
 		// TableView序号列上的复选框显示属性.用于批量操作TableView数据行时,列表题和列单元格上的复选框是可见状态还是隐藏状态
 		BooleanProperty checkBoxProperty = new SimpleBooleanProperty();
-		ImageView graphic = FileUtil.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
+		ImageView graphic = Resource.createGifView(TableViewCell.PLAY_GRAPHIC, 20, true);
 		tableView.getProperties().put(TableViewCell.PLAY_GRAPHIC, graphic);
 		tableView.getProperties().put(TableViewCell.CHECK_BOX, checkBoxProperty);
 

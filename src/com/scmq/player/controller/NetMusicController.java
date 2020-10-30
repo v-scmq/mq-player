@@ -1,6 +1,6 @@
 package com.scmq.player.controller;
 
-import com.scmq.player.app.Main;
+import com.scmq.player.app.App;
 import com.scmq.player.model.MV;
 import com.scmq.player.model.Music;
 import com.scmq.player.model.Page;
@@ -145,7 +145,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 		// 若是 选项卡 或 分页组件
 		if (node instanceof Tab || Pagination.SELECTED_CLASS.equals(node.getStyleClass().get(0))) {
 			e.consume();
-			Toast.makeText(Main.getRoot(), "上一次请求还未完成，请等待！").show();
+			Toast.makeText(App.getRoot(), "上一次请求还未完成，请等待！").show();
 			return;
 		}
 		// 若是 列表单元格
@@ -156,7 +156,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			}
 			ListCell<?> cell = (ListCell<?>) node;
 			if (!cell.isSelected() && !cell.isEmpty()) {
-				Toast.makeText(Main.getRoot(), "上一次请求还未完成，请等待！").show();
+				Toast.makeText(App.getRoot(), "上一次请求还未完成，请等待！").show();
 				e.consume();
 			}
 		}
@@ -167,7 +167,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			Singer singer = (Singer) ((Node) e.getSource()).getUserData();
 			// 获取主选项卡面板
-			TabPane tabPane = (TabPane) Main.getRoot().lookup(".tab-pane:vertical");
+			TabPane tabPane = (TabPane) App.getRoot().lookup(".tab-pane:vertical");
 			// 显示歌手内容页面
 			singerController.show(singer);
 		}
@@ -180,7 +180,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 			@SuppressWarnings("unchecked")
 			List<MV> mvList = (List<MV>) node.getParent().getUserData();
 			Integer index = (Integer) node.getUserData();
-			Main.playListProperty().set(new PlayList(index, mvList));
+			App.playListProperty().set(new PlayList(index, mvList));
 		}
 	};
 
@@ -287,7 +287,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 
 	void bind() {
 		spinner = new Spinner();
-		view = Main.remove(NetMusicView.class);
+		view = App.remove(NetMusicView.class);
 		mvSelection = view.getMvTagListView().getSelectionModel();
 		enSelection = view.getSingerEnListView().getSelectionModel();
 		kindSection = view.getSingerKindListView().getSelectionModel();
@@ -354,7 +354,7 @@ public class NetMusicController implements ChangeListener<Tab> {
 				return;
 			}
 			if (spinner.isPlaying()) {
-				Toast.makeText(Main.getRoot(), "上一次请求还未完成，请等待！").show();
+				Toast.makeText(App.getRoot(), "上一次请求还未完成，请等待！").show();
 			} else {
 				pagination.setPage(current);
 			}
