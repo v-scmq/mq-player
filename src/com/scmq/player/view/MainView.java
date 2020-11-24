@@ -629,7 +629,7 @@ public class MainView {
 		// 若MV播放队列为空时,表示正在使用音乐播放队列,此时显示音乐队列的播放数量; 否则显示MV播放队列的播放数量
 		ListChangeListener<? super Media> listener = (Change<? extends Media> c) -> {
 			ListView<?> node = mvQueueView.getItems().isEmpty() ? musicQueueView : mvQueueView;
-			playNum.setText(new StringBuilder().append(node.getItems().size()).append('首').toString());
+			playNum.setText(node.getItems().size() + "首");
 		};
 		// 播放列表视图数据量改变事件,设置有多少首音乐
 		musicQueueView.getItems().addListener(listener);
@@ -651,7 +651,7 @@ public class MainView {
 			if (!pane.getChildren().contains(addNode)) {
 				nodes.add(addNode);
 				// 更新播放队列中的播放数量
-				playNum.setText(new StringBuilder().append(num).append('首').toString());
+				playNum.setText(num + "首");
 			}
 		});
 
@@ -670,7 +670,7 @@ public class MainView {
 			// 添加需要显示的播放队列视图
 			if (!pane.getChildren().contains(addNode)) {
 				nodes.add(addNode);
-				playNum.setText(new StringBuilder().append(num).append('首').toString());
+				playNum.setText(num + "首");
 			}
 		});
 
