@@ -8,6 +8,7 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
 import com.sun.media.jfxmediaimpl.HostUtils;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
@@ -27,7 +28,7 @@ import javafx.stage.Stage;
  * @author SCMQ
  * @since 2020-08-23
  */
-public enum StageHandler implements EventHandler<MouseEvent> {
+public enum StageHandler implements EventHandler<MouseEvent>, ListChangeListener<Screen> {
 	/** JavaFX窗口 处理器(改用枚举实现单例模式) */
 	STAGE_HANDLER;
 
@@ -74,6 +75,7 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 		App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
 		App.getRoot().addEventFilter(MouseEvent.MOUSE_PRESSED, this);
 		App.getRoot().addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
+		Screen.getScreens().addListener(this);
 	}
 
 	/**
@@ -93,9 +95,8 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			width = stage.getWidth();
 			height = stage.getHeight();
 
-			Screen screen = Screen.getPrimary();
-			Rectangle2D bounds = screen.getVisualBounds();
-			setBounds(stage, 0, 0, bounds.getWidth(), bounds.getHeight());
+			Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+			setBounds(stage, bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
 			App.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
 			return;
 		}
@@ -167,21 +168,21 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			// 鼠标窗口右下角边界上,可以改变宽度和高度
 			if (cursor == Cursor.SE_RESIZE) {
 				Rectangle2D rect = Screen.getPrimary().getVisualBounds();
-				double size = (size = event.getX()) < 180 ? 180 : size > rect.getWidth() ? rect.getWidth() : size;
+				double size = (size = event.getX()) < 180 ? 180 : Math.min(size, rect.getWidth());
 				stage.setWidth(size);
-				size = (size = event.getY()) < 60 ? 60 : size > rect.getHeight() ? rect.getHeight() : size;
+				size = (size = event.getY()) < 60 ? 60 : Math.min(size, rect.getHeight());
 				stage.setHeight(size);
 
 				// 鼠标在窗口右水平方向时,可以改变宽度
 			} else if (cursor == Cursor.E_RESIZE) {
 				double max = Screen.getPrimary().getVisualBounds().getWidth();
-				double size = (size = event.getX()) < 180 ? 180 : size > max ? max : size;
+				double size = (size = event.getX()) < 180 ? 180 : Math.min(size, max);
 				stage.setWidth(size);
 
 				// 鼠标在窗口下垂直方向时,可以改变高度
 			} else if (cursor == Cursor.S_RESIZE) {
 				double max = Screen.getPrimary().getVisualBounds().getHeight();
-				double size = (size = event.getY()) < 60 ? 60 : size > max ? max : size;
+				double size = (size = event.getY()) < 60 ? 60 : Math.min(size, max);
 				stage.setHeight(size);
 			}
 
@@ -231,14 +232,14 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 			}
 
 			Stage stage = App.getPrimaryStage();
-
+			Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 			// 当前窗口已经最大化 并且 鼠标向下拖动. 那么先还原窗口,然后继续拖动
 			if (maximized && e.getScreenY() > 1) {
 				maximized = false;
 				maximizeNode.setContent(Resource.MAXIMIZE_ICON);
 
 				// 获取屏幕可见最大宽度
-				double max = Screen.getPrimary().getVisualBounds().getWidth();
+				double max = bounds.getWidth();
 				// 当前鼠标在屏幕上的x坐标, 新设置窗口坐标x=鼠标在屏幕上的x坐标-之前窗口宽度的一半
 				double screenX = e.getScreenX(), x = screenX - (width / 2);
 				// 需要注意计算出的x坐标 不能超过 (屏幕最大宽度 - 窗口之前的宽度)
@@ -249,15 +250,16 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 				// 必须重新计算offsetX(这个时候认为是鼠标的重新按下,所以误差x重算)
 				offsetX = screenX - x;
 
-				App.getRoot().removeEventFilter(MouseEvent.MOUSE_MOVED, this);
-				App.getRoot().addEventFilter(MouseEvent.MOUSE_MOVED, this);
+				// 重新设置鼠标移动监听
+				App.getRoot().setOnMouseMoved(this);
 				return;
 			}
 
 			stage.setX(e.getScreenX() - offsetX);
-			if (e.getScreenY() + 5 < Screen.getPrimary().getVisualBounds().getHeight()) {
-				stage.setY(e.getScreenY() - offsetY);
-			}
+			// 保证窗口y坐标是在可视范围内
+			double screenY = (screenY = e.getScreenY() - offsetY) < bounds.getMinY() ? bounds.getMinY()
+					: screenY + 10 > bounds.getMaxY() ? bounds.getMaxY() - 10 : screenY;
+			stage.setY(screenY);
 		});
 	}
 
@@ -275,11 +277,29 @@ public enum StageHandler implements EventHandler<MouseEvent> {
 	 * @param height
 	 *            窗口高度
 	 */
-	private static void setBounds(Stage stage, double x, double y, double width, double height) {
+	private void setBounds(Stage stage, double x, double y, double width, double height) {
 		stage.setWidth(width);
 		stage.setHeight(height);
 		stage.setX(x);
 		stage.setY(y);
 	}
 
+	/**
+	 * 屏幕发生变化时,回调此方法
+	 * 
+	 * @param c
+	 *            屏幕List改变维护对象
+	 */
+	@Override
+	public void onChanged(Change<? extends Screen> c) {
+		// 若已全屏或未最大化,则什么也不做
+		// 理论情况下没有全屏且没有最大化时屏幕切换后,需要考虑窗口边界,但是目前windows10会自动重置窗口边界
+		if (fullScreen || !maximized) {
+			return;
+		}
+
+		Stage stage = App.getPrimaryStage();
+		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+		setBounds(stage, bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+	}
 }

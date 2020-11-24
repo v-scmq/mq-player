@@ -802,7 +802,7 @@ public final class MainController implements MediaPlayerListener, ChangeListener
 			return next ? (++index >= size ? 0 : index) : (--index < 0 ? --size : index);
 		}
 		case SINGLE_LOOP: {
-			return index < 0 ? 0 : index;
+			return Math.max(index, 0);
 		}
 		case ORDER_PLAY: {
 			// 若生成下一个索引,则直接增加;
