@@ -418,7 +418,7 @@ public final class HttpClient {
 	 */
 	public static String encode(String text, String charset) {
 		try {
-			return URLEncoder.encode(text, charset);
+			return text == null || text.isEmpty() ? "" : URLEncoder.encode(text, charset);
 		} catch (UnsupportedEncodingException e) {
 			return text;
 		}
@@ -435,7 +435,7 @@ public final class HttpClient {
 	 */
 	public static String decode(String text, String charset) {
 		try {
-			return URLDecoder.decode(text, charset);
+			return text == null || text.isEmpty() ? "" : URLDecoder.decode(text, charset);
 		} catch (UnsupportedEncodingException e) {
 			return text;
 		}

@@ -190,6 +190,11 @@ public class DefaultSource implements NetSource {
 	}
 
 	@Override
+	public List<String> singerImageList(Music music) {
+		return new ArrayList<>(0);
+	}
+
+	@Override
 	public String platformId() {
 		return "not-implement";
 	}

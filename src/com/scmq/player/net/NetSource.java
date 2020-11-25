@@ -255,6 +255,15 @@ public interface NetSource {
 	List<LyricLine> handleLyric(Music music);
 
 	/**
+	 * 通过音乐信息获取歌手写真URL的List集合
+	 * 
+	 * @param music
+	 *            音乐信息
+	 * @return 歌手写真URL的List集合
+	 */
+	List<String> singerImageList(Music music);
+
+	/**
 	 * 获取热搜词列表
 	 *
 	 * @return 热搜词列表
